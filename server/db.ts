@@ -125,7 +125,7 @@ export async function createAppUser(data: {
     role: data.appRole === "admin" ? "admin" : "user",
     areaId: data.areaId ?? null,
     leaderId: data.leaderId ?? null,
-    mustChangePassword: true,
+    mustChangePassword: false,
     status: "active",
     loginMethod: "email",
     lastSignedIn: new Date(),
@@ -350,60 +350,6 @@ export async function createAuditFlag(data: { cycleId: number; evaluatorId: numb
   const db = await getDb();
   if (!db) return;
   await db.insert(auditFlags).values(data);
-}
-
-// ─── Pending Users (registro self-service) ───
-export async function createPendingUser(data: { name: string; email: string; passwordHash: string }) {
-  const dbConn = await getDb();
-  if (!dbConn) throw new Error("DB not available");
-  const openId = `pending_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
-  await dbConn.insert(users).values({
-    openId,
-    name: data.name,
-    email: data.email,
-    passwordHash: data.passwordHash,
-    appRole: "employee",
-    role: "user",
-    status: "inactive", // inativo até aprovação
-    mustChangePassword: false,
-    loginMethod: "email",
-    lastSignedIn: new Date(),
-  });
-}
-
-export async function getPendingUsers() {
-  const dbConn = await getDb();
-  if (!dbConn) return [];
-  return dbConn.select().from(users)
-    .where(eq(users.status, "inactive"))
-    .orderBy(desc(users.createdAt));
-}
-
-export async function approveUser(pendingUserId: number, linkToUserId?: number) {
-  const dbConn = await getDb();
-  if (!dbConn) return;
-  if (linkToUserId) {
-    // Copia senha do pending para o usuário pré-cadastrado
-    const pending = await getUserById(pendingUserId);
-    if (pending?.passwordHash) {
-      await dbConn.update(users)
-        .set({ passwordHash: pending.passwordHash, mustChangePassword: false, status: "active" })
-        .where(eq(users.id, linkToUserId));
-    }
-    // Remove o registro pendente (ou marca como inativo permanentemente)
-    await dbConn.delete(users).where(eq(users.id, pendingUserId));
-  } else {
-    // Ativa diretamente o usuário pendente
-    await dbConn.update(users)
-      .set({ status: "active" })
-      .where(eq(users.id, pendingUserId));
-  }
-}
-
-export async function rejectPendingUser(pendingUserId: number) {
-  const dbConn = await getDb();
-  if (!dbConn) return;
-  await dbConn.delete(users).where(eq(users.id, pendingUserId));
 }
 
 export async function getAllAggregates() {

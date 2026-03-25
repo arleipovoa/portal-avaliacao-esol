@@ -68,53 +68,10 @@ export const appRouter = router({
         await db.updateUserPassword(user.id, hash);
         return { success: true };
       }),
-
-    // Registro de 1º acesso pelo próprio colaborador
-    register: publicProcedure
-      .input(z.object({
-        name: z.string().min(2, "Nome muito curto"),
-        email: z.string().email("E-mail inválido"),
-        password: z.string().min(6, "Senha deve ter ao menos 6 caracteres"),
-      }))
-      .mutation(async ({ input }) => {
-        const existing = await db.getUserByEmail(input.email.toLowerCase().trim());
-        if (existing) {
-          // Se já existe mas está pendente de aprovação, informa
-          if ((existing as any).approvalStatus === "pending") {
-            throw new TRPCError({ code: "CONFLICT", message: "Cadastro já enviado. Aguarde a aprovação do administrador." });
-          }
-          throw new TRPCError({ code: "CONFLICT", message: "E-mail já cadastrado. Faça login normalmente." });
-        }
-        const hash = await bcrypt.hash(input.password, 10);
-        await db.createPendingUser({
-          name: input.name,
-          email: input.email.toLowerCase().trim(),
-          passwordHash: hash,
-        });
-        return { success: true };
-      }),
-
-    // Admin: lista cadastros pendentes de aprovação
-    pendingApprovals: adminProcedure.query(async () => {
-      return db.getPendingUsers();
-    }),
-
-    // Admin: aprova e vincula cadastro a um usuário pré-cadastrado
-    approveUser: adminProcedure
-      .input(z.object({
-        pendingId: z.number(),
-        linkToUserId: z.number().optional(), // vincular a usuário existente
-      }))
-      .mutation(async ({ input }) => {
-        await db.approveUser(input.pendingId, input.linkToUserId);
-        return { success: true };
-      }),
-
-    // Admin: rejeita cadastro pendente
-    rejectUser: adminProcedure
-      .input(z.object({ pendingId: z.number() }))
-      .mutation(async ({ input }) => {
-        await db.rejectPendingUser(input.pendingId);
+    updateProfile: protectedProcedure
+      .input(z.object({ name: z.string().min(2).max(120) }))
+      .mutation(async ({ ctx, input }) => {
+        await db.updateUser(ctx.user.id, { name: input.name.trim() });
         return { success: true };
       }),
   }),
@@ -212,7 +169,7 @@ export const appRouter = router({
       .input(z.object({ id: z.number(), newPassword: z.string().min(6) }))
       .mutation(async ({ input }) => {
         const hash = await bcrypt.hash(input.newPassword, 10);
-        await db.updateUser(input.id, { passwordHash: hash, mustChangePassword: true });
+        await db.updateUser(input.id, { passwordHash: hash, mustChangePassword: false });
         return { success: true };
       }),
   }),

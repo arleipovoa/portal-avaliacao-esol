@@ -1,3 +1,4 @@
+import { getLoginPathForCurrentPath } from "@/lib/moduleRouting";
 import { trpc } from "@/lib/trpc";
 import { BASE_PATH } from "@shared/const";
 import { TRPCClientError } from "@trpc/client";
@@ -9,8 +10,12 @@ type UseAuthOptions = {
 };
 
 export function useAuth(options?: UseAuthOptions) {
-  const { redirectOnUnauthenticated = false, redirectPath = `${BASE_PATH}/login` } =
-    options ?? {};
+  const redirectOnUnauthenticated = options?.redirectOnUnauthenticated ?? false;
+  const redirectPath =
+    options?.redirectPath ??
+    (typeof window !== "undefined"
+      ? `${BASE_PATH}${getLoginPathForCurrentPath(window.location.pathname)}`
+      : `${BASE_PATH}/login/obras`);
   const utils = trpc.useUtils();
 
   const meQuery = trpc.auth.me.useQuery(undefined, {
@@ -38,7 +43,8 @@ export function useAuth(options?: UseAuthOptions) {
     } finally {
       utils.auth.me.setData(undefined, null);
       await utils.auth.me.invalidate();
-      window.location.href = `${BASE_PATH}/login`;
+      const loginPath = getLoginPathForCurrentPath(window.location.pathname);
+      window.location.href = `${BASE_PATH}${loginPath}`;
     }
   }, [logoutMutation, utils]);
 

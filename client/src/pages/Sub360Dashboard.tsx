@@ -1,1 +1,1 @@
-export { default } from "./Evaluations";
+export { default } from "./Home";
