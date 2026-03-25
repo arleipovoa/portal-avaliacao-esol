@@ -1,0 +1,18 @@
+{
+  "query": "SELECT u.id, u.name, u.email, u.appRole, u.leaderId, l.name as leaderName FROM users u LEFT JOIN users l ON u.leaderId = l.id WHERE u.name LIKE '%Wesley Fernandes%';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2cGS7pfAKgRnQw7.root --database TWqMMTyKwbNtXYDRW545np --execute SELECT u.id, u.name, u.email, u.appRole, u.leaderId, l.name as leaderName FROM users u LEFT JOIN users l ON u.leaderId = l.id WHERE u.name LIKE '%Wesley Fernandes%';",
+  "rows": [
+    {
+      "id": "31",
+      "name": "Wesley Fernandes",
+      "email": "wesley.fernandes@grupoesol.com.br",
+      "appRole": "leader",
+      "leaderId": "26",
+      "leaderName": "Alam Saraiva"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\temail\tappRole\tleaderId\tleaderName\n31\tWesley Fernandes\twesley.fernandes@grupoesol.com.br\tleader\t26\tAlam Saraiva\n",
+  "stderr": "",
+  "execution_time_ms": 363
+}

@@ -1,0 +1,98 @@
+{
+  "query": "SELECT u.id, u.name, u.appRole, u.leaderId, l.name as leaderName, a.name as areaName\nFROM users u \nLEFT JOIN users l ON u.leaderId = l.id \nLEFT JOIN areas a ON u.areaId = a.id\nWHERE u.appRole IN ('leader', 'admin') AND u.status = 'active'\nORDER BY u.appRole, u.name;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2cGS7pfAKgRnQw7.root --database TWqMMTyKwbNtXYDRW545np --execute SELECT u.id, u.name, u.appRole, u.leaderId, l.name as leaderName, a.name as areaName\nFROM users u \nLEFT JOIN users l ON u.leaderId = l.id \nLEFT JOIN areas a ON u.areaId = a.id\nWHERE u.appRole IN ('leader', 'admin') AND u.status = 'active'\nORDER BY u.appRole, u.name;",
+  "rows": [
+    {
+      "id": "22",
+      "name": "Nathália Cavalcante",
+      "appRole": "admin",
+      "leaderId": "21",
+      "leaderName": "Árlei Póvoa",
+      "areaName": "Administrativo"
+    },
+    {
+      "id": "21",
+      "name": "Árlei Póvoa",
+      "appRole": "admin",
+      "leaderId": "NULL",
+      "leaderName": "NULL",
+      "areaName": "Diretoria"
+    },
+    {
+      "id": "26",
+      "name": "Alam Saraiva",
+      "appRole": "leader",
+      "leaderId": "21",
+      "leaderName": "Árlei Póvoa",
+      "areaName": "ELEX SET"
+    },
+    {
+      "id": "23",
+      "name": "Anna Lhívia",
+      "appRole": "leader",
+      "leaderId": "21",
+      "leaderName": "Árlei Póvoa",
+      "areaName": "Comercial"
+    },
+    {
+      "id": "30",
+      "name": "Caroline Martins",
+      "appRole": "leader",
+      "leaderId": "21",
+      "leaderName": "Árlei Póvoa",
+      "areaName": "Administrativo"
+    },
+    {
+      "id": "28",
+      "name": "Fábio Sanches",
+      "appRole": "leader",
+      "leaderId": "21",
+      "leaderName": "Árlei Póvoa",
+      "areaName": "reXiclar"
+    },
+    {
+      "id": "24",
+      "name": "Gabriel Trindade",
+      "appRole": "leader",
+      "leaderId": "21",
+      "leaderName": "Árlei Póvoa",
+      "areaName": "Instalação"
+    },
+    {
+      "id": "25",
+      "name": "Jonas Calegar",
+      "appRole": "leader",
+      "leaderId": "21",
+      "leaderName": "Árlei Póvoa",
+      "areaName": "OPEX Solar"
+    },
+    {
+      "id": "27",
+      "name": "Lucas Melo",
+      "appRole": "leader",
+      "leaderId": "21",
+      "leaderName": "Árlei Póvoa",
+      "areaName": "ELEX Material Elétrico"
+    },
+    {
+      "id": "29",
+      "name": "Rayandra Leite",
+      "appRole": "leader",
+      "leaderId": "21",
+      "leaderName": "Árlei Póvoa",
+      "areaName": "Sucesso do Cliente"
+    },
+    {
+      "id": "31",
+      "name": "Wesley Fernandes",
+      "appRole": "leader",
+      "leaderId": "21",
+      "leaderName": "Árlei Póvoa",
+      "areaName": "ELEX SET"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\tappRole\tleaderId\tleaderName\tareaName\n22\tNathália Cavalcante\tadmin\t21\tÁrlei Póvoa\tAdministrativo\n21\tÁrlei Póvoa\tadmin\tNULL\tNULL\tDiretoria\n26\tAlam Saraiva\tleader\t21\tÁrlei Póvoa\tELEX SET\n23\tAnna Lhívia\tleader\t21\tÁrlei Póvoa\tComercial\n30\tCaroline Martins\tleader\t21\tÁrlei Póvoa\tAdministrativo\n28\tFábio Sanches\tleader\t21\tÁrlei Póvoa\treXiclar\n24\tGabriel Trindade\tleader\t21\tÁrlei Póvoa\tInstalação\n25\tJonas Calegar\tleader\t21\tÁrlei Póvoa\tOPEX Solar\n27\tLucas Melo\tleader\t21\tÁrlei Póvoa\tELEX Material Elétrico\n29\tRayandra Leite\tleader\t21\tÁrlei Póvoa\tSucesso do Cliente\n31\tWesley Fernandes\tleader\t21\tÁrlei Póvoa\tELEX SET\n",
+  "stderr": "",
+  "execution_time_ms": 350
+}

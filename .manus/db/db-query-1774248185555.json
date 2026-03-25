@@ -1,0 +1,13 @@
+{
+  "query": "SELECT passwordHash FROM users WHERE email = 'arlei@grupoesol.com.br';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2cGS7pfAKgRnQw7.root --database TWqMMTyKwbNtXYDRW545np --execute SELECT passwordHash FROM users WHERE email = 'arlei@grupoesol.com.br';",
+  "rows": [
+    {
+      "passwordHash": "$2b$10$th.HFaZAkcnNVtQot8nTtudkWnS2pHWBsiaCUoJrma7dgmZ3Wm6wu"
+    }
+  ],
+  "messages": [],
+  "stdout": "passwordHash\n$2b$10$th.HFaZAkcnNVtQot8nTtudkWnS2pHWBsiaCUoJrma7dgmZ3Wm6wu\n",
+  "stderr": "",
+  "execution_time_ms": 393
+}
