@@ -55,10 +55,7 @@ export async function setupVite(app: Express, server: Server) {
 }
 
 export function serveStatic(app: Express) {
-  const distPath =
-    process.env.NODE_ENV === "development"
-      ? path.resolve(import.meta.dirname, "../..", "dist", "public")
-      : path.resolve(import.meta.dirname, "public");
+  const distPath = path.resolve(import.meta.dirname, "../..", "dist", "public");
   if (!fs.existsSync(distPath)) {
     console.error(
       `Could not find the build directory: ${distPath}, make sure to build the client first`
@@ -69,9 +66,9 @@ export function serveStatic(app: Express) {
   app.use("/obras", express.static(distPath));
 
   // SPA fallback: /obras/* routes serve index.html — exceto chamadas de API
+  // Nota: req.path NÃO descarta o prefixo /obras/ neste contexto, usar originalUrl
   app.use("/obras/*", (req, res, next) => {
-    // Deixa chamadas de API passarem para os handlers do Express
-    if (req.path.startsWith("/api/")) {
+    if (req.originalUrl.includes("/api/")) {
       return next();
     }
     res.sendFile(path.resolve(distPath, "index.html"));
