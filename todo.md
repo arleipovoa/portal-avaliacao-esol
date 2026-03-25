@@ -1,0 +1,44 @@
+# Project TODO - Sistema de Avaliação Grupo E-sol
+
+- [x] Configurar identidade visual E-sol (paleta amarelo solar, preto técnico, branco, cinza)
+- [x] Criar esquema do banco de dados (users, areas, cycles, criteria, evaluations, aggregates, bonus_records, punctuality, podium)
+- [x] Executar migrações SQL no banco
+- [x] Implementar autenticação própria (e-mail/senha) com bcrypt
+- [x] Implementar fluxo de primeiro acesso (forçar troca de senha na página Perfil)
+- [x] Página de Login com opção "Manter conectado"
+- [x] Página de Perfil com troca de senha
+- [x] CRUD de Áreas/Empresas (Admin)
+- [x] CRUD de Usuários/Colaboradores (Admin) com adição/remoção dinâmica
+- [x] Gestão de Ciclos Mensais (Admin) - abertura, prazos, fechamento, publicação
+- [x] Formulário de Avaliação 360º - Mesma Área (12 critérios detalhados)
+- [x] Formulário de Avaliação 360º - Outras Áreas (3 critérios base)
+- [x] Formulário de Autoavaliação (não computa na nota final)
+- [x] Formulário de Avaliação de Liderança top-down (7 critérios)
+- [x] Avaliação bottom-up (colaboradores avaliam seus líderes diretos)
+- [x] Validação de justificativa obrigatória quando nota ≠ 10 (mínimo 15 caracteres)
+- [x] Cálculo automático de notas 360º (mediana/média aparada)
+- [x] Cálculo de nota de Liderança
+- [x] Cálculo de Avaliação Global (média 360º + Liderança)
+- [x] Cálculo de Bônus Desempenho (R$125 proporcional, corte nota 7)
+- [x] Coluna de Bônus Pontualidade no BD (R$125, verificação externa)
+- [x] Cálculo de Pódio mensal com desempates
+- [x] Premiação adicional do pódio (1º +R$100, 2º +R$50, 3º +R$25)
+- [x] Dashboard Usuário - Gráfico Radar (5 categorias consolidadas)
+- [x] Dashboard Usuário - Percentual de avaliações realizadas no mês
+- [x] Dashboard Usuário - Ranking mensal Top 3 (nomes ocultos, só notas)
+- [x] Dashboard Usuário - Ranking anual
+- [x] Dashboard Usuário - Valor de bônus parcial do mês e acumulado no ano
+- [x] Dashboard Admin - Custo total de bonificação mensal e anual
+- [x] Dashboard Admin - Separação por tipo (Pontualidade vs Desempenho) e conjunto
+- [x] Gestão de colaboradores desligados (preservar histórico, desconsiderar mês corrente)
+- [x] Seed de dados iniciais (áreas, usuários, critérios)
+- [x] Dados retroativos Jan/Fev 2026 (nota 10 para todos)
+- [x] Testes unitários (vitest)
+- [x] Detecção antipanelinha (sinalização para Admin)
+- [x] Bug: Usuários duplicados na lista de avaliações pendentes (mesma pessoa aparece como Outra Área e Liderança separadamente)
+- [x] Feature: Avaliação de convivência (3 critérios base) deve aparecer para todos os colaboradores, incluindo os que o admin/líder já avalia como Liderança
+- [x] Feature: Adicionar Jhemilly Viana (Estúdio Paisagismo, líder Nathália Cavalcante) e nova área Estúdio Paisagismo
+- [x] Feature: Duplo setor — campo opcional secondaryAreaId + secondaryLeaderId para qualquer colaborador. Enderson e Gustavo Painha configurados com OPEX Solar (primário) + Estúdio Paisagismo (secundário).
+- [x] Regra: Diretoria não realiza avaliação de convivência (other_area)
+- [x] Regra: Convivência exclui colegas de mesma área (primária e secundária), líderes diretos e subordinados diretos
+- [x] UI Admin: formulário de edição de usuário com seção "Setor Secundário" (opcional) e badge visual na tabela
