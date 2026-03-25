@@ -51,8 +51,9 @@ async function startServer() {
       createContext,
     })
   );
-  // development mode uses Vite, production mode uses static files
-  if (process.env.NODE_ENV === "development") {
+  // Use Vite in any non-production environment to avoid static build requirements in local dev.
+  const isProduction = process.env.NODE_ENV === "production";
+  if (!isProduction) {
     await setupVite(app, server);
   } else {
     serveStatic(app);
