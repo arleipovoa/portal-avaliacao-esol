@@ -1,3 +1,4 @@
+import { getLoginPathForCurrentPath } from "@/lib/moduleRouting";
 import { trpc } from "@/lib/trpc";
 import { UNAUTHED_ERR_MSG, BASE_PATH } from '@shared/const';
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -15,8 +16,9 @@ const redirectToLoginIfUnauthorized = (error: unknown) => {
   const isUnauthorized = error.message === UNAUTHED_ERR_MSG;
   if (!isUnauthorized) return;
   // Only redirect if not already on login page
-  if (window.location.pathname !== `${BASE_PATH}/login`) {
-    window.location.href = `${BASE_PATH}/login`;
+  if (!window.location.pathname.startsWith(`${BASE_PATH}/login`)) {
+    const loginPath = getLoginPathForCurrentPath(window.location.pathname);
+    window.location.href = `${BASE_PATH}${loginPath}`;
   }
 };
 

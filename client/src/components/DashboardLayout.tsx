@@ -1,5 +1,12 @@
 import { useAuth } from "@/_core/hooks/useAuth";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  type AppModule,
+  getLoginPathForCurrentPath,
+  persistModule,
+  resolveActiveModule,
+} from "@/lib/moduleRouting";
+import { getStoredProfilePhoto } from "@/lib/profilePhoto";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,7 +29,7 @@ import {
 } from "@/components/ui/sidebar";
 import { useIsMobile } from "@/hooks/useMobile";
 import {
-  ClipboardList, LayoutDashboard, LogOut, PanelLeft, Settings,
+  ClipboardList, LayoutDashboard, LogOut, PanelLeft,
   Shield, User, type LucideIcon,
 } from "lucide-react";
 import { BASE_PATH } from "@shared/const";
@@ -31,13 +38,26 @@ import { useLocation } from "wouter";
 import { DashboardLayoutSkeleton } from "./DashboardLayoutSkeleton";
 import { Button } from "./ui/button";
 
-type MenuItem = { icon: LucideIcon; label: string; path: string; roles?: string[] };
+type MenuItem = { icon: LucideIcon; label: string; path: string };
 
-const ALL_MENU_ITEMS: MenuItem[] = [
-  { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard" },
-  { icon: ClipboardList, label: "Avaliações", path: "/avaliacoes" },
-  { icon: Shield, label: "Administração", path: "/admin", roles: ["admin"] },
-];
+const MODULE_MENU_ITEMS: Record<AppModule, MenuItem[]> = {
+  obras: [
+    { icon: LayoutDashboard, label: "Dashboard", path: "/modulo-obras/dashboard" },
+  ],
+  "360": [
+    { icon: LayoutDashboard, label: "Dashboard", path: "/modulo-360/dashboard" },
+    { icon: ClipboardList, label: "Avaliações", path: "/modulo-360/avaliacoes" },
+  ],
+  nps: [
+    { icon: LayoutDashboard, label: "Dashboard", path: "/modulo-nps/dashboard" },
+  ],
+};
+
+const ADMIN_MENU_ITEM: MenuItem = {
+  icon: Shield,
+  label: "Administração",
+  path: "/admin",
+};
 
 const SIDEBAR_WIDTH_KEY = "sidebar-width";
 const DEFAULT_WIDTH = 260;
@@ -65,8 +85,12 @@ export default function DashboardLayout({
 
   if (!user) {
     // Redirect to login
-    if (typeof window !== "undefined" && window.location.pathname !== `${BASE_PATH}/login`) {
-      window.location.href = `${BASE_PATH}/login`;
+    if (typeof window !== "undefined") {
+      const loginPath = getLoginPathForCurrentPath(window.location.pathname);
+      const fullLoginPath = `${BASE_PATH}${loginPath}`;
+      if (window.location.pathname !== fullLoginPath) {
+        window.location.href = fullLoginPath;
+      }
     }
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -83,7 +107,10 @@ export default function DashboardLayout({
             </p>
           </div>
           <Button
-            onClick={() => { window.location.href = `${BASE_PATH}/login`; }}
+            onClick={() => {
+              const loginPath = getLoginPathForCurrentPath(window.location.pathname);
+              window.location.href = `${BASE_PATH}${loginPath}`;
+            }}
             size="lg"
             className="w-full shadow-lg hover:shadow-xl transition-all bg-[#ffcc29] text-[#12110f] hover:bg-[#e6b800]"
           >
@@ -92,12 +119,6 @@ export default function DashboardLayout({
         </div>
       </div>
     );
-  }
-
-  // Force password change redirect
-  if ((user as any).mustChangePassword && typeof window !== "undefined" && window.location.pathname !== `${BASE_PATH}/perfil`) {
-    window.location.href = `${BASE_PATH}/perfil`;
-    return null;
   }
 
   return (
@@ -124,15 +145,30 @@ function DashboardLayoutContent({ children, setSidebarWidth }: DashboardLayoutCo
   const [isResizing, setIsResizing] = useState(false);
   const sidebarRef = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
+  const activeModule = useMemo(() => resolveActiveModule(location), [location]);
+  const [profilePhoto, setProfilePhoto] = useState<string | null>(null);
 
   const appRole = (user as any)?.appRole || "employee";
 
-  const menuItems = useMemo(
-    () => ALL_MENU_ITEMS.filter((item) => !item.roles || item.roles.includes(appRole)),
-    [appRole]
+  useEffect(() => {
+    persistModule(activeModule);
+  }, [activeModule]);
+
+  const moduleMenuItems = useMemo(
+    () => MODULE_MENU_ITEMS[activeModule] ?? MODULE_MENU_ITEMS.obras,
+    [activeModule]
   );
 
-  const activeMenuItem = menuItems.find((item) => item.path === location);
+  const menuItems = useMemo(
+    () => (appRole === "admin" ? [...moduleMenuItems, ADMIN_MENU_ITEM] : moduleMenuItems),
+    [appRole, moduleMenuItems]
+  );
+
+  const activeMenuItem = menuItems.find((item) => location === item.path || location.startsWith(`${item.path}/`));
+
+  useEffect(() => {
+    setProfilePhoto(getStoredProfilePhoto(user?.id));
+  }, [user?.id, location]);
 
   useEffect(() => {
     if (isCollapsed) setIsResizing(false);
@@ -190,7 +226,7 @@ function DashboardLayoutContent({ children, setSidebarWidth }: DashboardLayoutCo
           <SidebarContent className="gap-0">
             <SidebarMenu className="px-2 py-1">
               {menuItems.map((item) => {
-                const isActive = location === item.path;
+                const isActive = location === item.path || location.startsWith(`${item.path}/`);
                 return (
                   <SidebarMenuItem key={item.path}>
                     <SidebarMenuButton
@@ -213,6 +249,7 @@ function DashboardLayoutContent({ children, setSidebarWidth }: DashboardLayoutCo
               <DropdownMenuTrigger asChild>
                 <button className="flex items-center gap-3 rounded-lg px-1 py-1 hover:bg-sidebar-accent/50 transition-colors w-full text-left group-data-[collapsible=icon]:justify-center focus:outline-none">
                   <Avatar className="h-9 w-9 border border-sidebar-border shrink-0">
+                    {profilePhoto ? <AvatarImage src={profilePhoto} alt={user?.name || "Usuário"} /> : null}
                     <AvatarFallback className="text-xs font-medium bg-[#ffcc29] text-[#12110f]">
                       {user?.name?.charAt(0).toUpperCase()}
                     </AvatarFallback>

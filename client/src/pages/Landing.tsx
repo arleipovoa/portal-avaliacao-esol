@@ -1,25 +1,35 @@
+import {
+  type AppModule,
+  getLoginPathForModule,
+  persistModule,
+} from "@/lib/moduleRouting";
+import { ChevronDown } from "lucide-react";
 import { useState } from "react";
 import { useLocation } from "wouter";
-import { ChevronDown } from "lucide-react";
 
-const MODULES = [
+const MODULES: Array<{
+  module: AppModule;
+  label: string;
+  path: string;
+  description: string;
+}> = [
   {
+    module: "obras",
     label: "Avaliação de Obras",
-    path: "/login",
+    path: getLoginPathForModule("obras"),
     description: "Avaliação técnica de instalações e obras",
-    restricted: true,
   },
   {
+    module: "360",
     label: "Avaliação 360º",
-    path: "/login",
+    path: getLoginPathForModule("360"),
     description: "Avaliação de desempenho entre colaboradores",
-    restricted: false,
   },
   {
+    module: "nps",
     label: "NPS",
-    path: "/login",
+    path: getLoginPathForModule("nps"),
     description: "Net Promoter Score e satisfação de clientes",
-    restricted: false,
   },
 ];
 
@@ -84,8 +94,11 @@ export default function Landing() {
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
           {MODULES.map((m) => (
             <button
-              key={m.path}
-              onClick={() => setLocation(m.path)}
+              key={m.module}
+              onClick={() => {
+                persistModule(m.module);
+                setLocation(m.path);
+              }}
               style={{
                 padding: "8px 16px",
                 fontSize: 13,
@@ -246,8 +259,12 @@ export default function Landing() {
               >
                 {MODULES.map((m, i) => (
                   <button
-                    key={m.path}
-                    onClick={() => { setExploreOpen(false); setLocation(m.path); }}
+                    key={m.module}
+                    onClick={() => {
+                      persistModule(m.module);
+                      setExploreOpen(false);
+                      setLocation(m.path);
+                    }}
                     style={{
                       width: "100%",
                       display: "flex",
