@@ -28,14 +28,14 @@ async function run() {
     { name: "Comercial", companyName: "E-sol Engenharia" },
     { name: "Instalação", companyName: "E-sol Engenharia" },
     { name: "Projetos", companyName: "E-sol Engenharia" },
-    { name: "Administrativo", companyName: "E-sol Engenharia" },
-    { name: "Sucesso do Cliente", companyName: "E-sol Engenharia" },
+    { name: "Administrativo", companyName: "Grupo E-sol" },
+    { name: "Sucesso do Cliente", companyName: "Grupo E-sol" },
     { name: "OPEX Solar", companyName: "OPEX Solar" },
     { name: "ELEX SET", companyName: "ELEX Soluções Elétricas e Telecom" },
     { name: "ELEX Material Elétrico", companyName: "ELEX Material Elétrico" },
     { name: "reXiclar", companyName: "reXiclar" },
     { name: "Suprimentos", companyName: "Grupo E-sol" },
-    { name: "Estúdio Paisagismo", companyName: "Grupo E-sol" },
+    { name: "Estúdio Paisagismo", companyName: "Estúdio Paisagismo" },
   ];
 
   for (const area of areasData) {
@@ -62,7 +62,7 @@ async function run() {
     { name: "Cumprimento de prazos e SLAs", code: "cumprimento_prazos_slas", type: "detailed360", description: "Entrega dentro dos prazos acordados.", sortOrder: 5 },
     { name: "Organização, planejamento e processos", code: "organizacao_processos", type: "detailed360", description: "Uso correto dos processos/sistemas (OS/CRM/ERP/checklists).", sortOrder: 6 },
     { name: "Proatividade e melhoria contínua", code: "proatividade_melhoria", type: "detailed360", description: "Sugere melhorias, resolve problemas sem ser solicitado.", sortOrder: 7 },
-    { name: "Segurança, 5S, EPIs e zelo", code: "seguranca_5s_epis", type: "detailed360", description: "Atenção a normas de segurança, 5S, EPIs e zelo pelo patrimônio/veículos.", sortOrder: 8 },
+    { name: "Segurança, EPIs e zelo", code: "seguranca_5s_epis", type: "detailed360", description: "Atenção a normas de segurança, 5S, EPIs e zelo pelo patrimônio/veículos.", sortOrder: 8 },
     { name: "Documentação e registro", code: "documentacao_registro", type: "detailed360", description: "Checklists, fotos, relatórios, CRM atualizado.", sortOrder: 9 },
     { name: "Foco no cliente e pós-venda", code: "foco_cliente_posvenda", type: "detailed360", description: "Cordialidade, solução efetiva, retorno ao cliente.", sortOrder: 10 },
     { name: "Autonomia e gestão de prioridades", code: "autonomia_prioridades", type: "detailed360", description: "Puxa responsabilidade, precisa de pouca supervisão.", sortOrder: 11 },
@@ -74,7 +74,7 @@ async function run() {
     { name: "Postura e valores", code: "postura_valores", type: "leadership", description: "Profissionalismo, respeito, ética.", sortOrder: 16 },
     { name: "Desenvolvimento e autonomia", code: "desenvolvimento_autonomia", type: "leadership", description: "Aprendizado, evolução, mentoria/cooperatividade.", sortOrder: 17 },
     { name: "Foco no cliente e impacto de negócio", code: "foco_cliente_negocio", type: "leadership", description: "Impacto das ações no resultado do negócio.", sortOrder: 18 },
-    { name: "Segurança, 5S e zelo", code: "seguranca_5s_zelo", type: "leadership", description: "Quando aplicável à função.", sortOrder: 19 },
+    { name: "Organização e zelo", code: "seguranca_5s_zelo", type: "leadership", description: "Quando aplicável à função.", sortOrder: 19 },
   ];
 
   for (const c of criteriaData) {
