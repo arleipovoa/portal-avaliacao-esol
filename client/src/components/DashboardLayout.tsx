@@ -28,12 +28,13 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { useIsMobile } from "@/hooks/useMobile";
+import { useSidebarResize } from "@/hooks/useSidebarResize";
 import {
   ClipboardList, LayoutDashboard, LogOut, PanelLeft,
   Shield, User, type LucideIcon,
 } from "lucide-react";
 import { BASE_PATH } from "@shared/const";
-import { CSSProperties, useEffect, useMemo, useRef, useState } from "react";
+import { CSSProperties, useEffect, useMemo, useState } from "react";
 import { useLocation } from "wouter";
 import { DashboardLayoutSkeleton } from "./DashboardLayoutSkeleton";
 import { Button } from "./ui/button";
@@ -59,25 +60,13 @@ const ADMIN_MENU_ITEM: MenuItem = {
   path: "/admin",
 };
 
-const SIDEBAR_WIDTH_KEY = "sidebar-width";
-const DEFAULT_WIDTH = 260;
-const MIN_WIDTH = 200;
-const MAX_WIDTH = 400;
-
 export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const [sidebarWidth, setSidebarWidth] = useState(() => {
-    const saved = localStorage.getItem(SIDEBAR_WIDTH_KEY);
-    return saved ? parseInt(saved, 10) : DEFAULT_WIDTH;
-  });
+  const { sidebarWidth } = useSidebarResize(false);
   const { loading, user } = useAuth();
-
-  useEffect(() => {
-    localStorage.setItem(SIDEBAR_WIDTH_KEY, sidebarWidth.toString());
-  }, [sidebarWidth]);
 
   if (loading) {
     return <DashboardLayoutSkeleton />;
@@ -125,7 +114,7 @@ export default function DashboardLayout({
     <SidebarProvider
       style={{ "--sidebar-width": `${sidebarWidth}px` } as CSSProperties}
     >
-      <DashboardLayoutContent setSidebarWidth={setSidebarWidth}>
+      <DashboardLayoutContent>
         {children}
       </DashboardLayoutContent>
     </SidebarProvider>
@@ -134,16 +123,14 @@ export default function DashboardLayout({
 
 type DashboardLayoutContentProps = {
   children: React.ReactNode;
-  setSidebarWidth: (width: number) => void;
 };
 
-function DashboardLayoutContent({ children, setSidebarWidth }: DashboardLayoutContentProps) {
+function DashboardLayoutContent({ children }: DashboardLayoutContentProps) {
   const { user, logout } = useAuth();
   const [location, setLocation] = useLocation();
   const { state, toggleSidebar } = useSidebar();
   const isCollapsed = state === "collapsed";
-  const [isResizing, setIsResizing] = useState(false);
-  const sidebarRef = useRef<HTMLDivElement>(null);
+  const { isResizing, startResizing } = useSidebarResize(isCollapsed);
   const isMobile = useIsMobile();
   const activeModule = useMemo(() => resolveActiveModule(location), [location]);
   const [profilePhoto, setProfilePhoto] = useState<string | null>(null);
@@ -170,36 +157,9 @@ function DashboardLayoutContent({ children, setSidebarWidth }: DashboardLayoutCo
     setProfilePhoto(getStoredProfilePhoto(user?.id));
   }, [user?.id, location]);
 
-  useEffect(() => {
-    if (isCollapsed) setIsResizing(false);
-  }, [isCollapsed]);
-
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      if (!isResizing) return;
-      const sidebarLeft = sidebarRef.current?.getBoundingClientRect().left ?? 0;
-      const newWidth = e.clientX - sidebarLeft;
-      if (newWidth >= MIN_WIDTH && newWidth <= MAX_WIDTH) setSidebarWidth(newWidth);
-    };
-    const handleMouseUp = () => setIsResizing(false);
-
-    if (isResizing) {
-      document.addEventListener("mousemove", handleMouseMove);
-      document.addEventListener("mouseup", handleMouseUp);
-      document.body.style.cursor = "col-resize";
-      document.body.style.userSelect = "none";
-    }
-    return () => {
-      document.removeEventListener("mousemove", handleMouseMove);
-      document.removeEventListener("mouseup", handleMouseUp);
-      document.body.style.cursor = "";
-      document.body.style.userSelect = "";
-    };
-  }, [isResizing, setSidebarWidth]);
-
   return (
     <>
-      <div className="relative" ref={sidebarRef}>
+      <div className="relative" data-sidebar-resize-ref>
         <Sidebar collapsible="icon" className="border-r-0" disableTransition={isResizing}>
           <SidebarHeader className="h-16 justify-center">
             <div className="flex items-center gap-3 px-2 transition-all w-full">
@@ -280,7 +240,7 @@ function DashboardLayoutContent({ children, setSidebarWidth }: DashboardLayoutCo
         </Sidebar>
         <div
           className={`absolute top-0 right-0 w-1 h-full cursor-col-resize hover:bg-[#ffcc29]/30 transition-colors ${isCollapsed ? "hidden" : ""}`}
-          onMouseDown={() => { if (!isCollapsed) setIsResizing(true); }}
+          onMouseDown={startResizing}
           style={{ zIndex: 50 }}
         />
       </div>
