@@ -8,6 +8,7 @@ import { cyclesRouter } from "./cycles.router";
 import { dashboardRouter } from "./dashboard.router";
 import { evaluationsRouter } from "./evaluations.router";
 import { usersRouter } from "./users.router";
+import { projectsRouter } from "./projects.router";
 
 export const appRouter = router({
   system: systemRouter,
@@ -19,6 +20,7 @@ export const appRouter = router({
   evaluations: evaluationsRouter,
   admin: adminRouter,
   dashboard: dashboardRouter,
+  projects: projectsRouter,
 });
 
 export type AppRouter = typeof appRouter;

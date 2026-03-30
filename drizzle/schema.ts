@@ -21,6 +21,7 @@ export const users = mysqlTable("users", {
   role: mysqlEnum("role", ["user", "admin"]).default("user").notNull(),
   // App-specific fields
   appRole: mysqlEnum("appRole", ["admin", "leader", "employee"]).default("employee").notNull(),
+  jobCategory: mysqlEnum("jobCategory", ["administrativo", "operacional"]).default("administrativo").notNull(),
   areaId: int("areaId"),
   leaderId: int("leaderId"),
   passwordHash: varchar("passwordHash", { length: 255 }),
@@ -75,7 +76,7 @@ export const criteria = mysqlTable("criteria", {
   id: int("id").autoincrement().primaryKey(),
   name: varchar("name", { length: 255 }).notNull(),
   code: varchar("code", { length: 100 }).notNull().unique(),
-  type: mysqlEnum("type", ["base360", "detailed360", "leadership"]).notNull(),
+  type: mysqlEnum("type", ["base360", "detailed360", "leadership", "obra"]).notNull(),
   description: text("description"),
   active: boolean("active").default(true).notNull(),
   sortOrder: int("sortOrder").default(0).notNull(),
@@ -176,4 +177,116 @@ export const usersRelations = relations(users, ({ one }) => ({
 export const areasRelations = relations(areas, ({ one, many }) => ({
   leader: one(users, { fields: [areas.leaderId], references: [users.id] }),
   members: many(users),
+}));
+
+
+// ─── Projects / Works ───
+export const projects = mysqlTable("projects", {
+  id: int("id").autoincrement().primaryKey(),
+  code: varchar("code", { length: 50 }).notNull().unique(),
+  clientName: varchar("clientName", { length: 255 }).notNull(),
+  address: text("address"),
+  city: varchar("city", { length: 100 }),
+  state: varchar("state", { length: 2 }),
+  startDate: timestamp("startDate"),
+  endDate: timestamp("endDate"),
+  completedDate: timestamp("completedDate"),
+  moduleCount: int("moduleCount"),
+  modulePower: int("modulePower"), // Power in Watts (Wp)
+  powerKwp: decimal("powerKwp", { precision: 8, scale: 2 }), // Total power in kWp
+  category: mysqlEnum("category", ["B1", "B2", "B3", "B4", "B5", "B6", "B7"]), // Bonus category based on kWp
+  status: mysqlEnum("status", ["planning", "in_progress", "completed", "cancelled"]).default("planning").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Project = typeof projects.$inferSelect;
+export type InsertProject = typeof projects.$inferInsert;
+
+// ─── Project Members (Installers assigned to works) ───
+export const projectMembers = mysqlTable("project_members", {
+  id: int("id").autoincrement().primaryKey(),
+  projectId: int("projectId").notNull(),
+  userId: int("userId").notNull(),
+  role: mysqlEnum("role", ["leader", "organizer", "installer"]).default("installer").notNull(),
+  joinedAt: timestamp("joinedAt").defaultNow().notNull(),
+  leftAt: timestamp("leftAt"),
+});
+
+export type ProjectMember = typeof projectMembers.$inferSelect;
+export type InsertProjectMember = typeof projectMembers.$inferInsert;
+
+// ─── Obra Criteria (Evaluation criteria specific to works) ───
+export const obraCriteria = mysqlTable("obra_criteria", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  code: varchar("code", { length: 100 }).notNull().unique(),
+  category: mysqlEnum("category", ["seguranca", "funcionalidade", "estetica", "complementar"]).notNull(),
+  weight: decimal("weight", { precision: 3, scale: 1 }).default("1.0").notNull(),
+  description: text("description"),
+  active: boolean("active").default(true).notNull(),
+  sortOrder: int("sortOrder").default(0).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type ObraCriterion = typeof obraCriteria.$inferSelect;
+export type InsertObraCriterion = typeof obraCriteria.$inferInsert;
+
+// ─── Obra Evaluations (Individual evaluations of works) ───
+export const obraEvaluations = mysqlTable("obra_evaluations", {
+  id: int("id").autoincrement().primaryKey(),
+  projectId: int("projectId").notNull(),
+  evaluatorId: int("evaluatorId").notNull(),
+  evaluatedMemberIds: json("evaluatedMemberIds").$type<number[]>(), // Array of user IDs being evaluated
+  items: json("items").$type<Array<{ criteriaId: number; score: number; justification?: string }>>(),
+  status: mysqlEnum("status", ["draft", "submitted"]).default("draft").notNull(),
+  submittedAt: timestamp("submittedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type ObraEvaluation = typeof obraEvaluations.$inferSelect;
+export type InsertObraEvaluation = typeof obraEvaluations.$inferInsert;
+
+// ─── Obra Scores (Consolidated scores per project) ───
+export const obraScores = mysqlTable("obra_scores", {
+  id: int("id").autoincrement().primaryKey(),
+  projectId: int("projectId").notNull(),
+  userId: int("userId").notNull(),
+  notaSeguranca: decimal("notaSeguranca", { precision: 5, scale: 2 }), // Security score (0-10)
+  notaFuncionalidade: decimal("notaFuncionalidade", { precision: 5, scale: 2 }), // Functionality score (0-10)
+  notaEstetica: decimal("notaEstetica", { precision: 5, scale: 2 }), // Aesthetics score (0-10)
+  mediaOs: decimal("mediaOs", { precision: 5, scale: 2 }), // Average OS completion (0-10)
+  eficiencia: decimal("eficiencia", { precision: 5, scale: 2 }), // Efficiency score (0-10)
+  npsCliente: decimal("npsCliente", { precision: 5, scale: 2 }), // Client NPS (0-10)
+  notaObraPercentual: decimal("notaObraPercentual", { precision: 6, scale: 2 }), // Final work score (0-100)
+  bonusValorBase: decimal("bonusValorBase", { precision: 10, scale: 2 }), // Base bonus value for the work
+  bonusValorCorrigido: decimal("bonusValorCorrigido", { precision: 10, scale: 2 }), // Corrected bonus (base × score/100)
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type ObraScore = typeof obraScores.$inferSelect;
+export type InsertObraScore = typeof obraScores.$inferInsert;
+
+// ─── Relations for Projects ───
+export const projectsRelations = relations(projects, ({ many }) => ({
+  members: many(projectMembers),
+  evaluations: many(obraEvaluations),
+  scores: many(obraScores),
+}));
+
+export const projectMembersRelations = relations(projectMembers, ({ one }) => ({
+  project: one(projects, { fields: [projectMembers.projectId], references: [projects.id] }),
+  user: one(users, { fields: [projectMembers.userId], references: [users.id] }),
+}));
+
+export const obraEvaluationsRelations = relations(obraEvaluations, ({ one }) => ({
+  project: one(projects, { fields: [obraEvaluations.projectId], references: [projects.id] }),
+  evaluator: one(users, { fields: [obraEvaluations.evaluatorId], references: [users.id] }),
+}));
+
+export const obraScoresRelations = relations(obraScores, ({ one }) => ({
+  project: one(projects, { fields: [obraScores.projectId], references: [projects.id] }),
+  user: one(users, { fields: [obraScores.userId], references: [users.id] }),
 }));
