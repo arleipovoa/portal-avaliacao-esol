@@ -14,8 +14,6 @@ export async function setupVite(app: Express, server: Server) {
 
   const vite = await createViteServer({
     ...viteConfig,
-    // In middleware dev mode we serve the SPA under /obras/, but Vite source modules
-    // must stay at /src/* to resolve correctly.
     base: "/",
     configFile: false,
     server: serverOptions,
@@ -24,19 +22,8 @@ export async function setupVite(app: Express, server: Server) {
 
   app.use(vite.middlewares);
 
-  // Redirect root to /obras/ in dev mode
-  app.get("/", (_req, res) => {
-    res.redirect("/obras/");
-  });
-
-  // Redirect only the exact "/obras" path to "/obras/".
-  // Using a regex avoids matching "/obras/" itself and causing redirect loops.
-  app.get(/^\/obras$/, (_req, res) => {
-    res.redirect("/obras/");
-  });
-
-  // SPA fallback only for /obras routes in dev mode
-  app.use("/obras/*", async (req, res, next) => {
+  // SPA fallback for all routes in dev mode
+  app.use("*", async (req, res, next) => {
     const url = req.originalUrl;
 
     try {
@@ -47,7 +34,6 @@ export async function setupVite(app: Express, server: Server) {
         "index.html"
       );
 
-      // always reload the index.html file from disk incase it changes
       let template = await fs.promises.readFile(clientTemplate, "utf-8");
       const page = await vite.transformIndexHtml(url, template);
       res.status(200).set({ "Content-Type": "text/html" }).end(page);
@@ -66,23 +52,12 @@ export function serveStatic(app: Express) {
     );
   }
 
-  // Serve static assets under /obras/ base path
-  app.use("/obras", express.static(distPath));
+  app.use("/", express.static(distPath));
 
-  // SPA fallback: /obras/* routes serve index.html — exceto chamadas de API
-  // Nota: req.path NÃO descarta o prefixo /obras/ neste contexto, usar originalUrl
-  app.use("/obras/*", (req, res, next) => {
+  app.use("*", (req, res, next) => {
     if (req.originalUrl.includes("/api/")) {
       return next();
     }
     res.sendFile(path.resolve(distPath, "index.html"));
-  });
-
-  // Redirect root to /obras/
-  app.use("/", (_req, res, next) => {
-    if (_req.path === "/" || _req.path === "") {
-      return res.redirect("/obras/");
-    }
-    next();
   });
 }
