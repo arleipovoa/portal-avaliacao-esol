@@ -196,6 +196,15 @@ export const projects = mysqlTable("projects", {
   powerKwp: decimal("powerKwp", { precision: 8, scale: 2 }), // Total power in kWp
   category: mysqlEnum("category", ["B1", "B2", "B3", "B4", "B5", "B6", "B7"]), // Bonus category based on kWp
   status: mysqlEnum("status", ["planning", "in_progress", "completed", "cancelled"]).default("planning").notNull(),
+  paymentMonth: varchar("paymentMonth", { length: 7 }),
+  actualDays: int("actualDays"),
+  expectedDaysOverride: int("expectedDaysOverride"),
+  hasFinancialLoss: boolean("hasFinancialLoss").default(false),
+  financialLossReason: text("financialLossReason"),
+  forceMajeureJustification: text("forceMajeureJustification"),
+  photosLink: text("photosLink"),
+  reportLink: text("reportLink"),
+  nps: decimal("nps", { precision: 5, scale: 2 }),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });

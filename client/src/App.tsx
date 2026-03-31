@@ -20,6 +20,7 @@ import Profile from "./pages/Profile";
 import SubObrasDashboard from "./pages/SubObrasDashboard";
 import Sub360Dashboard from "./pages/Sub360Dashboard";
 import SubNpsDashboard from "./pages/SubNpsDashboard";
+import ObrasEvaluations from "./pages/ObrasEvaluations";
 
 function LegacyDashboardRedirect() {
   const [, setLocation] = useLocation();
@@ -39,7 +40,7 @@ function AuthenticatedRoutes() {
         <Route path="/dashboard" component={LegacyDashboardRedirect} />
         <Route path="/avaliacoes" component={Evaluations} />
         <Route path="/modulo-360/avaliacoes" component={Evaluations} />
-        <Route path="/modulo-obras/avaliacoes" component={Evaluations} />
+        <Route path="/modulo-obras/avaliacoes" component={ObrasEvaluations} />
         <Route path="/admin" component={Admin} />
         <Route path="/perfil" component={Profile} />
         <Route path="/modulo-obras/dashboard" component={SubObrasDashboard} />

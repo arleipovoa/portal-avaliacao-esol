@@ -1,274 +1,235 @@
-import { Router } from "express";
+import { protectedProcedure, router } from "../_core/trpc";
+import { z } from "zod";
 import { getDb } from "../db";
 import { projects, projectMembers, obraScores, obraEvaluations, obraCriteria, users } from "../../drizzle/schema";
 import { eq, and } from "drizzle-orm";
-import { canAccessObras } from "../_core/accessControl";
+// import { canAccessObras } from "../_core/accessControl";
 
-const router = Router();
-
-// ─── GET /api/projects - List all projects ───
-router.get("/", async (req, res) => {
-  try {
+export const projectsRouter = router({
+  // GET /api/projects - List all projects
+  list: protectedProcedure.query(async () => {
     const db = await getDb();
-    if (!db) return res.status(503).json({ error: "Database unavailable" });
+    if (!db) throw new Error("Database unavailable");
+    
+    // Fetch projects and their latest scores
     const allProjects = await db.select().from(projects);
-    res.json(allProjects);
-  } catch (error) {
-    res.status(500).json({ error: "Failed to fetch projects" });
-  }
-});
-
-// ─── GET /api/projects/:id - Get project details with members ───
-router.get("/:id", async (req, res) => {
-  try {
-    const db = await getDb();
-    if (!db) return res.status(503).json({ error: "Database unavailable" });
-    const projectId = parseInt(req.params.id);
-    const project = await db.select().from(projects).where(eq(projects.id, projectId));
+    const allScores = await db.select().from(obraScores);
     
-    if (!project.length) {
-      return res.status(404).json({ error: "Project not found" });
-    }
-
-    const members = await db.select().from(projectMembers).where(eq(projectMembers.projectId, projectId));
-    
-    res.json({
-      ...project[0],
-      members,
-    });
-  } catch (error) {
-    res.status(500).json({ error: "Failed to fetch project" });
-  }
-});
-
-// ─── POST /api/projects - Create new project ───
-router.post("/", async (req, res) => {
-  try {
-    const db = await getDb();
-    if (!db) return res.status(503).json({ error: "Database unavailable" });
-    const { code, clientName, address, city, state, moduleCount, modulePower, powerKwp, category } = req.body;
-
-    // Calculate category based on kWp if not provided
-    let finalCategory = category;
-    if (!finalCategory && powerKwp) {
-      if (powerKwp <= 5) finalCategory = "B1";
-      else if (powerKwp <= 10) finalCategory = "B2";
-      else if (powerKwp <= 20) finalCategory = "B3";
-      else if (powerKwp <= 30) finalCategory = "B4";
-      else if (powerKwp <= 50) finalCategory = "B5";
-      else if (powerKwp <= 75) finalCategory = "B6";
-      else finalCategory = "B7";
-    }
-
-    const result = await db.insert(projects).values({
-      code,
-      clientName,
-      address,
-      city,
-      state,
-      moduleCount,
-      modulePower,
-      powerKwp,
-      category: finalCategory,
-      status: "planning",
-    });
-
-    res.status(201).json({ id: result.insertId, message: "Project created successfully" });
-  } catch (error) {
-    res.status(500).json({ error: "Failed to create project" });
-  }
-});
-
-// ─── PUT /api/projects/:id - Update project ───
-router.put("/:id", async (req, res) => {
-  try {
-    const db = await getDb();
-    if (!db) return res.status(503).json({ error: "Database unavailable" });
-    const projectId = parseInt(req.params.id);
-    const { clientName, address, city, state, startDate, endDate, completedDate, status } = req.body;
-
-    await db.update(projects).set({
-      clientName,
-      address,
-      city,
-      state,
-      startDate: startDate ? new Date(startDate) : undefined,
-      endDate: endDate ? new Date(endDate) : undefined,
-      completedDate: completedDate ? new Date(completedDate) : undefined,
-      status,
-    }).where(eq(projects.id, projectId));
-
-    res.json({ message: "Project updated successfully" });
-  } catch (error) {
-    res.status(500).json({ error: "Failed to update project" });
-  }
-});
-
-// ─── POST /api/projects/:id/members - Add member to project ───
-router.post("/:id/members", async (req, res) => {
-  try {
-    const db = await getDb();
-    if (!db) return res.status(503).json({ error: "Database unavailable" });
-    const projectId = parseInt(req.params.id);
-    const { userId, role } = req.body;
-
-    const result = await db.insert(projectMembers).values({
-      projectId,
-      userId,
-      role: role || "installer",
-    });
-
-    res.status(201).json({ id: result.insertId, message: "Member added successfully" });
-  } catch (error) {
-    res.status(500).json({ error: "Failed to add member" });
-  }
-});
-
-// ─── PUT /api/projects/:projectId/members/:memberId - Update member role ───
-router.put("/:projectId/members/:memberId", async (req, res) => {
-  try {
-    const db = await getDb();
-    if (!db) return res.status(503).json({ error: "Database unavailable" });
-    const projectId = parseInt(req.params.projectId);
-    const memberId = parseInt(req.params.memberId);
-    const { role } = req.body;
-
-    await db.update(projectMembers).set({ role }).where(
-      and(eq(projectMembers.projectId, projectId), eq(projectMembers.id, memberId))
-    );
-
-    res.json({ message: "Member role updated successfully" });
-  } catch (error) {
-    res.status(500).json({ error: "Failed to update member" });
-  }
-});
-
-// ─── DELETE /api/projects/:projectId/members/:memberId - Remove member from project ───
-router.delete("/:projectId/members/:memberId", async (req, res) => {
-  try {
-    const db = await getDb();
-    if (!db) return res.status(503).json({ error: "Database unavailable" });
-    const projectId = parseInt(req.params.projectId);
-    const memberId = parseInt(req.params.memberId);
-
-    await db.delete(projectMembers).where(
-      and(eq(projectMembers.projectId, projectId), eq(projectMembers.id, memberId))
-    );
-
-    res.json({ message: "Member removed successfully" });
-  } catch (error) {
-    res.status(500).json({ error: "Failed to remove member" });
-  }
-});
-
-// ─── GET /api/projects/:id/criteria - Get obra criteria for evaluation ───
-router.get("/:id/criteria", async (req, res) => {
-  try {
-    const db = await getDb();
-    if (!db) return res.status(503).json({ error: "Database unavailable" });
-    const criteria = await db.select().from(obraCriteria).where(eq(obraCriteria.active, true));
-    
-    // Group by category
-    const grouped = criteria.reduce((acc, criterion) => {
-      if (!acc[criterion.category]) {
-        acc[criterion.category] = [];
+    // Map scores to respective projects
+    return allProjects.map(proj => {
+      const scores = allScores.filter(s => s.projectId === proj.id);
+      
+      let baseValue = 0;
+      let correctedValue = 0;
+      let projectScore = null;
+      
+      if (scores.length > 0) {
+        // Find averge or just use the first/max logic. Since there's supposed to be 1 consolidated score, we'll take the first.
+        const score = scores[0];
+        projectScore = score.notaObraPercentual;
+        baseValue = parseFloat(score.bonusValorBase as string || "0");
+        correctedValue = parseFloat(score.bonusValorCorrigido as string || "0");
       }
-      acc[criterion.category].push(criterion);
-      return acc;
-    }, {} as Record<string, typeof criteria>);
-
-    res.json(grouped);
-  } catch (error) {
-    res.status(500).json({ error: "Failed to fetch criteria" });
-  }
-});
-
-// ─── POST /api/projects/:id/scores - Submit obra evaluation scores ───
-router.post("/:id/scores", async (req, res) => {
-  try {
-    const db = await getDb();
-    if (!db) return res.status(503).json({ error: "Database unavailable" });
-    const projectId = parseInt(req.params.id);
-    const { userId, notaSeguranca, notaFuncionalidade, notaEstetica, mediaOs, eficiencia, npsCliente } = req.body;
-
-    // Calculate final score (0-100)
-    const baseScore = ((notaSeguranca * 2 + notaFuncionalidade * 2 + notaEstetica * 1) / 5);
-    const notaObraPercentual = (baseScore * 0.5) + (mediaOs * 0.2) + (eficiencia * 0.15) + (npsCliente * 0.15);
-
-    // Get project to determine bonus value
-    const project = await db.select().from(projects).where(eq(projects.id, projectId));
-    if (!project.length) {
-      return res.status(404).json({ error: "Project not found" });
-    }
-
-    const bonusMap: Record<string, number> = {
-      B1: 200,
-      B2: 300,
-      B3: 500,
-      B4: 750,
-      B5: 1000,
-      B6: 1500,
-      B7: 2000,
-    };
-
-    const bonusValorBase = bonusMap[project[0].category || "B1"] || 200;
-    const bonusValorCorrigido = bonusValorBase * (notaObraPercentual / 100);
-
-    // Insert or update score
-    const existingScore = await db.select().from(obraScores).where(
-      and(eq(obraScores.projectId, projectId), eq(obraScores.userId, userId))
-    );
-
-    if (existingScore.length) {
-      await db.update(obraScores).set({
-        notaSeguranca,
-        notaFuncionalidade,
-        notaEstetica,
-        mediaOs,
-        eficiencia,
-        npsCliente,
-        notaObraPercentual,
-        bonusValorBase,
-        bonusValorCorrigido,
-      }).where(eq(obraScores.id, existingScore[0].id));
-    } else {
-      await db.insert(obraScores).values({
-        projectId,
-        userId,
-        notaSeguranca,
-        notaFuncionalidade,
-        notaEstetica,
-        mediaOs,
-        eficiencia,
-        npsCliente,
-        notaObraPercentual,
-        bonusValorBase,
-        bonusValorCorrigido,
-      });
-    }
-
-    res.json({
-      notaObraPercentual,
-      bonusValorBase,
-      bonusValorCorrigido,
-      message: "Scores submitted successfully",
+      
+      return {
+        ...proj,
+        projectScore,
+        baseValue,
+        correctedValue
+      };
     });
-  } catch (error) {
-    res.status(500).json({ error: "Failed to submit scores" });
-  }
-});
+  }),
 
-// ─── GET /api/projects/:id/scores - Get all scores for a project ───
-router.get("/:id/scores", async (req, res) => {
-  try {
-    const db = await getDb();
-    if (!db) return res.status(503).json({ error: "Database unavailable" });
-    const projectId = parseInt(req.params.id);
-    const scores = await db.select().from(obraScores).where(eq(obraScores.projectId, projectId));
-    res.json(scores);
-  } catch (error) {
-    res.status(500).json({ error: "Failed to fetch scores" });
-  }
-});
+  // GET /api/projects/:id - Get project details with members
+  getById: protectedProcedure
+    .input(z.object({ id: z.number() }))
+    .query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new Error("Database unavailable");
+      const projectRes = await db.select().from(projects).where(eq(projects.id, input.id));
+      if (!projectRes.length) throw new Error("Project not found");
 
-export { router as projectsRouter };
+      const members = await db.select().from(projectMembers).where(eq(projectMembers.projectId, input.id));
+      return { ...projectRes[0], members };
+    }),
+
+  calculateExpectedDays: protectedProcedure
+    .input(z.object({ moduleCount: z.number() }))
+    .query(({ input }) => {
+      // Simplistic calculation: 1 day base + 1 day for every 10 modules
+      return { expectedDays: 1 + Math.ceil(input.moduleCount / 10) };
+    }),
+
+  // POST /api/projects - Create new project
+  create: protectedProcedure
+    .input(z.object({
+      code: z.string(),
+      clientName: z.string(),
+      address: z.string().optional(),
+      city: z.string().optional(),
+      state: z.string().optional(),
+      moduleCount: z.number().optional(),
+      modulePower: z.number().optional(),
+      powerKwp: z.number().optional(),
+      category: z.string().optional(),
+      completionDate: z.string().optional(),
+      paymentMonth: z.string().optional(),
+      actualDays: z.number().optional(),
+      expectedDaysOverride: z.number().optional(),
+      hasFinancialLoss: z.boolean().optional(),
+      financialLossReason: z.string().optional(),
+      forceMajeureJustification: z.string().optional(),
+      photosLink: z.string().optional(),
+      reportLink: z.string().optional(),
+      nps: z.string().optional(),
+    }))
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new Error("Database unavailable");
+      let finalCategory = input.category;
+      if (!finalCategory && input.powerKwp) {
+        if (input.powerKwp <= 5) finalCategory = "B1";
+        else if (input.powerKwp <= 10) finalCategory = "B2";
+        else if (input.powerKwp <= 20) finalCategory = "B3";
+        else if (input.powerKwp <= 30) finalCategory = "B4";
+        else if (input.powerKwp <= 50) finalCategory = "B5";
+        else if (input.powerKwp <= 75) finalCategory = "B6";
+        else finalCategory = "B7";
+      }
+
+      const { powerKwp, completionDate, nps, ...restInput } = input;
+      const result = await db.insert(projects).values({
+        ...restInput,
+        completedDate: completionDate ? new Date(completionDate) : undefined,
+        powerKwp: powerKwp !== undefined ? String(powerKwp) : undefined,
+        nps: nps !== undefined ? String(nps) : undefined,
+        category: finalCategory as any,
+        status: "planning" as any,
+      });
+      return { id: result[0]?.insertId, message: "Project created successfully" };
+    }),
+
+  // PUT /api/projects/:id - Update project
+  update: protectedProcedure
+    .input(z.object({
+      id: z.number(),
+      clientName: z.string().optional(),
+      address: z.string().optional(),
+      city: z.string().optional(),
+      state: z.string().optional(),
+      startDate: z.string().optional(),
+      endDate: z.string().optional(),
+      completedDate: z.string().optional(),
+      status: z.string().optional(),
+    }))
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new Error("Database unavailable");
+      const { id, startDate, endDate, completedDate, status, ...rest } = input;
+      await db.update(projects).set({
+        ...rest,
+        status: status as any,
+        startDate: startDate ? new Date(startDate) : undefined,
+        endDate: endDate ? new Date(endDate) : undefined,
+        completedDate: completedDate ? new Date(completedDate) : undefined,
+      }).where(eq(projects.id, id));
+      return { message: "Project updated successfully" };
+    }),
+
+  // GET /api/projects/:id/criteria - Get obra criteria for evaluation
+  getCriteria: protectedProcedure
+    .query(async () => {
+      const db = await getDb();
+      if (!db) throw new Error("Database unavailable");
+      const criteria = await db.select().from(obraCriteria).where(eq(obraCriteria.active, true));
+      
+      const grouped = criteria.reduce((acc, criterion) => {
+        const cat = criterion.category || "outros";
+        if (!acc[cat]) acc[cat] = [];
+        acc[cat].push(criterion);
+        return acc;
+      }, {} as Record<string, typeof criteria>);
+
+      return grouped;
+    }),
+
+  // POST /api/projects/:id/scores - Submit obra evaluation scores
+  submitScores: protectedProcedure
+    .input(z.object({
+      projectId: z.number(),
+      userId: z.number(),
+      notaSeguranca: z.number(),
+      notaFuncionalidade: z.number(),
+      notaEstetica: z.number(),
+      mediaOs: z.number(),
+      eficiencia: z.number(),
+      npsCliente: z.number(),
+    }))
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new Error("Database unavailable");
+      const { projectId, userId, notaSeguranca, notaFuncionalidade, notaEstetica, mediaOs, eficiencia, npsCliente } = input;
+
+      const baseScore = ((notaSeguranca * 2 + notaFuncionalidade * 2 + notaEstetica * 1) / 5);
+      const notaObraPercentual = (baseScore * 0.5) + (mediaOs * 0.2) + (eficiencia * 0.15) + (npsCliente * 0.15);
+
+      const projectRes = await db.select().from(projects).where(eq(projects.id, projectId));
+      if (!projectRes.length) throw new Error("Project not found");
+
+      const bonusMap: Record<string, number> = {
+        B1: 200, B2: 300, B3: 500, B4: 750, B5: 1000, B6: 1500, B7: 2000,
+      };
+
+      const baseCategory = typeof projectRes[0].category === "string" ? projectRes[0].category : "B1";
+      const bonusValorBase = bonusMap[baseCategory] || 200;
+      const bonusValorCorrigido = bonusValorBase * (notaObraPercentual / 100);
+
+      const existingScore = await db.select().from(obraScores).where(
+        and(eq(obraScores.projectId, projectId), eq(obraScores.userId, userId))
+      );
+
+      if (existingScore.length) {
+        await db.update(obraScores).set({
+          notaSeguranca: String(notaSeguranca), 
+          notaFuncionalidade: String(notaFuncionalidade), 
+          notaEstetica: String(notaEstetica), 
+          mediaOs: String(mediaOs), 
+          eficiencia: String(eficiencia), 
+          npsCliente: String(npsCliente),
+          notaObraPercentual: String(notaObraPercentual),
+          bonusValorBase: String(bonusValorBase),
+          bonusValorCorrigido: String(bonusValorCorrigido),
+        }).where(eq(obraScores.id, existingScore[0].id));
+      } else {
+        await db.insert(obraScores).values({
+          projectId, 
+          userId, 
+          notaSeguranca: String(notaSeguranca), 
+          notaFuncionalidade: String(notaFuncionalidade), 
+          notaEstetica: String(notaEstetica), 
+          mediaOs: String(mediaOs), 
+          eficiencia: String(eficiencia), 
+          npsCliente: String(npsCliente),
+          notaObraPercentual: String(notaObraPercentual),
+          bonusValorBase: String(bonusValorBase),
+          bonusValorCorrigido: String(bonusValorCorrigido),
+        });
+      }
+
+      return {
+        notaObraPercentual,
+        bonusValorBase,
+        bonusValorCorrigido,
+        message: "Scores submitted successfully",
+      };
+    }),
+
+  getScores: protectedProcedure
+    .input(z.object({ projectId: z.number() }))
+    .query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new Error("Database unavailable");
+      const scores = await db.select().from(obraScores).where(eq(obraScores.projectId, input.projectId));
+      return scores;
+    }),
+});

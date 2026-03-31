@@ -1,0 +1,16 @@
+commit dfb5b4b7c60176dfd88ca747c4a1104c5fc3ab94
+Author: Árlei Póvoa <arleipovoa@gmail.com>
+Date:   Tue Mar 24 21:28:26 2026 -0300
+
+    feat: deploy base path /obras/ + fix tRPC SPA fallback
+
+diff --git a/client/src/pages/SubObrasDashboard.tsx b/client/src/pages/SubObrasDashboard.tsx
+new file mode 100644
+index 0000000..3d670d7
+--- /dev/null
++++ b/client/src/pages/SubObrasDashboard.tsx
+@@ -0,0 +1,4 @@
++// Subpágina 1 — Avaliação de Obras (área restrita/dashboard)
++// Conteúdo da Home atual do sistema de obras é colocado aqui
++// (redirecionamos Home para /dashboard que é a Home do 360 + o conteúdo de obras fica em /obras/dashboard)
++export { default } from "./Home";
