@@ -51,6 +51,7 @@ export async function upsertUser(user: InsertUser): Promise<void> {
   if (user.lastSignedIn !== undefined) { values.lastSignedIn = user.lastSignedIn; updateSet.lastSignedIn = user.lastSignedIn; }
   if (user.role !== undefined) { values.role = user.role; updateSet.role = user.role; }
   else if (user.openId === ENV.ownerOpenId) { values.role = 'admin'; updateSet.role = 'admin'; }
+  if (user.jobCategory !== undefined) { values.jobCategory = user.jobCategory; updateSet.jobCategory = user.jobCategory; }
   if (user.appRole !== undefined) { values.appRole = user.appRole; updateSet.appRole = user.appRole; }
   if (user.areaId !== undefined) { values.areaId = user.areaId; updateSet.areaId = user.areaId; }
   if (user.leaderId !== undefined) { values.leaderId = user.leaderId; updateSet.leaderId = user.leaderId; }
@@ -111,6 +112,7 @@ export async function getUsersByLeader(leaderId: number) {
 
 export async function createAppUser(data: {
   name: string; email: string; passwordHash: string;
+  jobCategory: "administrativo" | "operacional";
   appRole: "admin" | "leader" | "employee"; areaId?: number; leaderId?: number;
 }) {
   const db = await getDb();
@@ -122,6 +124,7 @@ export async function createAppUser(data: {
     email: data.email,
     passwordHash: data.passwordHash,
     appRole: data.appRole,
+    jobCategory: data.jobCategory,
     role: data.appRole === "admin" ? "admin" : "user",
     areaId: data.areaId ?? null,
     leaderId: data.leaderId ?? null,

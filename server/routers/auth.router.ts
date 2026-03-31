@@ -37,7 +37,7 @@ export const authRouter = router({
       return {
         success: true,
         mustChangePassword: user.mustChangePassword,
-        user: { id: user.id, name: user.name, email: user.email, appRole: user.appRole },
+        user: { id: user.id, name: user.name, email: user.email, appRole: user.appRole, jobCategory: user.jobCategory },
       };
     }),
 

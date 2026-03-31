@@ -1,7 +1,14 @@
 {
   "permissions": {
     "allow": [
-      "WebFetch(domain:scripts.converteai.net)"
+      "Bash(touch .git/objects/test_write)",
+      "Bash(rm .git/objects/test_write)",
+      "Bash(git config:*)",
+      "Bash(git fsck:*)",
+      "Bash(git stash:*)",
+      "Bash(git remote:*)",
+      "Bash(find /home/arlei/dev/portal-avaliacao-esol/server -name cookies*)",
+      "Bash(xargs cat:*)"
     ]
   }
 }

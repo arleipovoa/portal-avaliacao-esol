@@ -56,9 +56,9 @@ export const CRITERIA_TO_RADAR: Record<string, string> = {
 };
 
 export const PODIUM_PRIZES: Record<number, number> = {
-  1: 100,
-  2: 50,
-  3: 25,
+  1: 0,
+  2: 0,
+  3: 0,
 };
 
 export const BONUS_PERFORMANCE_MAX = 125;

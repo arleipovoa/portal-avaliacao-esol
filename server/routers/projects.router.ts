@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { db } from "../db";
+import { getDb } from "../db";
 import { projects, projectMembers, obraScores, obraEvaluations, obraCriteria, users } from "../../drizzle/schema";
 import { eq, and } from "drizzle-orm";
 import { canAccessObras } from "../_core/accessControl";
@@ -9,6 +9,8 @@ const router = Router();
 // ─── GET /api/projects - List all projects ───
 router.get("/", async (req, res) => {
   try {
+    const db = await getDb();
+    if (!db) return res.status(503).json({ error: "Database unavailable" });
     const allProjects = await db.select().from(projects);
     res.json(allProjects);
   } catch (error) {
@@ -19,6 +21,8 @@ router.get("/", async (req, res) => {
 // ─── GET /api/projects/:id - Get project details with members ───
 router.get("/:id", async (req, res) => {
   try {
+    const db = await getDb();
+    if (!db) return res.status(503).json({ error: "Database unavailable" });
     const projectId = parseInt(req.params.id);
     const project = await db.select().from(projects).where(eq(projects.id, projectId));
     
@@ -40,6 +44,8 @@ router.get("/:id", async (req, res) => {
 // ─── POST /api/projects - Create new project ───
 router.post("/", async (req, res) => {
   try {
+    const db = await getDb();
+    if (!db) return res.status(503).json({ error: "Database unavailable" });
     const { code, clientName, address, city, state, moduleCount, modulePower, powerKwp, category } = req.body;
 
     // Calculate category based on kWp if not provided
@@ -76,6 +82,8 @@ router.post("/", async (req, res) => {
 // ─── PUT /api/projects/:id - Update project ───
 router.put("/:id", async (req, res) => {
   try {
+    const db = await getDb();
+    if (!db) return res.status(503).json({ error: "Database unavailable" });
     const projectId = parseInt(req.params.id);
     const { clientName, address, city, state, startDate, endDate, completedDate, status } = req.body;
 
@@ -99,6 +107,8 @@ router.put("/:id", async (req, res) => {
 // ─── POST /api/projects/:id/members - Add member to project ───
 router.post("/:id/members", async (req, res) => {
   try {
+    const db = await getDb();
+    if (!db) return res.status(503).json({ error: "Database unavailable" });
     const projectId = parseInt(req.params.id);
     const { userId, role } = req.body;
 
@@ -117,6 +127,8 @@ router.post("/:id/members", async (req, res) => {
 // ─── PUT /api/projects/:projectId/members/:memberId - Update member role ───
 router.put("/:projectId/members/:memberId", async (req, res) => {
   try {
+    const db = await getDb();
+    if (!db) return res.status(503).json({ error: "Database unavailable" });
     const projectId = parseInt(req.params.projectId);
     const memberId = parseInt(req.params.memberId);
     const { role } = req.body;
@@ -134,6 +146,8 @@ router.put("/:projectId/members/:memberId", async (req, res) => {
 // ─── DELETE /api/projects/:projectId/members/:memberId - Remove member from project ───
 router.delete("/:projectId/members/:memberId", async (req, res) => {
   try {
+    const db = await getDb();
+    if (!db) return res.status(503).json({ error: "Database unavailable" });
     const projectId = parseInt(req.params.projectId);
     const memberId = parseInt(req.params.memberId);
 
@@ -150,6 +164,8 @@ router.delete("/:projectId/members/:memberId", async (req, res) => {
 // ─── GET /api/projects/:id/criteria - Get obra criteria for evaluation ───
 router.get("/:id/criteria", async (req, res) => {
   try {
+    const db = await getDb();
+    if (!db) return res.status(503).json({ error: "Database unavailable" });
     const criteria = await db.select().from(obraCriteria).where(eq(obraCriteria.active, true));
     
     // Group by category
@@ -170,6 +186,8 @@ router.get("/:id/criteria", async (req, res) => {
 // ─── POST /api/projects/:id/scores - Submit obra evaluation scores ───
 router.post("/:id/scores", async (req, res) => {
   try {
+    const db = await getDb();
+    if (!db) return res.status(503).json({ error: "Database unavailable" });
     const projectId = parseInt(req.params.id);
     const { userId, notaSeguranca, notaFuncionalidade, notaEstetica, mediaOs, eficiencia, npsCliente } = req.body;
 
@@ -243,6 +261,8 @@ router.post("/:id/scores", async (req, res) => {
 // ─── GET /api/projects/:id/scores - Get all scores for a project ───
 router.get("/:id/scores", async (req, res) => {
   try {
+    const db = await getDb();
+    if (!db) return res.status(503).json({ error: "Database unavailable" });
     const projectId = parseInt(req.params.id);
     const scores = await db.select().from(obraScores).where(eq(obraScores.projectId, projectId));
     res.json(scores);
@@ -251,4 +271,4 @@ router.get("/:id/scores", async (req, res) => {
   }
 });
 
-export default router;
+export { router as projectsRouter };

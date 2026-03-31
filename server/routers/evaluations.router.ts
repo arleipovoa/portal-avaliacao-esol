@@ -119,14 +119,20 @@ export const evaluationsRouter = router({
       const allCriteria = await db.getAllCriteria();
       let filteredCriteria;
 
-      if (input.relation === "same_area" || input.relation === "bottom_up") {
-        filteredCriteria = allCriteria.filter((c) => c.type === "base360" || c.type === "detailed360");
-      } else if (input.relation === "other_area") {
-        filteredCriteria = allCriteria.filter((c) => c.type === "base360");
-      } else if (input.relation === "leadership") {
-        filteredCriteria = allCriteria.filter((c) => c.type === "leadership");
+      const isOperacional = ctx.user.jobCategory === "operacional";
+
+      if (isOperacional) {
+        filteredCriteria = allCriteria.filter((c) => c.type === "obra");
       } else {
-        filteredCriteria = allCriteria.filter((c) => c.type === "base360" || c.type === "detailed360");
+        if (input.relation === "same_area" || input.relation === "bottom_up") {
+          filteredCriteria = allCriteria.filter((c) => c.type === "base360" || c.type === "detailed360");
+        } else if (input.relation === "other_area") {
+          filteredCriteria = allCriteria.filter((c) => c.type === "base360");
+        } else if (input.relation === "leadership") {
+          filteredCriteria = allCriteria.filter((c) => c.type === "leadership");
+        } else {
+          filteredCriteria = allCriteria.filter((c) => c.type === "base360" || c.type === "detailed360");
+        }
       }
 
       const existingEvals = await db.getEvaluationsByEvaluator(input.cycleId, ctx.user.id);

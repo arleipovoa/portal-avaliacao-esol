@@ -10,14 +10,15 @@ export function EditUserForm({ user, areas, leaders, onSave, isPending }: any) {
     name: user.name || "",
     email: user.email || "",
     appRole: user.appRole,
-    areaId: user.areaId ? String(user.areaId) : "",
-    leaderId: user.leaderId ? String(user.leaderId) : "",
-    secondaryAreaId: user.secondaryAreaId ? String(user.secondaryAreaId) : "",
-    secondaryLeaderId: user.secondaryLeaderId ? String(user.secondaryLeaderId) : "",
+    jobCategory: user.jobCategory || "administrativo",
+    areaId: user.areaId ? String(user.areaId) : "none",
+    leaderId: user.leaderId ? String(user.leaderId) : "none",
+    secondaryAreaId: user.secondaryAreaId ? String(user.secondaryAreaId) : "none",
+    secondaryLeaderId: user.secondaryLeaderId ? String(user.secondaryLeaderId) : "none",
     status: user.status,
   });
 
-  const hasSecondary = form.secondaryAreaId !== "" || form.secondaryLeaderId !== "";
+  const hasSecondary = form.secondaryAreaId !== "none" || form.secondaryLeaderId !== "none";
 
   return (
     <div className="space-y-4">
@@ -40,6 +41,16 @@ export function EditUserForm({ user, areas, leaders, onSave, isPending }: any) {
           </SelectContent>
         </Select>
       </div>
+      <div className="space-y-2">
+        <Label>Categoria da Vaga (Libera Avaliação de Obras)</Label>
+        <Select value={form.jobCategory} onValueChange={(v) => setForm({ ...form, jobCategory: v })}>
+          <SelectTrigger><SelectValue /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="administrativo">Administrativo (Apenas 360º)</SelectItem>
+            <SelectItem value="operacional">Operacional (360º + Obras)</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
 
       <div className="rounded-lg border p-3 space-y-3">
         <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Setor Primário</p>
@@ -48,6 +59,7 @@ export function EditUserForm({ user, areas, leaders, onSave, isPending }: any) {
           <Select value={form.areaId} onValueChange={(v) => setForm({ ...form, areaId: v })}>
             <SelectTrigger><SelectValue placeholder="Selecione..." /></SelectTrigger>
             <SelectContent>
+              <SelectItem value="none">— Nenhuma —</SelectItem>
               {areas.map((a: any) => <SelectItem key={a.id} value={String(a.id)}>{a.name}</SelectItem>)}
             </SelectContent>
           </Select>
@@ -57,7 +69,7 @@ export function EditUserForm({ user, areas, leaders, onSave, isPending }: any) {
           <Select value={form.leaderId} onValueChange={(v) => setForm({ ...form, leaderId: v })}>
             <SelectTrigger><SelectValue placeholder="Selecione..." /></SelectTrigger>
             <SelectContent>
-              <SelectItem value="">— Nenhum —</SelectItem>
+              <SelectItem value="none">— Nenhum —</SelectItem>
               {leaders.map((l: any) => <SelectItem key={l.id} value={String(l.id)}>{l.name}</SelectItem>)}
             </SelectContent>
           </Select>
@@ -71,7 +83,7 @@ export function EditUserForm({ user, areas, leaders, onSave, isPending }: any) {
             <button
               type="button"
               className="text-xs text-destructive hover:underline"
-              onClick={() => setForm({ ...form, secondaryAreaId: "", secondaryLeaderId: "" })}
+              onClick={() => setForm({ ...form, secondaryAreaId: "none", secondaryLeaderId: "none" })}
             >
               Remover
             </button>
@@ -82,7 +94,7 @@ export function EditUserForm({ user, areas, leaders, onSave, isPending }: any) {
           <Select value={form.secondaryAreaId} onValueChange={(v) => setForm({ ...form, secondaryAreaId: v })}>
             <SelectTrigger><SelectValue placeholder="Não atribuído" /></SelectTrigger>
             <SelectContent>
-              <SelectItem value="">— Nenhuma —</SelectItem>
+              <SelectItem value="none">— Nenhuma —</SelectItem>
               {areas
                 .filter((a: any) => String(a.id) !== form.areaId)
                 .map((a: any) => <SelectItem key={a.id} value={String(a.id)}>{a.name}</SelectItem>)}
@@ -94,7 +106,7 @@ export function EditUserForm({ user, areas, leaders, onSave, isPending }: any) {
           <Select value={form.secondaryLeaderId} onValueChange={(v) => setForm({ ...form, secondaryLeaderId: v })}>
             <SelectTrigger><SelectValue placeholder="Não atribuído" /></SelectTrigger>
             <SelectContent>
-              <SelectItem value="">— Nenhum —</SelectItem>
+              <SelectItem value="none">— Nenhum —</SelectItem>
               {leaders.map((l: any) => <SelectItem key={l.id} value={String(l.id)}>{l.name}</SelectItem>)}
             </SelectContent>
           </Select>
@@ -121,10 +133,11 @@ export function EditUserForm({ user, areas, leaders, onSave, isPending }: any) {
         onClick={() => onSave({
           id: user.id, name: form.name, email: form.email,
           appRole: form.appRole as any,
-          areaId: form.areaId ? Number(form.areaId) : null,
-          leaderId: form.leaderId ? Number(form.leaderId) : null,
-          secondaryAreaId: form.secondaryAreaId ? Number(form.secondaryAreaId) : null,
-          secondaryLeaderId: form.secondaryLeaderId ? Number(form.secondaryLeaderId) : null,
+          areaId: form.areaId !== "none" ? Number(form.areaId) : null,
+          jobCategory: form.jobCategory as any,
+          leaderId: form.leaderId !== "none" ? Number(form.leaderId) : null,
+          secondaryAreaId: form.secondaryAreaId !== "none" ? Number(form.secondaryAreaId) : null,
+          secondaryLeaderId: form.secondaryLeaderId !== "none" ? Number(form.secondaryLeaderId) : null,
           status: form.status as any,
         })}
         disabled={isPending}

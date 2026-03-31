@@ -33,9 +33,20 @@ const MODULES: Array<{
   },
 ];
 
+import { useAuth } from "@/_core/hooks/useAuth";
+
 export default function Landing() {
   const [, setLocation] = useLocation();
   const [exploreOpen, setExploreOpen] = useState(false);
+  const { user } = useAuth({ redirectOnUnauthenticated: false });
+
+  const visibleModules = MODULES.filter(m => {
+    if (m.module === "obras") {
+      if (user) return (user as any).jobCategory === "operacional" || (user as any).appRole === "admin";
+      return true;
+    }
+    return true;
+  });
 
   return (
     <div
@@ -92,7 +103,7 @@ export default function Landing() {
 
         {/* 3 botões de acesso no canto direito */}
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          {MODULES.map((m) => (
+          {visibleModules.map((m) => (
             <button
               key={m.module}
               onClick={() => {
@@ -257,7 +268,7 @@ export default function Landing() {
                   zIndex: 50,
                 }}
               >
-                {MODULES.map((m, i) => (
+                {visibleModules.map((m, i) => (
                   <button
                     key={m.module}
                     onClick={() => {
@@ -273,7 +284,7 @@ export default function Landing() {
                       padding: "16px 18px",
                       background: "none",
                       border: "none",
-                      borderBottom: i < MODULES.length - 1 ? "1px solid rgba(255,255,255,0.06)" : "none",
+                      borderBottom: i < visibleModules.length - 1 ? "1px solid rgba(255,255,255,0.06)" : "none",
                       cursor: "pointer",
                       textAlign: "left",
                       fontFamily: "inherit",

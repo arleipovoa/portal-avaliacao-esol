@@ -44,6 +44,7 @@ type MenuItem = { icon: LucideIcon; label: string; path: string };
 const MODULE_MENU_ITEMS: Record<AppModule, MenuItem[]> = {
   obras: [
     { icon: LayoutDashboard, label: "Dashboard", path: "/modulo-obras/dashboard" },
+    { icon: ClipboardList, label: "Avaliações", path: "/modulo-obras/avaliacoes" },
   ],
   "360": [
     { icon: LayoutDashboard, label: "Dashboard", path: "/modulo-360/dashboard" },
@@ -136,10 +137,16 @@ function DashboardLayoutContent({ children }: DashboardLayoutContentProps) {
   const [profilePhoto, setProfilePhoto] = useState<string | null>(null);
 
   const appRole = (user as any)?.appRole || "employee";
+  const jobCategory = (user as any)?.jobCategory || "administrativo";
 
   useEffect(() => {
-    persistModule(activeModule);
-  }, [activeModule]);
+    if (activeModule === "obras" && jobCategory !== "operacional" && appRole !== "admin") {
+      persistModule("360");
+      setLocation("/modulo-360/dashboard");
+    } else {
+      persistModule(activeModule);
+    }
+  }, [activeModule, jobCategory, appRole, setLocation]);
 
   const moduleMenuItems = useMemo(
     () => MODULE_MENU_ITEMS[activeModule] ?? MODULE_MENU_ITEMS.obras,

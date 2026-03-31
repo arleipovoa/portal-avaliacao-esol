@@ -9,6 +9,7 @@ export const usersRouter = router({
     const allUsers = await db.getAllUsers();
     return allUsers.map((u) => ({
       id: u.id, name: u.name, email: u.email, appRole: u.appRole,
+      jobCategory: u.jobCategory,
       areaId: u.areaId, leaderId: u.leaderId, status: u.status,
       mustChangePassword: u.mustChangePassword,
       secondaryAreaId: u.secondaryAreaId, secondaryLeaderId: u.secondaryLeaderId,
@@ -19,6 +20,7 @@ export const usersRouter = router({
     const allUsers = await db.getAllUsers(true);
     return allUsers.map((u) => ({
       id: u.id, name: u.name, email: u.email, appRole: u.appRole,
+      jobCategory: u.jobCategory,
       areaId: u.areaId, leaderId: u.leaderId, status: u.status,
       mustChangePassword: u.mustChangePassword, deactivatedAt: u.deactivatedAt,
       secondaryAreaId: u.secondaryAreaId, secondaryLeaderId: u.secondaryLeaderId,
@@ -42,6 +44,7 @@ export const usersRouter = router({
       name: z.string().min(1), email: z.string().email(),
       password: z.string().min(6),
       appRole: z.enum(["admin", "leader", "employee"]),
+      jobCategory: z.enum(["administrativo", "operacional"]).optional(),
       areaId: z.number().optional(), leaderId: z.number().optional(),
     }))
     .mutation(async ({ input }) => {
@@ -51,6 +54,7 @@ export const usersRouter = router({
       const user = await db.createAppUser({
         name: input.name, email: input.email.toLowerCase().trim(),
         passwordHash: hash, appRole: input.appRole,
+        jobCategory: input.jobCategory || "administrativo",
         areaId: input.areaId, leaderId: input.leaderId,
       });
       return { success: true, user };
@@ -60,6 +64,7 @@ export const usersRouter = router({
     .input(z.object({
       id: z.number(), name: z.string().optional(), email: z.string().email().optional(),
       appRole: z.enum(["admin", "leader", "employee"]).optional(),
+      jobCategory: z.enum(["administrativo", "operacional"]).optional(),
       areaId: z.number().nullable().optional(), leaderId: z.number().nullable().optional(),
       secondaryAreaId: z.number().nullable().optional(),
       secondaryLeaderId: z.number().nullable().optional(),

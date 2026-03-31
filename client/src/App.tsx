@@ -39,6 +39,7 @@ function AuthenticatedRoutes() {
         <Route path="/dashboard" component={LegacyDashboardRedirect} />
         <Route path="/avaliacoes" component={Evaluations} />
         <Route path="/modulo-360/avaliacoes" component={Evaluations} />
+        <Route path="/modulo-obras/avaliacoes" component={Evaluations} />
         <Route path="/admin" component={Admin} />
         <Route path="/perfil" component={Profile} />
         <Route path="/modulo-obras/dashboard" component={SubObrasDashboard} />
