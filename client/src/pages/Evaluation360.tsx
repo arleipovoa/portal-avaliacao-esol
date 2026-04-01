@@ -1,1 +1,293 @@
-import React, { useState } from 'react';\nimport { cn, getScoreBadge, formatPercentage } from '../lib/utils';\nimport Header from '../components/layout/Header';\nimport Card, { CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '../components/ui/Card';\nimport Button from '../components/ui/Button';\nimport Badge from '../components/ui/Badge';\nimport Input, { Textarea, Select } from '../components/ui/Input';\nimport Loader from '../components/ui/Loader';\n\ninterface Criterion {\n  id: string;\n  name: string;\n  description: string;\n  category: 'base' | 'detailed' | 'leadership';\n  weight: number;\n}\n\ninterface EvaluationForm {\n  evaluatedId: string;\n  relationshipType: 'self' | 'same_area' | 'other_area' | 'bottom_up' | 'leadership';\n  scores: Record<string, number>;\n  comments: string;\n}\n\nconst Evaluation360: React.FC = () => {\n  const [loading, setLoading] = useState(false);\n  const [form, setForm] = useState<EvaluationForm>({\n    evaluatedId: '',\n    relationshipType: 'same_area',\n    scores: {},\n    comments: '',\n  });\n  const [submitted, setSubmitted] = useState(false);\n\n  // Mock criteria data\n  const criteria: Criterion[] = [\n    {\n      id: 'base_1',\n      name: 'Comunicação',\n      description: 'Clareza e efetividade na comunicação',\n      category: 'base',\n      weight: 1,\n    },\n    {\n      id: 'base_2',\n      name: 'Colaboração',\n      description: 'Trabalho em equipe e cooperação',\n      category: 'base',\n      weight: 1,\n    },\n    {\n      id: 'base_3',\n      name: 'Respeito',\n      description: 'Respeito com colegas e processos',\n      category: 'base',\n      weight: 1,\n    },\n    {\n      id: 'detailed_1',\n      name: 'Entrega',\n      description: 'Qualidade das entregas realizadas',\n      category: 'detailed',\n      weight: 2,\n    },\n    {\n      id: 'detailed_2',\n      name: 'Prazos',\n      description: 'Cumprimento de prazos estabelecidos',\n      category: 'detailed',\n      weight: 2,\n    },\n  ];\n\n  const categoryLabels = {\n    base: 'Base 360',\n    detailed: 'Avaliação Detalhada',\n    leadership: 'Liderança',\n  };\n\n  const handleScoreChange = (criterionId: string, score: number) => {\n    setForm(prev => ({\n      ...prev,\n      scores: { ...prev.scores, [criterionId]: score },\n    }));\n  };\n\n  const handleSubmit = async (e: React.FormEvent) => {\n    e.preventDefault();\n    setLoading(true);\n    // Simulate API call\n    setTimeout(() => {\n      setLoading(false);\n      setSubmitted(true);\n    }, 1000);\n  };\n\n  const calculateAverageScore = () => {\n    const scores = Object.values(form.scores);\n    if (scores.length === 0) return 0;\n    return Math.round(scores.reduce((a, b) => a + b, 0) / scores.length);\n  };\n\n  const averageScore = calculateAverageScore();\n  const scoreBadge = getScoreBadge(averageScore);\n\n  if (submitted) {\n    return (\n      <div className=\"flex-1 flex flex-col\">\n        <Header title=\"Avaliação 360°\" subtitle=\"Avaliação de Desempenho\" />\n        <div className=\"flex-1 flex items-center justify-center p-8\">\n          <Card variant=\"glass\" size=\"lg\" className=\"max-w-md text-center\">\n            <CardContent className=\"space-y-6\">\n              <div className=\"w-16 h-16 mx-auto rounded-full bg-green-500/10 flex items-center justify-center\">\n                <iconify-icon icon=\"solar:check-circle-bold-duotone\" width={32} className=\"text-green-400\" />\n              </div>\n              <div>\n                <h3 className=\"text-xl font-semibold text-white mb-2\">\n                  Avaliação Enviada!\n                </h3>\n                <p className=\"text-slate-400\">\n                  Sua avaliação foi registrada com sucesso no sistema.\n                </p>\n              </div>\n              <Button variant=\"primary\" fullWidth>\n                Voltar ao Dashboard\n              </Button>\n            </CardContent>\n          </Card>\n        </div>\n      </div>\n    );\n  }\n\n  return (\n    <div className=\"flex-1 flex flex-col\">\n      {/* Header */}\n      <Header\n        title=\"Avaliação 360°\"\n        subtitle=\"Avaliação de Desempenho e Comportamento\"\n        breadcrumbs={[\n          { label: 'Dashboard', href: '/dashboard' },\n          { label: 'Avaliação 360°' },\n        ]}\n      />\n\n      {/* Content */}\n      <div className=\"flex-1 overflow-y-auto p-8\">\n        {loading ? (\n          <Loader variant=\"spinner\" size=\"lg\" message=\"Processando avaliação...\" />\n        ) : (\n          <div className=\"max-w-4xl mx-auto space-y-6\">\n            {/* Form Card */}\n            <Card variant=\"glass\" size=\"lg\">\n              <CardHeader>\n                <CardTitle>Informações da Avaliação</CardTitle>\n                <CardDescription>\n                  Preencha os dados abaixo para realizar a avaliação\n                </CardDescription>\n              </CardHeader>\n\n              <form onSubmit={handleSubmit} className=\"space-y-6\">\n                <CardContent className=\"space-y-6\">\n                  {/* Form Fields */}\n                  <div className=\"grid grid-cols-1 md:grid-cols-2 gap-4\">\n                    <Select\n                      label=\"Pessoa a Avaliar\"\n                      options={[\n                        { value: 'user_1', label: 'João Silva' },\n                        { value: 'user_2', label: 'Maria Santos' },\n                        { value: 'user_3', label: 'Pedro Costa' },\n                      ]}\n                      value={form.evaluatedId}\n                      onChange={(e) => setForm(prev => ({ ...prev, evaluatedId: e.target.value }))}\n                      required\n                    />\n                    <Select\n                      label=\"Tipo de Relação\"\n                      options={[\n                        { value: 'self', label: 'Autoavaliação' },\n                        { value: 'same_area', label: 'Colega do Setor' },\n                        { value: 'other_area', label: 'Colega de Outro Setor' },\n                        { value: 'bottom_up', label: 'Subordinado' },\n                        { value: 'leadership', label: 'Liderança' },\n                      ]}\n                      value={form.relationshipType}\n                      onChange={(e) => setForm(prev => ({ ...prev, relationshipType: e.target.value as any }))}\n                      required\n                    />\n                  </div>\n                </CardContent>\n\n                {/* Criteria Scoring */}\n                <CardContent className=\"space-y-6\">\n                  <div>\n                    <h3 className=\"text-lg font-semibold text-white mb-4\">Critérios de Avaliação</h3>\n                    <div className=\"space-y-4\">\n                      {Object.entries(\n                        criteria.reduce((acc, c) => {\n                          if (!acc[c.category]) acc[c.category] = [];\n                          acc[c.category].push(c);\n                          return acc;\n                        }, {} as Record<string, Criterion[]>)\n                      ).map(([category, items]) => (\n                        <div key={category} className=\"space-y-3\">\n                          <div className=\"flex items-center gap-2\">\n                            <h4 className=\"text-sm font-semibold text-slate-300 uppercase tracking-wide\">\n                              {categoryLabels[category as keyof typeof categoryLabels]}\n                            </h4>\n                            <div className=\"flex-1 h-px bg-white/5\" />\n                          </div>\n                          {items.map((criterion) => (\n                            <div key={criterion.id} className=\"glass rounded-lg p-4 space-y-3\">\n                              <div className=\"flex items-start justify-between\">\n                                <div className=\"flex-1\">\n                                  <p className=\"font-medium text-white\">{criterion.name}</p>\n                                  <p className=\"text-sm text-slate-400\">{criterion.description}</p>\n                                </div>\n                                <Badge variant=\"secondary\" size=\"sm\">\n                                  Peso: {criterion.weight}\n                                </Badge>\n                              </div>\n                              <div className=\"flex items-center gap-4\">\n                                <input\n                                  type=\"range\"\n                                  min=\"0\"\n                                  max=\"100\"\n                                  step=\"5\"\n                                  value={form.scores[criterion.id] || 0}\n                                  onChange={(e) => handleScoreChange(criterion.id, parseInt(e.target.value))}\n                                  className=\"flex-1 h-2 bg-white/10 rounded-lg appearance-none cursor-pointer accent-flux-orange\"\n                                />\n                                <span className=\"text-sm font-semibold text-flux-orange min-w-12 text-right\">\n                                  {form.scores[criterion.id] || 0}%\n                                </span>\n                              </div>\n                            </div>\n                          ))}\n                        </div>\n                      ))}\n                    </div>\n                  </div>\n                </CardContent>\n\n                {/* Comments */}\n                <CardContent>\n                  <Textarea\n                    label=\"Comentários Adicionais\"\n                    placeholder=\"Adicione comentários sobre a avaliação...\"\n                    value={form.comments}\n                    onChange={(e) => setForm(prev => ({ ...prev, comments: e.target.value }))}\n                    rows={4}\n                  />\n                </CardContent>\n\n                {/* Score Summary */}\n                <CardContent className=\"bg-white/5 rounded-lg p-4\">\n                  <div className=\"flex items-center justify-between\">\n                    <div>\n                      <p className=\"text-sm text-slate-400 mb-1\">Pontuação Média</p>\n                      <p className=\"text-3xl font-bold text-white\">{averageScore}%</p>\n                    </div>\n                    <div className={cn('px-4 py-2 rounded-lg border', scoreBadge.color)}>\n                      <p className=\"text-sm font-semibold\">{scoreBadge.text}</p>\n                    </div>\n                  </div>\n                </CardContent>\n\n                {/* Actions */}\n                <CardFooter className=\"gap-3 justify-end\">\n                  <Button variant=\"ghost\">\n                    Cancelar\n                  </Button>\n                  <Button\n                    variant=\"primary\"\n                    isLoading={loading}\n                    rightIcon={\n                      <iconify-icon icon=\"solar:send-bold-duotone\" width={16} />\n                    }\n                  >\n                    Enviar Avaliação\n                  </Button>\n                </CardFooter>\n              </form>\n            </Card>\n          </div>\n        )}\n      </div>\n    </div>\n  );\n};\n\nexport default Evaluation360;\n
+import React, { useState } from 'react';
+import { cn, getScoreBadge, formatPercentage } from '../lib/utils';
+import Header from '../components/layout/Header';
+import Card, { CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '../components/ui/Card';
+import Button from '../components/ui/Button';
+import Badge from '../components/ui/Badge';
+import Input, { Textarea, Select } from '../components/ui/Input';
+import Loader from '../components/ui/Loader';
+
+interface Criterion {
+  id: string;
+  name: string;
+  description: string;
+  category: 'base' | 'detailed' | 'leadership';
+  weight: number;
+}
+
+interface EvaluationForm {
+  evaluatedId: string;
+  relationshipType: 'self' | 'same_area' | 'other_area' | 'bottom_up' | 'leadership';
+  scores: Record<string, number>;
+  comments: string;
+}
+
+const Evaluation360: React.FC = () => {
+  const [loading, setLoading] = useState(false);
+  const [form, setForm] = useState<EvaluationForm>({
+    evaluatedId: '',
+    relationshipType: 'same_area',
+    scores: {},
+    comments: '',
+  });
+  const [submitted, setSubmitted] = useState(false);
+
+  // Mock criteria data
+  const criteria: Criterion[] = [
+    {
+      id: 'base_1',
+      name: 'Comunicação',
+      description: 'Clareza e efetividade na comunicação',
+      category: 'base',
+      weight: 1,
+    },
+    {
+      id: 'base_2',
+      name: 'Colaboração',
+      description: 'Trabalho em equipe e cooperação',
+      category: 'base',
+      weight: 1,
+    },
+    {
+      id: 'base_3',
+      name: 'Respeito',
+      description: 'Respeito com colegas e processos',
+      category: 'base',
+      weight: 1,
+    },
+    {
+      id: 'detailed_1',
+      name: 'Entrega',
+      description: 'Qualidade das entregas realizadas',
+      category: 'detailed',
+      weight: 2,
+    },
+    {
+      id: 'detailed_2',
+      name: 'Prazos',
+      description: 'Cumprimento de prazos estabelecidos',
+      category: 'detailed',
+      weight: 2,
+    },
+  ];
+
+  const categoryLabels = {
+    base: 'Base 360',
+    detailed: 'Avaliação Detalhada',
+    leadership: 'Liderança',
+  };
+
+  const handleScoreChange = (criterionId: string, score: number) => {
+    setForm(prev => ({
+      ...prev,
+      scores: { ...prev.scores, [criterionId]: score },
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    // Simulate API call
+    setTimeout(() => {
+      setLoading(false);
+      setSubmitted(true);
+    }, 1000);
+  };
+
+  const calculateAverageScore = () => {
+    const scores = Object.values(form.scores);
+    if (scores.length === 0) return 0;
+    return Math.round(scores.reduce((a, b) => a + b, 0) / scores.length);
+  };
+
+  const averageScore = calculateAverageScore();
+  const scoreBadge = getScoreBadge(averageScore);
+
+  if (submitted) {
+    return (
+      <div className="flex-1 flex flex-col">
+        <Header title="Avaliação 360°" subtitle="Avaliação de Desempenho" />
+        <div className="flex-1 flex items-center justify-center p-8">
+          <Card variant="glass" size="lg" className="max-w-md text-center">
+            <CardContent className="space-y-6">
+              <div className="w-16 h-16 mx-auto rounded-full bg-green-500/10 flex items-center justify-center">
+                <iconify-icon icon="solar:check-circle-bold-duotone" width={32} className="text-green-400" />
+              </div>
+              <div>
+                <h3 className="text-xl font-semibold text-white mb-2">
+                  Avaliação Enviada!
+                </h3>
+                <p className="text-slate-400">
+                  Sua avaliação foi registrada com sucesso no sistema.
+                </p>
+              </div>
+              <Button variant="primary" fullWidth>
+                Voltar ao Dashboard
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex-1 flex flex-col">
+      {/* Header */}
+      <Header
+        title="Avaliação 360°"
+        subtitle="Avaliação de Desempenho e Comportamento"
+        breadcrumbs={[
+          { label: 'Dashboard', href: '/dashboard' },
+          { label: 'Avaliação 360°' },
+        ]}
+      />
+
+      {/* Content */}
+      <div className="flex-1 overflow-y-auto p-8">
+        {loading ? (
+          <Loader variant="spinner" size="lg" message="Processando avaliação..." />
+        ) : (
+          <div className="max-w-4xl mx-auto space-y-6">
+            {/* Form Card */}
+            <Card variant="glass" size="lg">
+              <CardHeader>
+                <CardTitle>Informações da Avaliação</CardTitle>
+                <CardDescription>
+                  Preencha os dados abaixo para realizar a avaliação
+                </CardDescription>
+              </CardHeader>
+
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <CardContent className="space-y-6">
+                  {/* Form Fields */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <Select
+                      label="Pessoa a Avaliar"
+                      options={[
+                        { value: 'user_1', label: 'João Silva' },
+                        { value: 'user_2', label: 'Maria Santos' },
+                        { value: 'user_3', label: 'Pedro Costa' },
+                      ]}
+                      value={form.evaluatedId}
+                      onChange={(e) => setForm(prev => ({ ...prev, evaluatedId: e.target.value }))}
+                      required
+                    />
+                    <Select
+                      label="Tipo de Relação"
+                      options={[
+                        { value: 'self', label: 'Autoavaliação' },
+                        { value: 'same_area', label: 'Colega do Setor' },
+                        { value: 'other_area', label: 'Colega de Outro Setor' },
+                        { value: 'bottom_up', label: 'Subordinado' },
+                        { value: 'leadership', label: 'Liderança' },
+                      ]}
+                      value={form.relationshipType}
+                      onChange={(e) => setForm(prev => ({ ...prev, relationshipType: e.target.value as any }))}
+                      required
+                    />
+                  </div>
+                </CardContent>
+
+                {/* Criteria Scoring */}
+                <CardContent className="space-y-6">
+                  <div>
+                    <h3 className="text-lg font-semibold text-white mb-4">Critérios de Avaliação</h3>
+                    <div className="space-y-4">
+                      {Object.entries(
+                        criteria.reduce((acc, c) => {
+                          if (!acc[c.category]) acc[c.category] = [];
+                          acc[c.category].push(c);
+                          return acc;
+                        }, {} as Record<string, Criterion[]>)
+                      ).map(([category, items]) => (
+                        <div key={category} className="space-y-3">
+                          <div className="flex items-center gap-2">
+                            <h4 className="text-sm font-semibold text-slate-300 uppercase tracking-wide">
+                              {categoryLabels[category as keyof typeof categoryLabels]}
+                            </h4>
+                            <div className="flex-1 h-px bg-white/5" />
+                          </div>
+                          {items.map((criterion) => (
+                            <div key={criterion.id} className="glass rounded-lg p-4 space-y-3">
+                              <div className="flex items-start justify-between">
+                                <div className="flex-1">
+                                  <p className="font-medium text-white">{criterion.name}</p>
+                                  <p className="text-sm text-slate-400">{criterion.description}</p>
+                                </div>
+                                <Badge variant="secondary" size="sm">
+                                  Peso: {criterion.weight}
+                                </Badge>
+                              </div>
+                              <div className="flex items-center gap-4">
+                                <input
+                                  type="range"
+                                  min="0"
+                                  max="100"
+                                  step="5"
+                                  value={form.scores[criterion.id] || 0}
+                                  onChange={(e) => handleScoreChange(criterion.id, parseInt(e.target.value))}
+                                  className="flex-1 h-2 bg-white/10 rounded-lg appearance-none cursor-pointer accent-flux-orange"
+                                />
+                                <span className="text-sm font-semibold text-flux-orange min-w-12 text-right">
+                                  {form.scores[criterion.id] || 0}%
+                                </span>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </CardContent>
+
+                {/* Comments */}
+                <CardContent>
+                  <Textarea
+                    label="Comentários Adicionais"
+                    placeholder="Adicione comentários sobre a avaliação..."
+                    value={form.comments}
+                    onChange={(e) => setForm(prev => ({ ...prev, comments: e.target.value }))}
+                    rows={4}
+                  />
+                </CardContent>
+
+                {/* Score Summary */}
+                <CardContent className="bg-white/5 rounded-lg p-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm text-slate-400 mb-1">Pontuação Média</p>
+                      <p className="text-3xl font-bold text-white">{averageScore}%</p>
+                    </div>
+                    <div className={cn('px-4 py-2 rounded-lg border', scoreBadge.color)}>
+                      <p className="text-sm font-semibold">{scoreBadge.text}</p>
+                    </div>
+                  </div>
+                </CardContent>
+
+                {/* Actions */}
+                <CardFooter className="gap-3 justify-end">
+                  <Button variant="ghost">
+                    Cancelar
+                  </Button>
+                  <Button
+                    variant="primary"
+                    isLoading={loading}
+                    rightIcon={
+                      <iconify-icon icon="solar:send-bold-duotone" width={16} />
+                    }
+                  >
+                    Enviar Avaliação
+                  </Button>
+                </CardFooter>
+              </form>
+            </Card>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default Evaluation360;
+

@@ -12,7 +12,7 @@ import Landing from '@/pages/Landing';
 import Dashboard from '@/pages/Dashboard';
 
 // ── Pages: 360 ──
-import Sub360Dashboard from '@/pages/Sub360Dashboard';
+import Home from '@/pages/Home';
 import Evaluation360 from '@/pages/Evaluation360';
 import Evaluations from '@/pages/Evaluations';
 
@@ -25,8 +25,8 @@ import NpsDashboard from '@/pages/NpsDashboard';
 import NpsResponses from '@/pages/NpsResponses';
 
 // ── Pages: Admin ──
-import AdminUsers from '@/pages/admin/AdminUsers';
-import EditUserForm from '@/pages/admin/EditUserForm';
+
+import { EditUserForm } from '@/pages/admin/EditUserForm';
 
 // ── Protected Route ──
 function ProtectedRoute({ component: Component, ...rest }: { component: React.ComponentType; path: string }) {
@@ -70,7 +70,7 @@ export default function App() {
               <Redirect to="/360/dashboard" />
             </Route>
             <Route path="/360/dashboard">
-              <ProtectedRoute path="/360/dashboard" component={Sub360Dashboard} />
+              <ProtectedRoute path="/360/dashboard" component={Home} />
             </Route>
             <Route path="/360/avaliacoes">
               <ProtectedRoute path="/360/avaliacoes" component={Evaluations} />

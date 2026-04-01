@@ -1,1 +1,65 @@
-import React, { ReactNode, useState } from 'react';\nimport { cn } from '../../lib/utils';\nimport Navigation from './Navigation';\n\ninterface NavItem {\n  id: string;\n  label: string;\n  icon: string;\n  href: string;\n  badge?: number;\n  submenu?: NavItem[];\n}\n\ninterface MainLayoutProps {\n  children: ReactNode;\n  navItems: NavItem[];\n  activeItem?: string;\n  onNavigate?: (id: string) => void;\n}\n\nconst MainLayout: React.FC<MainLayoutProps> = ({\n  children,\n  navItems,\n  activeItem,\n  onNavigate,\n}) => {\n  const [navCollapsed, setNavCollapsed] = useState(false);\n\n  return (\n    <div className=\"flex h-screen bg-void overflow-hidden\">\n      {/* Navigation Sidebar */}\n      <Navigation\n        items={navItems}\n        activeItem={activeItem}\n        onNavigate={onNavigate}\n        collapsed={navCollapsed}\n      />\n\n      {/* Main Content */}\n      <div className={cn(\n        'flex-1 flex flex-col transition-all duration-300 overflow-hidden',\n        navCollapsed ? 'ml-20' : 'ml-64'\n      )}>\n        {/* Toggle Button */}\n        <button\n          onClick={() => setNavCollapsed(!navCollapsed)}\n          className=\"absolute top-4 left-4 z-50 p-2 rounded-lg glass hover:bg-white/10 transition-all duration-200\"\n        >\n          <iconify-icon\n            icon={navCollapsed ? 'solar:menu-dots-bold-duotone' : 'solar:menu-dots-bold-duotone'}\n            width={20}\n          />\n        </button>\n\n        {/* Content Area */}\n        <div className=\"flex-1 overflow-y-auto\">\n          {children}\n        </div>\n      </div>\n    </div>\n  );\n};\n\nexport default MainLayout;\n
+import React, { ReactNode, useState } from 'react';
+import { cn } from '../../lib/utils';
+import Navigation from './Navigation';
+
+interface NavItem {
+  id: string;
+  label: string;
+  icon: string;
+  href: string;
+  badge?: number;
+  submenu?: NavItem[];
+}
+
+interface MainLayoutProps {
+  children: ReactNode;
+  navItems: NavItem[];
+  activeItem?: string;
+  onNavigate?: (id: string) => void;
+}
+
+const MainLayout: React.FC<MainLayoutProps> = ({
+  children,
+  navItems,
+  activeItem,
+  onNavigate,
+}) => {
+  const [navCollapsed, setNavCollapsed] = useState(false);
+
+  return (
+    <div className="flex h-screen bg-void overflow-hidden">
+      {/* Navigation Sidebar */}
+      <Navigation
+        items={navItems}
+        activeItem={activeItem}
+        onNavigate={onNavigate}
+        collapsed={navCollapsed}
+      />
+
+      {/* Main Content */}
+      <div className={cn(
+        'flex-1 flex flex-col transition-all duration-300 overflow-hidden',
+        navCollapsed ? 'ml-20' : 'ml-64'
+      )}>
+        {/* Toggle Button */}
+        <button
+          onClick={() => setNavCollapsed(!navCollapsed)}
+          className="absolute top-4 left-4 z-50 p-2 rounded-lg glass hover:bg-white/10 transition-all duration-200"
+        >
+          <iconify-icon
+            icon={navCollapsed ? 'solar:menu-dots-bold-duotone' : 'solar:menu-dots-bold-duotone'}
+            width={20}
+          />
+        </button>
+
+        {/* Content Area */}
+        <div className="flex-1 overflow-y-auto">
+          {children}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default MainLayout;
+
