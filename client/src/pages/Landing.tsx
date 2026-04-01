@@ -1,331 +1,191 @@
-import {
-  type AppModule,
-  getLoginPathForModule,
-  persistModule,
-} from "@/lib/moduleRouting";
-import { ChevronDown } from "lucide-react";
-import { useState } from "react";
-import { useLocation } from "wouter";
+import { useAuth } from '@/_core/hooks/useAuth';
+import { useLocation } from 'wouter';
+import { cn } from '@/lib/utils';
 
-const MODULES: Array<{
-  module: AppModule;
-  label: string;
-  path: string;
-  description: string;
-}> = [
+// ── Module Cards Config ──
+
+const MODULES = [
   {
-    module: "obras",
-    label: "Avaliação de Obras",
-    path: getLoginPathForModule("obras"),
-    description: "Avaliação técnica de instalações e obras",
+    id: '360',
+    title: 'Avaliacao 360',
+    subtitle: 'Desempenho & Comportamento',
+    description: 'Avaliacao completa de desempenho e comportamento de todos os colaboradores da empresa.',
+    icon: '\u{1F3AF}',
+    route: '/360/dashboard',
+    gradient: 'from-blue-500/20 via-blue-500/5 to-transparent',
+    borderColor: 'border-blue-500/20 hover:border-blue-500/40',
+    accentColor: 'text-blue-400',
+    badgeColor: 'bg-blue-500/10 text-blue-400',
+    stats: [
+      { label: 'Ciclo', value: 'Mensal' },
+      { label: 'Podio', value: 'Trimestral' },
+    ],
+    access: 'all',
   },
   {
-    module: "360",
-    label: "Avaliação 360º",
-    path: getLoginPathForModule("360"),
-    description: "Avaliação de desempenho entre colaboradores",
+    id: 'obras',
+    title: 'Avaliacao da Equipe',
+    subtitle: 'Portal de Obras',
+    description: 'Avaliacao tecnica das equipes de instalacao por obra: Seguranca, Funcionalidade e Estetica.',
+    icon: '\u{1F3D7}',
+    route: '/obras/dashboard',
+    gradient: 'from-flux-orange/20 via-flux-orange/5 to-transparent',
+    borderColor: 'border-flux-orange/20 hover:border-flux-orange/40',
+    accentColor: 'text-flux-orange',
+    badgeColor: 'bg-flux-orange/10 text-flux-orange',
+    stats: [
+      { label: 'Ciclo', value: 'Por Obra' },
+      { label: 'Bonus', value: 'kWp' },
+    ],
+    access: 'obras',
   },
   {
-    module: "nps",
-    label: "NPS",
-    path: getLoginPathForModule("nps"),
-    description: "Net Promoter Score e satisfação de clientes",
+    id: 'nps',
+    title: 'Pesquisa NPS',
+    subtitle: 'Satisfacao do Cliente',
+    description: 'Pesquisas de satisfacao para medir a experiencia dos clientes com nossos servicos.',
+    icon: '\u{1F4CA}',
+    route: '/nps/dashboard',
+    gradient: 'from-green-500/20 via-green-500/5 to-transparent',
+    borderColor: 'border-green-500/20 hover:border-green-500/40',
+    accentColor: 'text-green-400',
+    badgeColor: 'bg-green-500/10 text-green-400',
+    stats: [
+      { label: 'Ciclo', value: 'Continuo' },
+      { label: 'Tipo', value: '0-10' },
+    ],
+    access: 'all',
   },
 ];
 
-import { useAuth } from "@/_core/hooks/useAuth";
+// ── Component ──
 
 export default function Landing() {
-  const [, setLocation] = useLocation();
-  const [exploreOpen, setExploreOpen] = useState(false);
-  const { user } = useAuth({ redirectOnUnauthenticated: false });
+  const { user } = useAuth({ redirectOnUnauthenticated: true });
+  const [, navigate] = useLocation();
 
-  const visibleModules = MODULES.filter(m => {
-    if (m.module === "obras") {
-      if (user) return (user as any).jobCategory === "operacional" || (user as any).appRole === "admin";
-      return true;
+  const appRole = (user as any)?.appRole || 'employee';
+  const jobCategory = (user as any)?.jobCategory || 'administrativo';
+
+  const visibleModules = MODULES.filter((mod) => {
+    if (mod.access === 'all') return true;
+    if (mod.access === 'obras') {
+      if (jobCategory === 'operacional') return true;
+      if (appRole === 'admin' || appRole === 'leader') return true;
+      return false;
     }
     return true;
   });
 
+  const greeting = getGreeting();
+  const firstName = (user as any)?.name?.split(' ')[0] || 'Colaborador';
+
   return (
-    <div
-      style={{
-        fontFamily: "'Plus Jakarta Sans', sans-serif",
-        minHeight: "100vh",
-        backgroundColor: "#12110f",
-        color: "#fff",
-      }}
-    >
-      <link
-        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
-        rel="stylesheet"
-      />
-
-      {/* ── Navbar ── */}
-      <header
-        style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          right: 0,
-          zIndex: 50,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          padding: "16px 32px",
-          backgroundColor: "rgba(18,17,15,0.85)",
-          backdropFilter: "blur(12px)",
-          borderBottom: "1px solid rgba(255,255,255,0.08)",
-        }}
-      >
-        {/* Logo */}
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <div
-            style={{
-              width: 32,
-              height: 32,
-              borderRadius: 8,
-              backgroundColor: "#ffcc29",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-              <path d="M13 2L4.09 12.69C3.74 13.11 3.57 13.32 3.57 13.49C3.56 13.65 3.63 13.79 3.75 13.89C3.89 14 4.16 14 4.71 14H12L11 22L19.91 11.31C20.26 10.89 20.43 10.68 20.43 10.51C20.43 10.35 20.37 10.21 20.25 10.11C20.11 10 19.84 10 19.29 10H12L13 2Z" stroke="#12110f" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </div>
-          <span style={{ color: "#fff", fontWeight: 600, fontSize: 15, letterSpacing: "-0.3px" }}>
-            E-sol <span style={{ color: "#ffcc29" }}>|</span> Avaliações
-          </span>
+    <div className="space-y-10">
+      {/* ── Hero Section ── */}
+      <div className="relative overflow-hidden rounded-2xl glass border border-white/5 p-8 md:p-12">
+        <div className="absolute inset-0 opacity-30">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-flux-orange/10 rounded-full blur-3xl" />
+          <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl" />
         </div>
-
-        {/* 3 botões de acesso no canto direito */}
-        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          {visibleModules.map((m) => (
-            <button
-              key={m.module}
-              onClick={() => {
-                persistModule(m.module);
-                setLocation(m.path);
-              }}
-              style={{
-                padding: "8px 16px",
-                fontSize: 13,
-                fontWeight: 600,
-                color: "#12110f",
-                backgroundColor: "#ffcc29",
-                border: "none",
-                borderRadius: 8,
-                cursor: "pointer",
-                fontFamily: "inherit",
-                transition: "opacity 0.15s",
-                whiteSpace: "nowrap",
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.85")}
-              onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
-            >
-              {m.label}
-            </button>
-          ))}
-        </div>
-      </header>
-
-      {/* ── Hero ── */}
-      <section
-        style={{
-          position: "relative",
-          minHeight: "100vh",
-          display: "flex",
-          alignItems: "center",
-          overflow: "hidden",
-        }}
-      >
-        {/* Background */}
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            backgroundImage:
-              "linear-gradient(to bottom right, rgba(18,17,15,0.90) 35%, rgba(18,17,15,0.55) 100%), url('https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?w=1600&q=80')",
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-          }}
-        />
-
-        <div
-          style={{
-            position: "relative",
-            zIndex: 1,
-            padding: "120px 48px 80px",
-            maxWidth: 1200,
-            margin: "0 auto",
-            width: "100%",
-          }}
-        >
-          {/* Badge */}
-          <div
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: 8,
-              padding: "6px 14px",
-              borderRadius: 999,
-              border: "1px solid rgba(255,204,41,0.35)",
-              backgroundColor: "rgba(255,204,41,0.08)",
-              marginBottom: 24,
-            }}
-          >
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
-              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="#ffcc29"/>
-            </svg>
-            <span style={{ color: "#ffcc29", fontSize: 12, fontWeight: 600 }}>
-              Sistema de Avaliação 2026
-            </span>
-          </div>
-
-          {/* Heading */}
-          <h1
-            style={{
-              fontSize: "clamp(42px, 6vw, 72px)",
-              fontWeight: 800,
-              lineHeight: 1.05,
-              marginBottom: 4,
-              letterSpacing: "-1.5px",
-            }}
-          >
-            Portal de Avaliações
-          </h1>
-          <h2
-            style={{
-              fontSize: "clamp(42px, 6vw, 72px)",
-              fontWeight: 800,
-              lineHeight: 1.05,
-              color: "#ffcc29",
-              marginBottom: 28,
-              letterSpacing: "-1.5px",
-            }}
-          >
-            Grupo E-sol
-          </h2>
-
-          <p
-            style={{
-              fontSize: 18,
-              color: "rgba(255,255,255,0.7)",
-              maxWidth: 480,
-              lineHeight: 1.7,
-              marginBottom: 40,
-            }}
-          >
-            Avaliação técnica de obras, desempenho 360º entre colaboradores e NPS de clientes — tudo em um único portal.
+        <div className="relative z-10">
+          <p className="text-xs font-semibold text-flux-orange uppercase tracking-widest mb-3">
+            Central E-sol
           </p>
+          <h1 className="text-3xl md:text-4xl font-display font-semibold text-white mb-2">
+            {greeting}, <span className="text-flux-orange">{firstName}</span>
+          </h1>
+          <p className="text-slate-400 text-sm md:text-base max-w-xl">
+            Selecione um modulo abaixo para acessar as avaliacoes, pesquisas e ferramentas de gestao do Grupo E-sol.
+          </p>
+        </div>
+      </div>
 
-          {/* Botão Explorar com dropdown */}
-          <div style={{ position: "relative", display: "inline-block" }}>
-            <button
-              onClick={() => setExploreOpen(!exploreOpen)}
-              onMouseEnter={() => setExploreOpen(true)}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 8,
-                padding: "14px 28px",
-                backgroundColor: "#ffcc29",
-                color: "#12110f",
-                fontWeight: 700,
-                fontSize: 15,
-                border: "none",
-                borderRadius: 10,
-                cursor: "pointer",
-                fontFamily: "inherit",
-              }}
-            >
-              Explorar
-              <ChevronDown
-                size={16}
-                style={{
-                  transition: "transform 0.2s",
-                  transform: exploreOpen ? "rotate(180deg)" : "rotate(0deg)",
-                }}
-              />
-            </button>
-
-            {exploreOpen && (
-              <div
-                onMouseLeave={() => setExploreOpen(false)}
-                style={{
-                  position: "absolute",
-                  top: "calc(100% + 8px)",
-                  left: 0,
-                  width: 280,
-                  backgroundColor: "#1a1917",
-                  border: "1px solid rgba(255,255,255,0.1)",
-                  borderRadius: 14,
-                  overflow: "hidden",
-                  boxShadow: "0 20px 40px rgba(0,0,0,0.4)",
-                  zIndex: 50,
-                }}
-              >
-                {visibleModules.map((m, i) => (
-                  <button
-                    key={m.module}
-                    onClick={() => {
-                      persistModule(m.module);
-                      setExploreOpen(false);
-                      setLocation(m.path);
-                    }}
-                    style={{
-                      width: "100%",
-                      display: "flex",
-                      alignItems: "flex-start",
-                      gap: 12,
-                      padding: "16px 18px",
-                      background: "none",
-                      border: "none",
-                      borderBottom: i < visibleModules.length - 1 ? "1px solid rgba(255,255,255,0.06)" : "none",
-                      cursor: "pointer",
-                      textAlign: "left",
-                      fontFamily: "inherit",
-                      color: "#fff",
-                      transition: "background 0.15s",
-                    }}
-                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.05)")}
-                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
-                  >
-                    <div>
-                      <p style={{ fontSize: 14, fontWeight: 600, marginBottom: 3 }}>{m.label}</p>
-                      <p style={{ fontSize: 12, color: "rgba(255,255,255,0.5)", margin: 0 }}>{m.description}</p>
-                    </div>
-                  </button>
-                ))}
-              </div>
+      {/* ── Module Cards (Bento Grid) ── */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {visibleModules.map((mod, index) => (
+          <button
+            key={mod.id}
+            onClick={() => navigate(mod.route)}
+            className={cn(
+              'group relative text-left rounded-2xl border p-6 transition-all duration-300',
+              'hover:scale-[1.02] hover:shadow-xl hover:shadow-black/20',
+              'bg-gradient-to-br',
+              mod.gradient,
+              mod.borderColor,
+              'animate-in fade-in slide-in-from-bottom-4'
             )}
+            style={{ animationDelay: `${index * 100}ms`, animationFillMode: 'both' }}
+          >
+            <div className="flex items-center justify-between mb-5">
+              <div className="w-14 h-14 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform duration-300">
+                {mod.icon}
+              </div>
+              <svg
+                className={cn('w-5 h-5 opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:translate-x-1', mod.accentColor)}
+                fill="none" viewBox="0 0 24 24" stroke="currentColor"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
+            </div>
+
+            <h3 className="text-lg font-semibold text-white mb-1 group-hover:text-flux-orange transition-colors">
+              {mod.title}
+            </h3>
+            <p className={cn('text-xs font-medium uppercase tracking-wider mb-3', mod.accentColor)}>
+              {mod.subtitle}
+            </p>
+            <p className="text-sm text-slate-400 leading-relaxed mb-5">
+              {mod.description}
+            </p>
+
+            <div className="flex gap-3">
+              {mod.stats.map((stat) => (
+                <div key={stat.label} className={cn('px-3 py-1.5 rounded-lg text-xs font-medium', mod.badgeColor)}>
+                  <span className="text-slate-500">{stat.label}:</span> {stat.value}
+                </div>
+              ))}
+            </div>
+
+            <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
+              <div className={cn('absolute inset-0 rounded-2xl bg-gradient-to-br', mod.gradient, 'opacity-50')} />
+            </div>
+          </button>
+        ))}
+      </div>
+
+      {/* ── Quick Actions ── */}
+      {appRole === 'admin' && (
+        <div className="glass rounded-xl border border-white/5 p-6">
+          <h3 className="text-sm font-semibold text-white mb-4 uppercase tracking-wider">
+            Acoes Rapidas (Admin)
+          </h3>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            {[
+              { label: 'Gerenciar Usuarios', route: '/admin/users', icon: '\u{1F465}' },
+              { label: 'Dashboard Geral', route: '/dashboard', icon: '\u{1F4C8}' },
+              { label: 'Novo Ciclo 360', route: '/360/dashboard', icon: '\u{1F504}' },
+              { label: 'Nova Pesquisa NPS', route: '/nps/dashboard', icon: '\u{1F4CB}' },
+            ].map((action) => (
+              <button
+                key={action.label}
+                onClick={() => navigate(action.route)}
+                className="flex items-center gap-3 p-3 rounded-lg bg-white/5 border border-white/5 hover:bg-white/10 hover:border-white/10 transition-all text-left"
+              >
+                <span className="text-lg">{action.icon}</span>
+                <span className="text-xs text-slate-300 font-medium">{action.label}</span>
+              </button>
+            ))}
           </div>
         </div>
-      </section>
-
-      {/* Click fora fecha dropdown */}
-      {exploreOpen && (
-        <div
-          style={{ position: "fixed", inset: 0, zIndex: 40 }}
-          onClick={() => setExploreOpen(false)}
-        />
       )}
-
-      {/* Footer */}
-      <footer
-        style={{
-          borderTop: "1px solid rgba(255,255,255,0.08)",
-          padding: "24px",
-          textAlign: "center",
-        }}
-      >
-        <p style={{ color: "rgba(255,255,255,0.3)", fontSize: 12 }}>
-          Grupo E-sol &mdash; Portal de Avaliações &copy; 2026
-        </p>
-      </footer>
     </div>
   );
+}
+
+function getGreeting(): string {
+  const hour = new Date().getHours();
+  if (hour < 12) return 'Bom dia';
+  if (hour < 18) return 'Boa tarde';
+  return 'Boa noite';
 }

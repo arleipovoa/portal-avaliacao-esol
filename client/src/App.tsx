@@ -1,81 +1,135 @@
-import { Toaster } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import {
-  DEFAULT_MODULE,
-  getDashboardPathForModule,
-  getPersistedModule,
-} from "@/lib/moduleRouting";
-import NotFound from "@/pages/NotFound";
-import { useEffect } from "react";
-import { Route, Switch, Router as WouterRouter, useLocation } from "wouter";
-import { BASE_PATH } from "@shared/const";
-import ErrorBoundary from "./components/ErrorBoundary";
-import DashboardLayout from "./components/DashboardLayout";
-import { ThemeProvider } from "./contexts/ThemeContext";
-import Login from "./pages/Login";
-import Landing from "./pages/Landing";
-import Evaluations from "./pages/Evaluations";
-import Admin from "./pages/Admin";
-import Profile from "./pages/Profile";
-import SubObrasDashboard from "./pages/SubObrasDashboard";
-import Sub360Dashboard from "./pages/Sub360Dashboard";
-import SubNpsDashboard from "./pages/SubNpsDashboard";
-import ObrasEvaluations from "./pages/ObrasEvaluations";
+import { Switch, Route, Redirect } from 'wouter';
+import { useAuth } from '@/_core/hooks/useAuth';
 
-function LegacyDashboardRedirect() {
-  const [, setLocation] = useLocation();
+// ── Layouts ──
+import MainLayout from '@/components/layout/MainLayout';
 
-  useEffect(() => {
-    const module = getPersistedModule() ?? DEFAULT_MODULE;
-    setLocation(getDashboardPathForModule(module));
-  }, [setLocation]);
+// ── Pages: Auth ──
+import Login from '@/pages/Login';
 
-  return null;
+// ── Pages: Core ──
+import Landing from '@/pages/Landing';
+import Dashboard from '@/pages/Dashboard';
+
+// ── Pages: 360 ──
+import Sub360Dashboard from '@/pages/Sub360Dashboard';
+import Evaluation360 from '@/pages/Evaluation360';
+import Evaluations from '@/pages/Evaluations';
+
+// ── Pages: Obras ──
+import ObrasDashboard from '@/pages/ObrasDashboard';
+import ObrasEvaluation from '@/pages/ObrasEvaluation';
+
+// ── Pages: NPS ──
+import NpsDashboard from '@/pages/NpsDashboard';
+import NpsResponses from '@/pages/NpsResponses';
+
+// ── Pages: Admin ──
+import AdminUsers from '@/pages/admin/AdminUsers';
+import EditUserForm from '@/pages/admin/EditUserForm';
+
+// ── Protected Route ──
+function ProtectedRoute({ component: Component, ...rest }: { component: React.ComponentType; path: string }) {
+  const { user, isLoading } = useAuth({ redirectOnUnauthenticated: false });
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-void">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 border-2 border-flux-orange/30 border-t-flux-orange rounded-full animate-spin" />
+          <p className="text-sm text-slate-400 font-display">Carregando...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return <Redirect to="/login" />;
+  }
+
+  return <Component />;
 }
 
-function AuthenticatedRoutes() {
-  return (
-    <DashboardLayout>
-      <Switch>
-        <Route path="/dashboard" component={LegacyDashboardRedirect} />
-        <Route path="/avaliacoes" component={Evaluations} />
-        <Route path="/modulo-360/avaliacoes" component={Evaluations} />
-        <Route path="/modulo-obras/avaliacoes" component={ObrasEvaluations} />
-        <Route path="/admin" component={Admin} />
-        <Route path="/perfil" component={Profile} />
-        <Route path="/modulo-obras/dashboard" component={SubObrasDashboard} />
-        <Route path="/modulo-360/dashboard" component={Sub360Dashboard} />
-        <Route path="/modulo-nps/dashboard" component={SubNpsDashboard} />
-        <Route component={NotFound} />
-      </Switch>
-    </DashboardLayout>
-  );
-}
-
-function AppRouter() {
+// ── App ──
+export default function App() {
   return (
     <Switch>
-      <Route path="/" component={Landing} />
-      <Route path="/login/:module" component={Login} />
+      {/* ── Public Routes ── */}
       <Route path="/login" component={Login} />
-      <Route component={AuthenticatedRoutes} />
+
+      {/* ── Protected Routes (with MainLayout) ── */}
+      <Route path="/">
+        <MainLayout>
+          <Switch>
+            {/* Landing / Home */}
+            <Route path="/" component={Landing} />
+            <Route path="/dashboard" component={Dashboard} />
+
+            {/* ── Modulo 360 ── */}
+            <Route path="/360">
+              <Redirect to="/360/dashboard" />
+            </Route>
+            <Route path="/360/dashboard">
+              <ProtectedRoute path="/360/dashboard" component={Sub360Dashboard} />
+            </Route>
+            <Route path="/360/avaliacoes">
+              <ProtectedRoute path="/360/avaliacoes" component={Evaluations} />
+            </Route>
+            <Route path="/360/avaliar/:userId">
+              <ProtectedRoute path="/360/avaliar/:userId" component={Evaluation360} />
+            </Route>
+
+            {/* ── Modulo Obras ── */}
+            <Route path="/obras">
+              <Redirect to="/obras/dashboard" />
+            </Route>
+            <Route path="/obras/dashboard">
+              <ProtectedRoute path="/obras/dashboard" component={ObrasDashboard} />
+            </Route>
+            <Route path="/obras/avaliacao">
+              <ProtectedRoute path="/obras/avaliacao" component={ObrasEvaluation} />
+            </Route>
+
+            {/* ── Modulo NPS ── */}
+            <Route path="/nps">
+              <Redirect to="/nps/dashboard" />
+            </Route>
+            <Route path="/nps/dashboard">
+              <ProtectedRoute path="/nps/dashboard" component={NpsDashboard} />
+            </Route>
+            <Route path="/nps/respostas">
+              <ProtectedRoute path="/nps/respostas" component={NpsResponses} />
+            </Route>
+
+            {/* ── Admin ── */}
+            <Route path="/admin/users">
+              <ProtectedRoute path="/admin/users" component={AdminUsers} />
+            </Route>
+            <Route path="/admin/users/:id">
+              <ProtectedRoute path="/admin/users/:id" component={EditUserForm} />
+            </Route>
+
+            {/* ── Fallback ── */}
+            <Route>
+              <div className="flex items-center justify-center min-h-[60vh]">
+                <div className="glass rounded-2xl border border-white/5 p-12 text-center max-w-md">
+                  <p className="text-5xl mb-4">404</p>
+                  <h2 className="text-xl font-semibold text-white mb-2">Pagina nao encontrada</h2>
+                  <p className="text-sm text-slate-400 mb-6">
+                    A pagina que voce esta procurando nao existe ou foi movida.
+                  </p>
+                  <a
+                    href="/"
+                    className="inline-flex items-center gap-2 px-5 py-2.5 bg-flux-orange text-void font-semibold text-sm rounded-lg hover:bg-flux-orange/90 transition-all"
+                  >
+                    Voltar ao Inicio
+                  </a>
+                </div>
+              </div>
+            </Route>
+          </Switch>
+        </MainLayout>
+      </Route>
     </Switch>
   );
 }
-
-function App() {
-  return (
-    <ErrorBoundary>
-      <ThemeProvider defaultTheme="light">
-        <TooltipProvider>
-          <Toaster />
-          <WouterRouter base={BASE_PATH}>
-            <AppRouter />
-          </WouterRouter>
-        </TooltipProvider>
-      </ThemeProvider>
-    </ErrorBoundary>
-  );
-}
-
-export default App;
