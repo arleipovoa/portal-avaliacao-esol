@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { cn, getModuleIcon, formatDate, formatCurrency } from '../lib/utils';
 import Header from '../components/layout/Header';
-import Card, { CardHeader, CardTitle, CardDescription, CardContent } from '../components/ui/Card';
-import Button from '../components/ui/Button';
-import Badge from '../components/ui/Badge';
+import Card, { CardHeader, CardTitle, CardDescription, CardContent } from '../components/ui/FluxCard';
+import Button from '../components/ui/FluxButton';
+import Badge from '../components/ui/FluxBadge';
 import Loader from '../components/ui/Loader';
 
 interface DashboardModule {

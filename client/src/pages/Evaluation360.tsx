@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { cn, getScoreBadge, formatPercentage } from '../lib/utils';
 import Header from '../components/layout/Header';
-import Card, { CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '../components/ui/Card';
-import Button from '../components/ui/Button';
-import Badge from '../components/ui/Badge';
-import Input, { Textarea, Select } from '../components/ui/Input';
+import Card, { CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '../components/ui/FluxCard';
+import Button from '../components/ui/FluxButton';
+import Badge from '../components/ui/FluxBadge';
+import Input, { Textarea, Select } from '../components/ui/FluxInput';
 import Loader from '../components/ui/Loader';
 
 interface Criterion {

@@ -25,12 +25,20 @@ import NpsDashboard from '@/pages/NpsDashboard';
 import NpsResponses from '@/pages/NpsResponses';
 
 // ── Pages: Admin ──
-
+import { UsersTab as AdminUsers } from '@/pages/admin/UsersTab';
 import { EditUserForm } from '@/pages/admin/EditUserForm';
+
+const NAV_ITEMS = [
+  { id: 'dashboard', label: 'Dashboard', icon: 'solar:home-bold-duotone', href: '/dashboard' },
+  { id: '360', label: 'Avaliação 360°', icon: 'solar:chart-bold-duotone', href: '/360/dashboard' },
+  { id: 'obras', label: 'Obras', icon: 'solar:buildings-bold-duotone', href: '/obras/dashboard' },
+  { id: 'nps', label: 'NPS', icon: 'solar:star-bold-duotone', href: '/nps/dashboard' },
+  { id: 'admin', label: 'Admin', icon: 'solar:settings-bold-duotone', href: '/admin/users' },
+];
 
 // ── Protected Route ──
 function ProtectedRoute({ component: Component, ...rest }: { component: React.ComponentType; path: string }) {
-  const { user, isLoading } = useAuth({ redirectOnUnauthenticated: false });
+  const { user, loading: isLoading } = useAuth({ redirectOnUnauthenticated: false });
 
   if (isLoading) {
     return (
