@@ -31,7 +31,7 @@ export default function ObrasDashboard() {
   const [, navigate] = useLocation();
   const [filter, setFilter] = useState('all');
 
-  const { data: projects = [], isLoading, error, refetch } = trpc.projects.list.useQuery(undefined, {
+  const { data: projects = [], isLoading, error, refetch } = trpc.projects.listFromPbi.useQuery(undefined, {
     enabled: !!user,
   });
 
