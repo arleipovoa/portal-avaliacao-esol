@@ -3,6 +3,20 @@
 
 @custom-variant dark (&:is(.dark *));
 
+@theme {
+  --color-void: #0B0C15;
+  --color-obsidian: #0B0C15;
+  --color-acid-lime: #ccff00;
+  --color-flux-orange: #ffcc29;
+  --font-sans: Manrope, Geist, ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'Geist Mono', 'JetBrains Mono', ui-monospace, monospace;
+  --font-display: 'Space Grotesk', Manrope, ui-sans-serif, system-ui, sans-serif;
+  --shadow-glow: 0 0 30px rgba(255, 204, 41, 0.1);
+  --shadow-glow-lg: 0 0 60px rgba(255, 204, 41, 0.15);
+  --shadow-glow-xl: 0 0 120px rgba(255, 204, 41, 0.2);
+  --shadow-inner-glow: inset 0 0 30px rgba(255, 204, 41, 0.05);
+}
+
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -84,8 +98,13 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    @apply bg-void text-slate-200;
+    font-family: Manrope, 'Inter', system-ui, -apple-system, sans-serif;
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+    background-size: 4rem 4rem;
+    background-attachment: fixed;
   }
   button:not(:disabled),
   [role="button"]:not([aria-disabled="true"]),
@@ -127,5 +146,39 @@
       padding-right: 2rem;
       max-width: 1280px;
     }
+  }
+
+  .glass {
+    @apply backdrop-blur-lg bg-white/5 border border-white/10;
+  }
+
+  .glass-sm {
+    @apply backdrop-blur-md bg-white/[0.02] border border-white/5;
+  }
+
+  .glass-lg {
+    @apply backdrop-blur-xl bg-white/[0.08] border border-white/20;
+  }
+}
+
+@layer utilities {
+  ::selection {
+    @apply bg-flux-orange/20 text-flux-orange;
+  }
+
+  ::-webkit-scrollbar {
+    @apply w-2 h-2;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-void;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-slate-700 rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-slate-600;
   }
 }
