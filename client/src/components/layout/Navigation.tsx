@@ -180,25 +180,34 @@ export default function Navigation({ collapsed = false, onToggle }: NavigationPr
 
       <div className="border-t border-white/5 p-3 shrink-0">
         {!collapsed ? (
-          <div className="flex items-center gap-3 px-2">
+          <button
+            onClick={() => navigate('/perfil')}
+            className="w-full flex items-center gap-3 px-2 py-1.5 rounded-lg hover:bg-white/5 transition-all text-left group"
+          >
             <div className="w-8 h-8 rounded-full bg-flux-orange/10 border border-flux-orange/20 flex items-center justify-center shrink-0">
               <span className="text-xs font-bold text-flux-orange">
                 {((user as any)?.name || 'U')[0].toUpperCase()}
               </span>
             </div>
-            <div className="min-w-0">
-              <p className="text-xs font-medium text-white truncate">{(user as any)?.name || 'Usuario'}</p>
+            <div className="min-w-0 flex-1">
+              <p className="text-xs font-medium text-white truncate group-hover:text-flux-orange transition-colors">
+                {(user as any)?.name || 'Usuário'}
+              </p>
               <p className="text-[10px] text-slate-500 truncate capitalize">{appRole}</p>
             </div>
-          </div>
+          </button>
         ) : (
-          <div className="flex justify-center">
+          <button
+            onClick={() => navigate('/perfil')}
+            className="flex justify-center w-full hover:opacity-80 transition-opacity"
+            title="Meu Perfil"
+          >
             <div className="w-8 h-8 rounded-full bg-flux-orange/10 border border-flux-orange/20 flex items-center justify-center">
               <span className="text-xs font-bold text-flux-orange">
                 {((user as any)?.name || 'U')[0].toUpperCase()}
               </span>
             </div>
-          </div>
+          </button>
         )}
       </div>
 
