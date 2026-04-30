@@ -68,13 +68,9 @@ export function useAuth(options?: UseAuthOptions) {
   ]);
 
   useEffect(() => {
+    // Login desabilitado temporariamente — sem redirect
     if (!redirectOnUnauthenticated) return;
-    if (meQuery.isLoading || logoutMutation.isPending) return;
-    if (state.user) return;
-    if (typeof window === "undefined") return;
-    if (window.location.pathname === redirectPath) return;
-
-    window.location.href = redirectPath;
+    void redirectPath; // referência mantida para evitar warning de lint
   }, [
     redirectOnUnauthenticated,
     redirectPath,

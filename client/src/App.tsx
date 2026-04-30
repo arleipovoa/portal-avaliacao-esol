@@ -63,11 +63,7 @@ function ProtectedRoute({ component: Component, ...rest }: { component: React.Co
 export default function App() {
   return (
     <Switch>
-      {/* ── Public Routes ── */}
-      <Route path="/login" component={Login} />
-      <Route path="/login/obras"><Redirect to="/login" /></Route>
-      <Route path="/login/360"><Redirect to="/login" /></Route>
-      <Route path="/login/nps"><Redirect to="/login" /></Route>
+      {/* Login desabilitado temporariamente */}
 
       {/* ── Protected Routes (with MainLayout) ── */}
       <Route path="/">
