@@ -3,7 +3,7 @@ import { z } from "zod";
 import { getDb } from "../db";
 import { projects, projectMembers, obraScores, obraEvaluations, obraCriteria, users } from "../../drizzle/schema";
 import { eq, and } from "drizzle-orm";
-import { fetchPbiProjects } from "../lib/pbiClient";
+import { fetchPbiProjects, generatePbiDocuments } from "../lib/pbiClient";
 // import { canAccessObras } from "../_core/accessControl";
 
 export const projectsRouter = router({
@@ -232,6 +232,13 @@ export const projectsRouter = router({
       if (!db) throw new Error("Database unavailable");
       const scores = await db.select().from(obraScores).where(eq(obraScores.projectId, input.projectId));
       return scores;
+    }),
+
+  // Gera contrato e procuração via API do form-pbi
+  generateDocuments: protectedProcedure
+    .input(z.string()) // codigoProjeto ex: "P1044"
+    .mutation(async ({ input }) => {
+      return generatePbiDocuments(input);
     }),
 
   // Busca projetos do form-pbi, sincroniza na tabela local e retorna com scores

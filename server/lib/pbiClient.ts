@@ -41,6 +41,20 @@ export function clearPbiCache() {
   _cache = null;
 }
 
+export async function generatePbiDocuments(codigoProjeto: string): Promise<{ contrato?: string; procuracao?: string }> {
+  const numericCode = codigoProjeto.replace(/^P/i, '');
+  const resp = await fetch(`${PBI_API_URL}/gerar-documentos/${numericCode}`, {
+    method: 'POST',
+    headers: { 'x-api-key': PBI_API_KEY },
+    signal: AbortSignal.timeout(30_000),
+  });
+  if (!resp.ok) {
+    const body = await resp.text().catch(() => '');
+    throw new Error(`Falha ao gerar documentos (HTTP ${resp.status}): ${body}`);
+  }
+  return resp.json();
+}
+
 function mapStatus(s = ''): 'planning' | 'in_progress' | 'completed' | 'cancelled' {
   const lower = s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
   if (lower.includes('instalac') || lower.includes('andamento') || lower.includes('execucao')) return 'in_progress';
@@ -59,25 +73,40 @@ function mapCategory(kwp: number): 'B1' | 'B2' | 'B3' | 'B4' | 'B5' | 'B6' | 'B7
   return 'B7';
 }
 
-function mapRawProject(p: any): PbiProject {
-  const rawCode = String(p['Código P'] ?? p['Codigo P'] ?? p.p ?? p.P ?? p['A2'] ?? '').trim();
-  const codigoProjeto = /^P\d/i.test(rawCode) ? rawCode.toUpperCase() : rawCode ? `P${rawCode}` : `P${Math.random().toString(36).slice(2, 7)}`;
+// Nomes de campos usando Unicode escapes explícitos (evita ambiguidade de encoding)
+const F_CODIGO        = 'Código P';            // "Código P"
+const F_KWP           = 'Potência (kWp)';      // "Potência (kWp)"
+const F_LOGRADOURO    = 'Logradouro/Córrego';  // "Logradouro/Córrego"
+const F_MODULOS       = 'Qnt. de Módulos';     // "Qnt. de Módulos"
+const F_INSTALACAO_INI = 'Instalação Iniciada';   // "Instalação Iniciada"
+const F_INSTALACAO_FIM = 'Instalação Finalizada'; // "Instalação Finalizada"
+const F_STATUS        = 'Status da Usina';
+const F_APELIDO       = 'Apelido da Usina';
+const F_TITULAR       = 'Titular do Projeto';
 
-  const kwpRaw = p['Potência (kWp)'] ?? p['Potencia (kWp)'] ?? 0;
+function mapRawProject(p: any): PbiProject {
+  const rawCode = String(p[F_CODIGO] ?? p['Codigo P'] ?? p.p ?? p.P ?? p['A2'] ?? '').trim();
+  const codigoProjeto = /^P\d/i.test(rawCode)
+    ? rawCode.toUpperCase()
+    : rawCode
+      ? `P${rawCode}`
+      : `P${Math.random().toString(36).slice(2, 7)}`;
+
+  const kwpRaw = p[F_KWP] ?? p['Potencia (kWp)'] ?? 0;
   const powerKwp = parseFloat(String(kwpRaw).replace(',', '.')) || 0;
 
   return {
     codigoProjeto,
-    clientName: p['Apelido da Usina'] || p['Titular do Projeto'] || 'Sem Nome',
-    address: p['Logradouro/Córrego'] || '',
+    clientName: p[F_APELIDO] || p[F_TITULAR] || 'Sem Nome',
+    address: p[F_LOGRADOURO] || '',
     city: p['Cidade'] || '',
     state: p['UF'] || '',
     powerKwp,
     category: mapCategory(powerKwp),
-    status: mapStatus(p['Status da Usina']),
-    moduleCount: Number(p['Qnt. de Módulos']) || 0,
-    startDate: p['Instalação Iniciada'] || null,
-    endDate: p['Instalação Finalizada'] || null,
+    status: mapStatus(p[F_STATUS]),
+    moduleCount: Number(p[F_MODULOS]) || 0,
+    startDate: p[F_INSTALACAO_INI] || null,
+    endDate: p[F_INSTALACAO_FIM] || null,
     vendedor: p['Vendedor'] || '',
   };
 }

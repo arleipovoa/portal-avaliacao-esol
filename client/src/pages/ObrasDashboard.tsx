@@ -30,6 +30,19 @@ export default function ObrasDashboard() {
   const { user } = useAuth({ redirectOnUnauthenticated: true });
   const [, navigate] = useLocation();
   const [filter, setFilter] = useState('all');
+  const [generatingDocs, setGeneratingDocs] = useState<string | null>(null);
+  const [docsResult, setDocsResult] = useState<{ code: string; contrato?: string; procuracao?: string } | null>(null);
+
+  const generateDocsMutation = trpc.projects.generateDocuments.useMutation({
+    onSuccess: (data, variables) => {
+      setDocsResult({ code: variables, ...data });
+      setGeneratingDocs(null);
+    },
+    onError: (err) => {
+      alert(`Erro ao gerar documentos: ${err.message}`);
+      setGeneratingDocs(null);
+    },
+  });
 
   const { data: projects = [], isLoading, error, refetch } = trpc.projects.listFromPbi.useQuery(undefined, {
     enabled: !!user,
@@ -145,15 +158,16 @@ export default function ObrasDashboard() {
                 <div className="flex items-center justify-between">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-3 mb-2">
+                      <span className="text-[10px] font-mono text-flux-orange/70 shrink-0">{project.code}</span>
                       <h3 className="text-sm font-semibold text-white truncate group-hover:text-flux-orange transition-colors">
                         {project.clientName}
                       </h3>
-                      <span className={cn('px-2.5 py-0.5 rounded-full text-[10px] font-medium', statusCfg.bg, statusCfg.color)}>
+                      <span className={cn('px-2.5 py-0.5 rounded-full text-[10px] font-medium shrink-0', statusCfg.bg, statusCfg.color)}>
                         {statusCfg.label}
                       </span>
                     </div>
                     <div className="flex items-center gap-4 text-xs text-slate-500">
-                      <span>📍 {project.address || project.city || 'Sem endereço'}</span>
+                      <span>📍 {project.city || project.address || 'Sem endereço'}{project.state ? ` - ${project.state}` : ''}</span>
                       <span>☀️ {project.powerKwp.toFixed(2)} kWp</span>
                       <span>🏷️ Cat. {project.category}</span>
                     </div>
@@ -172,13 +186,67 @@ export default function ObrasDashboard() {
                     </div>
                   )}
 
-                  <svg className="w-4 h-4 text-slate-600 group-hover:text-flux-orange transition-all ml-4 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setGeneratingDocs(project.code);
+                      generateDocsMutation.mutate(project.code);
+                    }}
+                    disabled={generatingDocs === project.code}
+                    title="Gerar Contrato e Procuração"
+                    className="ml-3 p-1.5 rounded-lg text-slate-500 hover:text-flux-orange hover:bg-flux-orange/10 transition-all shrink-0 disabled:opacity-40"
+                  >
+                    {generatingDocs === project.code
+                      ? <div className="w-4 h-4 border border-flux-orange/30 border-t-flux-orange rounded-full animate-spin" />
+                      : <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                    }
+                  </button>
+                  <svg className="w-4 h-4 text-slate-600 group-hover:text-flux-orange transition-all ml-1 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
                 </div>
               </div>
             );
           })}
+        </div>
+      )}
+
+      {/* Modal de links dos documentos gerados */}
+      {docsResult && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" onClick={() => setDocsResult(null)}>
+          <div className="glass rounded-2xl border border-flux-orange/20 p-8 max-w-md w-full mx-4" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-white font-semibold">Documentos — {docsResult.code}</h3>
+              <button onClick={() => setDocsResult(null)} className="text-slate-400 hover:text-white transition-colors">✕</button>
+            </div>
+            <div className="space-y-3">
+              {docsResult.contrato && (
+                <a href={docsResult.contrato} target="_blank" rel="noopener noreferrer"
+                  className="flex items-center gap-3 p-4 rounded-xl bg-flux-orange/10 border border-flux-orange/20 hover:border-flux-orange/40 transition-all group">
+                  <span className="text-2xl">📄</span>
+                  <div>
+                    <p className="text-sm font-medium text-flux-orange">Contrato</p>
+                    <p className="text-xs text-slate-400">Clique para abrir no Google Drive</p>
+                  </div>
+                  <svg className="w-4 h-4 text-flux-orange ml-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
+                </a>
+              )}
+              {docsResult.procuracao && (
+                <a href={docsResult.procuracao} target="_blank" rel="noopener noreferrer"
+                  className="flex items-center gap-3 p-4 rounded-xl bg-blue-500/10 border border-blue-500/20 hover:border-blue-500/40 transition-all group">
+                  <span className="text-2xl">📋</span>
+                  <div>
+                    <p className="text-sm font-medium text-blue-400">Procuração</p>
+                    <p className="text-xs text-slate-400">Clique para abrir no Google Drive</p>
+                  </div>
+                  <svg className="w-4 h-4 text-blue-400 ml-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
+                </a>
+              )}
+              {!docsResult.contrato && !docsResult.procuracao && (
+                <p className="text-slate-400 text-sm text-center py-4">Nenhum documento retornado pela API.</p>
+              )}
+            </div>
+          </div>
         </div>
       )}
     </div>
