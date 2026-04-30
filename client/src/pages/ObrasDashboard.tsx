@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useLocation } from 'wouter';
 import { useAuth } from '@/_core/hooks/useAuth';
 import { trpc } from '@/lib/trpc';
@@ -23,8 +24,6 @@ const FILTER_TABS = [
   { key: 'em_andamento',label: 'Em Andamento'},
   { key: 'concluido',   label: 'Concluídos'  },
 ];
-
-import { useState } from 'react';
 
 export default function ObrasDashboard() {
   const { user } = useAuth({ redirectOnUnauthenticated: true });
