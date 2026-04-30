@@ -3,6 +3,7 @@ import { z } from "zod";
 import { getDb } from "../db";
 import { projects, projectMembers, obraScores, obraEvaluations, obraCriteria, users } from "../../drizzle/schema";
 import { eq, and } from "drizzle-orm";
+import { fetchPbiProjects, generatePbiDocuments } from "../lib/pbiClient";
 // import { canAccessObras } from "../_core/accessControl";
 
 export const projectsRouter = router({
@@ -232,4 +233,75 @@ export const projectsRouter = router({
       const scores = await db.select().from(obraScores).where(eq(obraScores.projectId, input.projectId));
       return scores;
     }),
+
+  // Gera contrato e procuração via API do form-pbi
+  generateDocuments: protectedProcedure
+    .input(z.string()) // codigoProjeto ex: "P1044"
+    .mutation(async ({ input }) => {
+      return generatePbiDocuments(input);
+    }),
+
+  // Busca projetos do form-pbi, sincroniza na tabela local e retorna com scores
+  listFromPbi: protectedProcedure.query(async () => {
+    const db = await getDb();
+    if (!db) throw new Error("Database unavailable");
+
+    let pbiProjects: Awaited<ReturnType<typeof fetchPbiProjects>> = [];
+    try {
+      pbiProjects = await fetchPbiProjects();
+    } catch (err) {
+      console.error('[PBI] Falha ao buscar projetos da API:', err);
+      // Fallback: retorna projetos locais se a API estiver indisponível
+      const localProjects = await db.select().from(projects);
+      const allScores = await db.select().from(obraScores);
+      return localProjects.map(proj => {
+        const score = allScores.find(s => s.projectId === proj.id);
+        return { ...proj, projectScore: score?.notaObraPercentual ?? null, baseValue: 0, correctedValue: 0, fromPbi: false };
+      });
+    }
+
+    // Upsert cada projeto do form-pbi na tabela local (keyed by code)
+    for (const p of pbiProjects) {
+      await db.insert(projects).values({
+        code: p.codigoProjeto,
+        clientName: p.clientName,
+        address: p.address || null,
+        city: p.city || null,
+        state: p.state || null,
+        powerKwp: p.powerKwp ? String(p.powerKwp) : null,
+        category: p.category,
+        status: p.status,
+        moduleCount: p.moduleCount || null,
+        startDate: p.startDate ? new Date(p.startDate) : null,
+        endDate: p.endDate ? new Date(p.endDate) : null,
+      } as any).onDuplicateKeyUpdate({
+        set: {
+          clientName: p.clientName,
+          city: p.city || null,
+          state: p.state || null,
+          powerKwp: p.powerKwp ? String(p.powerKwp) : null,
+          category: p.category,
+          status: p.status,
+          moduleCount: p.moduleCount || null,
+          startDate: p.startDate ? new Date(p.startDate) : null,
+          endDate: p.endDate ? new Date(p.endDate) : null,
+        },
+      });
+    }
+
+    // Retorna a lista local (agora sincronizada) com scores
+    const allProjects = await db.select().from(projects);
+    const allScores = await db.select().from(obraScores);
+
+    return allProjects.map(proj => {
+      const score = allScores.find(s => s.projectId === proj.id);
+      return {
+        ...proj,
+        projectScore: score?.notaObraPercentual ?? null,
+        baseValue: parseFloat(String(score?.bonusValorBase ?? 0)),
+        correctedValue: parseFloat(String(score?.bonusValorCorrigido ?? 0)),
+        fromPbi: true,
+      };
+    });
+  }),
 });

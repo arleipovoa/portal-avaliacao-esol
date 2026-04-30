@@ -27,6 +27,7 @@ import NpsResponses from '@/pages/NpsResponses';
 // ── Pages: Admin ──
 import { UsersTab as AdminUsers } from '@/pages/admin/UsersTab';
 import { EditUserForm } from '@/pages/admin/EditUserForm';
+import Profile from '@/pages/Profile';
 
 const NAV_ITEMS = [
   { id: 'dashboard', label: 'Dashboard', icon: 'solar:home-bold-duotone', href: '/dashboard' },
@@ -115,6 +116,11 @@ export default function App() {
             </Route>
             <Route path="/admin/users/:id">
               <ProtectedRoute path="/admin/users/:id" component={EditUserForm} />
+            </Route>
+
+            {/* ── Perfil ── */}
+            <Route path="/perfil">
+              <ProtectedRoute path="/perfil" component={Profile} />
             </Route>
 
             {/* ── Fallback ── */}
