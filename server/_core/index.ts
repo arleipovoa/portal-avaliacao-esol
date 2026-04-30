@@ -8,18 +8,17 @@ import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
 
+// Uses a connection attempt instead of bind+close to avoid Windows TIME_WAIT race condition
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
-    const server = net.createServer();
-    server.listen(port, () => {
-      server.close(() => resolve(true));
-    });
-    server.on("error", () => resolve(false));
+    const socket = net.createConnection({ port, host: '127.0.0.1' });
+    socket.on('connect', () => { socket.destroy(); resolve(false); }); // someone is listening
+    socket.on('error', () => { socket.destroy(); resolve(true); });    // ECONNREFUSED = free
   });
 }
 
 async function findAvailablePort(startPort: number = 3000): Promise<number> {
-  for (let port = startPort; port < startPort + 20; port++) {
+  for (let port = startPort; port < startPort + 50; port++) {
     if (await isPortAvailable(port)) {
       return port;
     }
