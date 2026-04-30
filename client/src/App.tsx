@@ -65,6 +65,9 @@ export default function App() {
     <Switch>
       {/* ── Public Routes ── */}
       <Route path="/login" component={Login} />
+      <Route path="/login/obras"><Redirect to="/login" /></Route>
+      <Route path="/login/360"><Redirect to="/login" /></Route>
+      <Route path="/login/nps"><Redirect to="/login" /></Route>
 
       {/* ── Protected Routes (with MainLayout) ── */}
       <Route path="/">
