@@ -45,7 +45,14 @@ export async function setupVite(app: Express, server: Server) {
 }
 
 export function serveStatic(app: Express) {
-  const distPath = path.resolve(import.meta.dirname, "../..", "dist", "public");
+  // Em dev (rodando via tsx), import.meta.dirname = server/_core/, entao precisamos de
+  // ../../dist/public para chegar em <root>/dist/public.
+  // Em prod, este arquivo eh inlined dentro de dist/index.js (bundle do esbuild),
+  // entao import.meta.dirname = dist/ e o public esta em dist/public.
+  const distPath =
+    process.env.NODE_ENV === "production"
+      ? path.resolve(import.meta.dirname, "public")
+      : path.resolve(import.meta.dirname, "../..", "dist", "public");
   if (!fs.existsSync(distPath)) {
     console.error(
       `Could not find the build directory: ${distPath}, make sure to build the client first`
