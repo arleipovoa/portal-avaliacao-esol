@@ -45,14 +45,17 @@ export async function setupVite(app: Express, server: Server) {
 }
 
 export function serveStatic(app: Express) {
-  // Em dev (rodando via tsx), import.meta.dirname = server/_core/, entao precisamos de
-  // ../../dist/public para chegar em <root>/dist/public.
-  // Em prod, este arquivo eh inlined dentro de dist/index.js (bundle do esbuild),
-  // entao import.meta.dirname = dist/ e o public esta em dist/public.
+  // Resolve dist/public sem depender de NODE_ENV (que nem sempre chega correto no
+  // processo do PM2). Em prod, este arquivo eh inlined no bundle dist/index.js,
+  // entao import.meta.dirname = .../dist e existe public/ ao lado.
+  // Em dev (tsx), import.meta.dirname = server/_core/, e dist/public esta dois
+  // niveis acima. Tentamos o caminho de prod primeiro pois eh o caso comum em runtime.
+  const candidates = [
+    path.resolve(import.meta.dirname, "public"),
+    path.resolve(import.meta.dirname, "../..", "dist", "public"),
+  ];
   const distPath =
-    process.env.NODE_ENV === "production"
-      ? path.resolve(import.meta.dirname, "public")
-      : path.resolve(import.meta.dirname, "../..", "dist", "public");
+    candidates.find((c) => fs.existsSync(c)) ?? candidates[0];
   if (!fs.existsSync(distPath)) {
     console.error(
       `Could not find the build directory: ${distPath}, make sure to build the client first`
