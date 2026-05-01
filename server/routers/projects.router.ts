@@ -3,8 +3,55 @@ import { z } from "zod";
 import { getDb } from "../db";
 import { projects, projectMembers, obraScores, obraEvaluations, obraCriteria, users } from "../../drizzle/schema";
 import { eq, and } from "drizzle-orm";
-import { fetchPbiProjects, generatePbiDocuments } from "../lib/pbiClient";
+import { fetchPbiProjects, generatePbiDocuments, isPbiConfigured } from "../lib/pbiClient";
+import { MOCK_PROJECTS } from "../lib/mockProjects";
+import { MOCK_OBRA_CRITERIA_GROUPED } from "../lib/mockObraCriteria";
 // import { canAccessObras } from "../_core/accessControl";
+
+
+// ── Modo mock ──
+// Quando PBI_API_URL nao esta configurada, evitamos qualquer escrita no DB
+// (a tabela `projects` nao necessariamente existe no DATABASE_URL legado).
+// IDs sao derivados do codigo: P1001 -> 1001, permitindo getById/submitScores
+// funcionarem de forma estavel.
+function mockProjectId(codigoProjeto: string): number {
+  const numeric = parseInt(codigoProjeto.replace(/\D/g, ""), 10);
+  return Number.isFinite(numeric) ? numeric : 1;
+}
+
+function buildMockProjectList() {
+  return MOCK_PROJECTS.map((p) => ({
+    id: mockProjectId(p.codigoProjeto),
+    code: p.codigoProjeto,
+    clientName: p.clientName,
+    address: p.address ?? null,
+    city: p.city ?? null,
+    state: p.state ?? null,
+    powerKwp: p.powerKwp ? String(p.powerKwp) : null,
+    category: p.category,
+    status: p.status,
+    moduleCount: p.moduleCount ?? null,
+    startDate: p.startDate ? new Date(p.startDate) : null,
+    endDate: p.endDate ? new Date(p.endDate) : null,
+    completedDate: null,
+    modulePower: null,
+    paymentMonth: null,
+    actualDays: null,
+    expectedDaysOverride: null,
+    hasFinancialLoss: false,
+    financialLossReason: null,
+    forceMajeureJustification: null,
+    photosLink: null,
+    reportLink: null,
+    nps: null,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    projectScore: null,
+    baseValue: 0,
+    correctedValue: 0,
+    fromPbi: false,
+  }));
+}
 
 export const projectsRouter = router({
   // GET /api/projects - List all projects
@@ -45,6 +92,11 @@ export const projectsRouter = router({
   getById: protectedProcedure
     .input(z.object({ id: z.number() }))
     .query(async ({ input }) => {
+      if (!isPbiConfigured()) {
+        const mock = buildMockProjectList().find((p) => p.id === input.id);
+        if (!mock) throw new Error("Project not found");
+        return { ...mock, members: [] };
+      }
       const db = await getDb();
       if (!db) throw new Error("Database unavailable");
       const projectRes = await db.select().from(projects).where(eq(projects.id, input.id));
@@ -140,10 +192,13 @@ export const projectsRouter = router({
   // GET /api/projects/:id/criteria - Get obra criteria for evaluation
   getCriteria: protectedProcedure
     .query(async () => {
+      if (!isPbiConfigured()) {
+        return MOCK_OBRA_CRITERIA_GROUPED;
+      }
       const db = await getDb();
       if (!db) throw new Error("Database unavailable");
       const criteria = await db.select().from(obraCriteria).where(eq(obraCriteria.active, true));
-      
+
       const grouped = criteria.reduce((acc, criterion) => {
         const cat = criterion.category || "outros";
         if (!acc[cat]) acc[cat] = [];
@@ -173,6 +228,24 @@ export const projectsRouter = router({
 
       const baseScore = ((notaSeguranca * 2 + notaFuncionalidade * 2 + notaEstetica * 1) / 5);
       const notaObraPercentual = (baseScore * 0.5) + (mediaOs * 0.2) + (eficiencia * 0.15) + (npsCliente * 0.15);
+
+      // Mock mode: simula calculo sem persistir
+      if (!isPbiConfigured()) {
+        const mock = buildMockProjectList().find((p) => p.id === projectId);
+        if (!mock) throw new Error("Project not found");
+        const bonusMap: Record<string, number> = {
+          B1: 200, B2: 300, B3: 500, B4: 750, B5: 1000, B6: 1500, B7: 2000,
+        };
+        const baseCategory = mock.category ?? "B1";
+        const bonusValorBase = bonusMap[baseCategory] || 200;
+        const bonusValorCorrigido = bonusValorBase * (notaObraPercentual / 100);
+        return {
+          notaObraPercentual,
+          bonusValorBase,
+          bonusValorCorrigido,
+          message: "Scores submitted successfully (mock — nao persistido)",
+        };
+      }
 
       const projectRes = await db.select().from(projects).where(eq(projects.id, projectId));
       if (!projectRes.length) throw new Error("Project not found");
@@ -243,6 +316,12 @@ export const projectsRouter = router({
 
   // Busca projetos do form-pbi, sincroniza na tabela local e retorna com scores
   listFromPbi: protectedProcedure.query(async () => {
+    // Modo mock: nao toca no DB, evita problema de tabela 'projects' nao existir
+    // no banco do DATABASE_URL legado (a tabela real fica no banco de obras).
+    if (!isPbiConfigured()) {
+      return buildMockProjectList();
+    }
+
     const db = await getDb();
     if (!db) throw new Error("Database unavailable");
 
@@ -251,7 +330,6 @@ export const projectsRouter = router({
       pbiProjects = await fetchPbiProjects();
     } catch (err) {
       console.error('[PBI] Falha ao buscar projetos da API:', err);
-      // Fallback: retorna projetos locais se a API estiver indisponível
       const localProjects = await db.select().from(projects);
       const allScores = await db.select().from(obraScores);
       return localProjects.map(proj => {

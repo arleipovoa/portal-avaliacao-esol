@@ -24,7 +24,7 @@ const CACHE_TTL = 5 * 60 * 1000;
 // Quando PBI_API_URL nao esta configurada (modo dev/sem integracao), devolve
 // projetos simulados — permite testar toda a UI do modulo Obras sem dependencia
 // externa. Remover este branch quando a API form-pbi estiver acessivel.
-function isPbiConfigured(): boolean {
+export function isPbiConfigured(): boolean {
   return Boolean(PBI_API_URL && !PBI_API_URL.includes("localhost"));
 }
 
