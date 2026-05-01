@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useAuth } from "@/_core/hooks/useAuth";
 import {
   type AppModule,
   DEFAULT_MODULE,
@@ -33,6 +34,7 @@ const MODULE_COPY: Record<AppModule, { title: string; subtitle: string }> = {
 
 export default function Login() {
   const [location, setLocation] = useLocation();
+  const { user, loading: authLoading } = useAuth();
 
   const activeModule = useMemo(
     () => resolveActiveModule(location || "/login"),
@@ -43,7 +45,27 @@ export default function Login() {
     persistModule(activeModule);
   }, [activeModule]);
 
+  // Quando AUTH_BYPASS estiver ativo no backend, auth.me ja retorna um usuario
+  // e a tela de login deixa de ser necessaria - vamos direto para o dashboard
+  // do modulo ativo. Mesmo comportamento util quando o usuario tem sessao valida
+  // e tenta voltar ao /login: redireciona em vez de exibir o formulario.
+  useEffect(() => {
+    if (authLoading) return;
+    if (!user) return;
+    persistModule(activeModule);
+    window.location.replace(`${BASE_PATH}${getDashboardPathForModule(activeModule)}`);
+  }, [authLoading, user, activeModule]);
+
   const moduleCopy = MODULE_COPY[activeModule] ?? MODULE_COPY[DEFAULT_MODULE];
+
+  // Enquanto descobrimos se ha sessao (ou bypass), evita um flash do form de login.
+  if (authLoading || user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#12110f] px-4">
+        <Loader2 className="h-6 w-6 animate-spin text-[#ffcc29]" />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#12110f] px-4">

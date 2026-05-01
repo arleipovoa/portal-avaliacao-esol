@@ -2,16 +2,19 @@ export type AppModule = "obras" | "360" | "nps";
 
 const MODULE_STORAGE_KEY = "esol-active-module";
 
+// IMPORTANT: estes paths PRECISAM bater com as <Route> registradas em App.tsx.
+// Antes apontavam para /login/<modulo> e /modulo-<modulo>/dashboard, que nao
+// existiam no Switch - por isso o login redirecionava para tela em branco.
 const LOGIN_PATHS: Record<AppModule, string> = {
-  obras: "/login/obras",
-  "360": "/login/360",
-  nps: "/login/nps",
+  obras: "/login",
+  "360": "/login",
+  nps: "/login",
 };
 
 const DASHBOARD_PATHS: Record<AppModule, string> = {
-  obras: "/modulo-obras/dashboard",
-  "360": "/modulo-360/dashboard",
-  nps: "/modulo-nps/dashboard",
+  obras: "/obras/dashboard",
+  "360": "/360/dashboard",
+  nps: "/nps/dashboard",
 };
 
 export const DEFAULT_MODULE: AppModule = "obras";

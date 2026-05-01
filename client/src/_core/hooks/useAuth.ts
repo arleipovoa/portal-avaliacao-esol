@@ -15,7 +15,7 @@ export function useAuth(options?: UseAuthOptions) {
     options?.redirectPath ??
     (typeof window !== "undefined"
       ? `${BASE_PATH}${getLoginPathForCurrentPath(window.location.pathname)}`
-      : `${BASE_PATH}/login/obras`);
+      : `${BASE_PATH}/login`);
   const utils = trpc.useUtils();
 
   const meQuery = trpc.auth.me.useQuery(undefined, {
