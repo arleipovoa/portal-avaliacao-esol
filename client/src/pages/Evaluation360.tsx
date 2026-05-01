@@ -1,5 +1,4 @@
-import { Redirect } from 'wouter';
-
-export default function Evaluation360() {
-  return <Redirect to="/360/avaliacoes" />;
+// REMOVIDO no reboot — pagina legada. Mantida como stub para nao quebrar bundles.
+export default function Evaluation360Stub() {
+  return null;
 }

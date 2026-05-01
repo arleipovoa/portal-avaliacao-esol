@@ -1,4 +1,3 @@
-import { systemRouter } from "../_core/systemRouter";
 import { router } from "../_core/trpc";
 import { adminRouter } from "./admin.router";
 import { areasRouter } from "./areas.router";
@@ -11,8 +10,7 @@ import { usersRouter } from "./users.router";
 import { projectsRouter } from "./projects.router";
 
 export const appRouter = router({
-  system: systemRouter,
-  auth: authRouter,
+  auth: authRouter, // stub vazio — mantido por compatibilidade
   areas: areasRouter,
   users: usersRouter,
   cycles: cyclesRouter,
