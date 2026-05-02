@@ -360,73 +360,11 @@ export const projectsRouter = router({
       return generatePbiDocuments(input);
     }),
 
-  // Busca projetos do form-pbi, sincroniza na tabela local e retorna com scores
+  // Lista projetos do form-pbi (ou mocks se nao configurado).
+  // NAO faz upsert no DB local: a fonte de verdade eh a planilha via API.
+  // Quando voltar a salvar scores reais, usaremos `obraScores` separado por code.
   listFromPbi: protectedProcedure.query(async () => {
-    // Modo mock: nao toca no DB, evita problema de tabela 'projects' nao existir
-    // no banco do DATABASE_URL legado (a tabela real fica no banco de obras).
-    if (!isPbiConfigured()) {
-      return buildMockProjectList();
-    }
-
-    const db = await getDb();
-    if (!db) throw new Error("Database unavailable");
-
-    let pbiProjects: Awaited<ReturnType<typeof fetchPbiProjects>> = [];
-    try {
-      pbiProjects = await fetchPbiProjects();
-    } catch (err) {
-      console.error('[PBI] Falha ao buscar projetos da API:', err);
-      const localProjects = await db.select().from(projects);
-      const allScores = await db.select().from(obraScores);
-      return localProjects.map(proj => {
-        const score = allScores.find(s => s.projectId === proj.id);
-        return { ...proj, projectScore: score?.notaObraPercentual ?? null, baseValue: 0, correctedValue: 0, fromPbi: false };
-      });
-    }
-
-    // Upsert cada projeto do form-pbi na tabela local (keyed by code)
-    for (const p of pbiProjects) {
-      await db.insert(projects).values({
-        code: p.codigoProjeto,
-        clientName: p.clientName,
-        address: p.address || null,
-        city: p.city || null,
-        state: p.state || null,
-        powerKwp: p.powerKwp ? String(p.powerKwp) : null,
-        category: p.category,
-        status: p.status,
-        moduleCount: p.moduleCount || null,
-        startDate: p.startDate ? new Date(p.startDate) : null,
-        endDate: p.endDate ? new Date(p.endDate) : null,
-      } as any).onDuplicateKeyUpdate({
-        set: {
-          clientName: p.clientName,
-          city: p.city || null,
-          state: p.state || null,
-          powerKwp: p.powerKwp ? String(p.powerKwp) : null,
-          category: p.category,
-          status: p.status,
-          moduleCount: p.moduleCount || null,
-          startDate: p.startDate ? new Date(p.startDate) : null,
-          endDate: p.endDate ? new Date(p.endDate) : null,
-        },
-      });
-    }
-
-    // Retorna a lista local (agora sincronizada) com scores
-    const allProjects = await db.select().from(projects);
-    const allScores = await db.select().from(obraScores);
-
-    return allProjects.map(proj => {
-      const score = allScores.find(s => s.projectId === proj.id);
-      return {
-        ...proj,
-        projectScore: score?.notaObraPercentual ?? null,
-        baseValue: parseFloat(String(score?.bonusValorBase ?? 0)),
-        correctedValue: parseFloat(String(score?.bonusValorCorrigido ?? 0)),
-        fromPbi: true,
-      };
-    });
+    return fetchAllProjectsForUI();
   }),
 
   // ── Lista projetos ELEGIVEIS para avaliacao em um mes especifico ──
