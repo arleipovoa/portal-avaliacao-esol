@@ -1,0 +1,3230 @@
+[
+  {
+    "projeto": "P774",
+    "cliente": "João Luiz Gonzaga",
+    "presenca": [
+      "Moisés",
+      "Gabriel T",
+      "Kauã"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 9.5,
+      "Fábio": 10.0,
+      "Moisés": 10.0,
+      "Gabriel T": 10.0,
+      "Gabriel M": 10.0,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P775",
+    "cliente": "João Paulo Louback",
+    "presenca": [
+      "Elivelton",
+      "Gabriel M",
+      "Hyan",
+      "Gustavo"
+    ],
+    "mediasPorColaborador": {
+      "Gabriel M": 10.0,
+      "Hyan": 9.666666667,
+      "Gustavo G": 10.0,
+      "Elivelton": 10.0,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P767",
+    "cliente": "Joanice Ferreira",
+    "presenca": [
+      "Moisés",
+      "Gabriel T",
+      "Kauã"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 10.0,
+      "Fábio": 10.0,
+      "Moisés": 10.0,
+      "Gabriel T": 10.0,
+      "Gabriel M": 10.0,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P762",
+    "cliente": "Ana Carolina Freitas",
+    "presenca": [
+      "Moisés",
+      "Gabriel T",
+      "Kauã"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 7.0,
+      "Fábio": 10.0,
+      "Moisés": 10.0,
+      "Gabriel T": 10.0,
+      "Gabriel M": 10.0,
+      "Material": 9.666666667,
+      "Projeto": 9.333333333
+    }
+  },
+  {
+    "projeto": "P754",
+    "cliente": "Lúcia Aparecida Moura",
+    "presenca": [
+      "Moisés",
+      "Gabriel T",
+      "Kauã"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 10.0,
+      "Fábio": 10.0,
+      "Moisés": 10.0,
+      "Gabriel T": 10.0,
+      "Gabriel M": 10.0,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P724",
+    "cliente": "Rodrigo (SABOR AMIL) Mercearia",
+    "presenca": [
+      "Elivelton",
+      "Gabriel M",
+      "Hyan",
+      "Gustavo"
+    ],
+    "mediasPorColaborador": {
+      "Gabriel M": 10.0,
+      "Hyan": 9.666666667,
+      "Gustavo G": 10.0,
+      "Elivelton": 10.0,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P782",
+    "cliente": "Mariolucio Dutra Brandão",
+    "presenca": [
+      "Moisés",
+      "Gabriel M",
+      "Hyan",
+      "Gustavo"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 10.0,
+      "Moisés": 10.0,
+      "Gabriel M": 10.0,
+      "Hyan": 10.0,
+      "Gustavo G": 10.0,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P729",
+    "cliente": "Antônio Claudio da Costa",
+    "presenca": [
+      "Elivelton",
+      "Gabriel M",
+      "Hyan"
+    ],
+    "mediasPorColaborador": {
+      "Gabriel M": 10.0,
+      "Hyan": 10.0,
+      "Elivelton": 10.0,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P781",
+    "cliente": "Leonilson Barbosa Lima",
+    "presenca": [
+      "Moisés",
+      "Gabriel T",
+      "Kauã"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 10.0,
+      "Fábio": 10.0,
+      "Moisés": 10.0,
+      "Gabriel T": 10.0,
+      "Gabriel M": 10.0,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P780",
+    "cliente": "Marcos Roberto de Assis",
+    "presenca": [
+      "Elivelton",
+      "Gabriel M",
+      "Hyan",
+      "Gustavo"
+    ],
+    "mediasPorColaborador": {
+      "Gabriel M": 10.0,
+      "Hyan": 10.0,
+      "Gustavo G": 10.0,
+      "Elivelton": 10.0,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P776",
+    "cliente": "Álvaro Afonso Domingues",
+    "presenca": [
+      "Elivelton",
+      "Gabriel M",
+      "Hyan",
+      "Gustavo"
+    ],
+    "mediasPorColaborador": {
+      "Gabriel M": 10.0,
+      "Hyan": 10.0,
+      "Gustavo G": 10.0,
+      "Elivelton": 10.0,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P771",
+    "cliente": "Ailton Sathler",
+    "presenca": [
+      "Moisés",
+      "Gabriel T",
+      "Kauã"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 9.5,
+      "Fábio": 10.0,
+      "Moisés": 10.0,
+      "Gabriel T": 10.0,
+      "Gabriel M": 10.0,
+      "Material": 9.666666667,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P766",
+    "cliente": "Auto Máquinas (Vinícius)",
+    "presenca": [
+      "Moisés",
+      "Gabriel T",
+      "Kauã"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 10.0,
+      "Fábio": 10.0,
+      "Moisés": 10.0,
+      "Gabriel T": 10.0,
+      "Gabriel M": 10.0,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P765",
+    "cliente": "Silviana Malaquias da Silva",
+    "presenca": [
+      "Hyan",
+      "Gustavo"
+    ],
+    "mediasPorColaborador": {
+      "Hyan": 10.0,
+      "Gustavo G": 10.0,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P768",
+    "cliente": "Ronaldo José da Silva",
+    "presenca": [
+      "Elivelton",
+      "Moisés",
+      "Gabriel T",
+      "Gabriel M",
+      "Hyan",
+      "Gustavo",
+      "Kauã"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 9.0,
+      "Fábio": 9.333333333,
+      "Moisés": 9.666666667,
+      "Gabriel T": 9.666666667,
+      "Gabriel M": 9.666666667,
+      "Hyan": 9.833333333,
+      "Gustavo G": 9.666666667,
+      "Elivelton": 9.6,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P700",
+    "cliente": "Fabio Salles II",
+    "presenca": [],
+    "mediasPorColaborador": {}
+  },
+  {
+    "projeto": "P230 II",
+    "cliente": "Marcio Sad",
+    "presenca": [
+      "Moisés",
+      "Gabriel T",
+      "Kauã"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 10.0,
+      "Fábio": 10.0,
+      "Moisés": 10.0,
+      "Gabriel T": 10.0,
+      "Gabriel M": 10.0,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P772",
+    "cliente": "Vicente Ferreira",
+    "presenca": [
+      "Elivelton",
+      "Hyan",
+      "Gustavo"
+    ],
+    "mediasPorColaborador": {
+      "Hyan": 10.0,
+      "Gustavo G": 10.0,
+      "Elivelton": 9.0,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P784",
+    "cliente": "Carlos Roberto Shot",
+    "presenca": [
+      "Elivelton",
+      "Gabriel M",
+      "Hyan",
+      "Gustavo"
+    ],
+    "mediasPorColaborador": {
+      "Gabriel M": 10.0,
+      "Hyan": 10.0,
+      "Gustavo G": 10.0,
+      "Elivelton": 10.0,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P789",
+    "cliente": "Alexandre Lopes de Faria",
+    "presenca": [
+      "Elivelton",
+      "Gabriel M",
+      "Hyan"
+    ],
+    "mediasPorColaborador": {
+      "Gabriel M": 10.0,
+      "Hyan": 10.0,
+      "Elivelton": 10.0,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P749",
+    "cliente": "Terezinha Ferreira Carmo",
+    "presenca": [
+      "Moisés",
+      "Gabriel T",
+      "Gabriel M",
+      "Hyan",
+      "Gustavo",
+      "Kauã"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 9.2,
+      "Fábio": 9.2,
+      "Moisés": 9.25,
+      "Gabriel T": 9.4,
+      "Gabriel M": 9.4,
+      "Hyan": 10.0,
+      "Gustavo G": 10.0,
+      "Elivelton": 10.0,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P783",
+    "cliente": "Ataídes da Silva Filho",
+    "presenca": [
+      "Elivelton",
+      "Gabriel M",
+      "Hyan",
+      "Gustavo"
+    ],
+    "mediasPorColaborador": {
+      "Gabriel M": 9.5,
+      "Hyan": 8.666666667,
+      "Gustavo G": 9.666666667,
+      "Elivelton": 10.0,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P794",
+    "cliente": "Shirley Fabiane de Paula",
+    "presenca": [
+      "Moisés",
+      "Gabriel T",
+      "Kauã"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 10.0,
+      "Fábio": 10.0,
+      "Moisés": 10.0,
+      "Gabriel T": 10.0,
+      "Gabriel M": 10.0,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P773",
+    "cliente": "Edgar de Oliveira Rocha",
+    "presenca": [
+      "Moisés",
+      "Gabriel T",
+      "Gustavo",
+      "Kauã"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 9.666666667,
+      "Moisés": 10.0,
+      "Gabriel T": 10.0,
+      "Gabriel M": 10.0,
+      "Gustavo G": 10.0,
+      "Elivelton": 10.0,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P779",
+    "cliente": "Alice Ferreira da Silva",
+    "presenca": [
+      "Gustavo P",
+      "Enderson"
+    ],
+    "mediasPorColaborador": {
+      "Elivelton": 8.0,
+      "Enderson": 10.0,
+      "Gustavo P": 10.0,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P82",
+    "cliente": "Oseir Figueiredo",
+    "presenca": [
+      "Gustavo P",
+      "Enderson"
+    ],
+    "mediasPorColaborador": {
+      "Enderson": 10.0,
+      "Gustavo P": 10.0,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P378-II",
+    "cliente": "Rogério Cezer",
+    "presenca": [
+      "Elivelton",
+      "Moisés",
+      "Gabriel M",
+      "Hyan",
+      "Gustavo",
+      "Kauã",
+      "Gustavo P"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 8.5,
+      "Fábio": 9.5,
+      "Moisés": 9.5,
+      "Gabriel T": 10.0,
+      "Gabriel M": 9.25,
+      "Hyan": 9.666666667,
+      "Gustavo G": 9.666666667,
+      "Elivelton": 9.666666667,
+      "Enderson": 10.0,
+      "Gustavo P": 9.2,
+      "Material": 9.333333333,
+      "Projeto": 9.142857143
+    }
+  },
+  {
+    "projeto": "P740",
+    "cliente": "Barrigão III",
+    "presenca": [
+      "Moisés",
+      "Gabriel T",
+      "Kauã"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 10.0,
+      "Fábio": 10.0,
+      "Moisés": 10.0,
+      "Gabriel T": 10.0,
+      "Gabriel M": 10.0,
+      "Material": 9.666666667,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P786",
+    "cliente": "Thais Miguel (Rodoforte)",
+    "presenca": [
+      "Elivelton",
+      "Gabriel M",
+      "Hyan",
+      "Gustavo"
+    ],
+    "mediasPorColaborador": {
+      "Gabriel M": 9.0,
+      "Hyan": 7.333333333,
+      "Gustavo G": 9.0,
+      "Elivelton": 9.333333333,
+      "Material": 9.75,
+      "Projeto": 9.75
+    }
+  },
+  {
+    "projeto": "P787",
+    "cliente": "LOBA PRÉ-MOLDADOS",
+    "presenca": [
+      "Moisés",
+      "Gabriel T",
+      "Kauã",
+      "Enderson"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 10.0,
+      "Fábio": 10.0,
+      "Moisés": 10.0,
+      "Gabriel T": 10.0,
+      "Gabriel M": 10.0,
+      "Enderson": 10.0,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P229",
+    "cliente": "João Adil",
+    "presenca": [
+      "Hyan",
+      "Kauã",
+      "Enderson"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 9.5,
+      "Fábio": 10.0,
+      "Moisés": 10.0,
+      "Hyan": 10.0,
+      "Gustavo G": 10.0,
+      "Enderson": 10.0,
+      "Material": 10.0,
+      "Projeto": 9.666666667
+    }
+  },
+  {
+    "projeto": "P778",
+    "cliente": "Leonardo Cerqueira Guimarães",
+    "presenca": [
+      "Elivelton",
+      "Gabriel M",
+      "Hyan",
+      "Gustavo",
+      "Gustavo P"
+    ],
+    "mediasPorColaborador": {
+      "Gabriel M": 9.666666667,
+      "Hyan": 10.0,
+      "Gustavo G": 9.25,
+      "Elivelton": 8.5,
+      "Gustavo P": 9.5,
+      "Material": 8.75,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P725",
+    "cliente": "Emanuelle Souza Reguete",
+    "presenca": [
+      "Moisés",
+      "Gabriel T",
+      "Kauã",
+      "Enderson"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 10.0,
+      "Fábio": 10.0,
+      "Moisés": 10.0,
+      "Gabriel T": 10.0,
+      "Gabriel M": 10.0,
+      "Enderson": 10.0,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P791",
+    "cliente": "Renato Santana Moreira",
+    "presenca": [
+      "Moisés",
+      "Gabriel T",
+      "Kauã"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 10.0,
+      "Fábio": 10.0,
+      "Moisés": 10.0,
+      "Gabriel T": 10.0,
+      "Gabriel M": 10.0,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P792",
+    "cliente": "Adair José Cantamissa",
+    "presenca": [
+      "Elivelton",
+      "Gabriel M",
+      "Hyan",
+      "Gustavo"
+    ],
+    "mediasPorColaborador": {
+      "Gabriel M": 10.0,
+      "Hyan": 10.0,
+      "Gustavo G": 10.0,
+      "Elivelton": 9.0,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P722",
+    "cliente": "Fabio Fernandez de Salles",
+    "presenca": [
+      "Gustavo P",
+      "Enderson"
+    ],
+    "mediasPorColaborador": {
+      "Enderson": 10.0,
+      "Gustavo P": 10.0,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P271 II",
+    "cliente": "Alexandre Brito da Silva",
+    "presenca": [
+      "Elivelton",
+      "Gabriel M",
+      "Hyan",
+      "Gustavo"
+    ],
+    "mediasPorColaborador": {
+      "Gabriel M": 10.0,
+      "Hyan": 10.0,
+      "Gustavo G": 10.0,
+      "Elivelton": 10.0,
+      "Material": 10.0,
+      "Projeto": 5.5
+    }
+  },
+  {
+    "projeto": "P763",
+    "cliente": "Famáquinas III",
+    "presenca": [
+      "Moisés",
+      "Gabriel T",
+      "Kauã"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 10.0,
+      "Fábio": 10.0,
+      "Moisés": 10.0,
+      "Gabriel T": 10.0,
+      "Gabriel M": 8.0,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P745",
+    "cliente": "Sidnei Gama",
+    "presenca": [
+      "Elivelton",
+      "Gabriel M",
+      "Hyan",
+      "Gustavo"
+    ],
+    "mediasPorColaborador": {
+      "Gabriel M": 10.0,
+      "Hyan": 10.0,
+      "Gustavo G": 10.0,
+      "Elivelton": 10.0,
+      "Material": 10.0,
+      "Projeto": 9.25
+    }
+  },
+  {
+    "projeto": "P727",
+    "cliente": "Alessandro da Silva Florencio",
+    "presenca": [
+      "Elivelton",
+      "Gabriel M",
+      "Hyan",
+      "Gustavo"
+    ],
+    "mediasPorColaborador": {
+      "Gabriel M": 10.0,
+      "Hyan": 10.0,
+      "Gustavo G": 10.0,
+      "Elivelton": 10.0,
+      "Material": 9.75,
+      "Projeto": 9.5
+    }
+  },
+  {
+    "projeto": "P326-II",
+    "cliente": "Breno Abreu",
+    "presenca": [],
+    "mediasPorColaborador": {}
+  },
+  {
+    "projeto": "P713",
+    "cliente": "José Geraldo da Silva",
+    "presenca": [
+      "Elivelton",
+      "Gabriel M",
+      "Hyan",
+      "Gustavo",
+      "Gustavo P"
+    ],
+    "mediasPorColaborador": {
+      "Gabriel M": 10.0,
+      "Hyan": 10.0,
+      "Gustavo G": 10.0,
+      "Elivelton": 10.0,
+      "Gustavo P": 10.0,
+      "Material": 9.25,
+      "Projeto": 8.6
+    }
+  },
+  {
+    "projeto": "P799",
+    "cliente": "Valdemir de Jesus",
+    "presenca": [
+      "Elivelton",
+      "Gabriel M",
+      "Hyan",
+      "Gustavo"
+    ],
+    "mediasPorColaborador": {
+      "Gabriel M": 10.0,
+      "Hyan": 10.0,
+      "Gustavo G": 10.0,
+      "Elivelton": 10.0,
+      "Material": 9.75,
+      "Projeto": 9.75
+    }
+  },
+  {
+    "projeto": "P785",
+    "cliente": "Clair Ribeiro",
+    "presenca": [
+      "Moisés",
+      "Gabriel T",
+      "Kauã"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 10.0,
+      "Fábio": 10.0,
+      "Moisés": 10.0,
+      "Gabriel T": 10.0,
+      "Gabriel M": 10.0,
+      "Material": 9.666666667,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P591",
+    "cliente": "UniFacig",
+    "presenca": [
+      "Elivelton",
+      "Gabriel M",
+      "Hyan",
+      "Gustavo"
+    ],
+    "mediasPorColaborador": {
+      "Gabriel M": 10.0,
+      "Hyan": 10.0,
+      "Gustavo G": 10.0,
+      "Elivelton": 10.0,
+      "Material": 10.0,
+      "Projeto": 9.25
+    }
+  },
+  {
+    "projeto": "P796",
+    "cliente": "Carlos Eduardo Toledo",
+    "presenca": [
+      "Gabriel T",
+      "Kauã"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 10.0,
+      "Fábio": 10.0,
+      "Moisés": 10.0,
+      "Gabriel M": 10.0,
+      "Material": 10.0,
+      "Projeto": 7.5
+    }
+  },
+  {
+    "projeto": "P594",
+    "cliente": "Pref. Municipal (Escola Cabeceira)",
+    "presenca": [
+      "Gabriel T",
+      "Gabriel M",
+      "Gustavo"
+    ],
+    "mediasPorColaborador": {
+      "Fábio": 9.0,
+      "Gabriel T": 10.0,
+      "Gabriel M": 10.0,
+      "Gustavo G": 10.0,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P756",
+    "cliente": "Pref Simonesia (Centro de Saúde)",
+    "presenca": [
+      "Moisés",
+      "Gabriel T",
+      "Kauã"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 10.0,
+      "Fábio": 10.0,
+      "Moisés": 8.0,
+      "Gabriel T": 10.0,
+      "Gabriel M": 6.0,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P788",
+    "cliente": "Antônio Marcos Sampaio",
+    "presenca": [
+      "Elivelton",
+      "Gabriel M",
+      "Hyan",
+      "Gustavo",
+      "Gustavo P"
+    ],
+    "mediasPorColaborador": {
+      "Gabriel M": 10.0,
+      "Hyan": 10.0,
+      "Gustavo G": 10.0,
+      "Elivelton": 10.0,
+      "Gustavo P": 9.5,
+      "Material": 9.75,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P798",
+    "cliente": "Luciana Cristina",
+    "presenca": [
+      "Gabriel M",
+      "Gustavo",
+      "Kauã"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 9.0,
+      "Fábio": 9.0,
+      "Moisés": 10.0,
+      "Hyan": 10.0,
+      "Gustavo G": 10.0,
+      "Elivelton": 10.0,
+      "Material": 4.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P667",
+    "cliente": "Carlos Roberto Salgado",
+    "presenca": [
+      "Elivelton",
+      "Gabriel M",
+      "Hyan",
+      "Gustavo"
+    ],
+    "mediasPorColaborador": {
+      "Gabriel M": 10.0,
+      "Hyan": 10.0,
+      "Gustavo G": 10.0,
+      "Elivelton": 10.0,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P795",
+    "cliente": "Cristiano Muniz",
+    "presenca": [
+      "Elivelton",
+      "Gabriel M",
+      "Hyan",
+      "Gustavo"
+    ],
+    "mediasPorColaborador": {
+      "Gabriel M": 10.0,
+      "Hyan": 10.0,
+      "Gustavo G": 10.0,
+      "Elivelton": 10.0,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P803",
+    "cliente": "Geraldo Magela",
+    "presenca": [
+      "Gabriel T",
+      "Hyan",
+      "Gustavo"
+    ],
+    "mediasPorColaborador": {
+      "Fábio": 10.0,
+      "Gabriel T": 10.0,
+      "Gabriel M": 10.0,
+      "Hyan": 7.5,
+      "Gustavo G": 7.5,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P673",
+    "cliente": "Raquel Emerick",
+    "presenca": [
+      "Elivelton",
+      "Gabriel M",
+      "Hyan",
+      "Gustavo"
+    ],
+    "mediasPorColaborador": {
+      "Gabriel M": 10.0,
+      "Hyan": 10.0,
+      "Gustavo G": 10.0,
+      "Elivelton": 10.0,
+      "Material": 9.75,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P697",
+    "cliente": "Viviane Borel",
+    "presenca": [
+      "Moisés",
+      "Gabriel T",
+      "Hyan",
+      "Gustavo",
+      "Kauã"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 9.5,
+      "Fábio": 9.25,
+      "Moisés": 9.5,
+      "Gabriel T": 8.0,
+      "Gabriel M": 9.0,
+      "Hyan": 10.0,
+      "Gustavo G": 10.0,
+      "Elivelton": 10.0,
+      "Material": 8.6,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P502",
+    "cliente": "Jaqueline Pena",
+    "presenca": [
+      "Elivelton",
+      "Gabriel M",
+      "Hyan"
+    ],
+    "mediasPorColaborador": {
+      "Gabriel M": 10.0,
+      "Hyan": 10.0,
+      "Elivelton": 10.0,
+      "Material": 7.333333333,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P793",
+    "cliente": "Ailton José",
+    "presenca": [
+      "Moisés",
+      "Gabriel T",
+      "Kauã",
+      "Gustavo P"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 8.666666667,
+      "Moisés": 10.0,
+      "Gabriel T": 9.0,
+      "Gabriel M": 10.0,
+      "Enderson": 10.0,
+      "Gustavo P": 8.0,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P797",
+    "cliente": "Matheus Henrique",
+    "presenca": [
+      "Moisés",
+      "Gabriel M",
+      "Gustavo"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 10.0,
+      "Fábio": 10.0,
+      "Moisés": 10.0,
+      "Gabriel M": 10.0,
+      "Gustavo G": 10.0,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P800",
+    "cliente": "Luis Carlos Frutuoso",
+    "presenca": [
+      "Moisés",
+      "Gabriel T",
+      "Kauã"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 10.0,
+      "Fábio": 10.0,
+      "Moisés": 10.0,
+      "Gabriel T": 10.0,
+      "Gabriel M": 10.0,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P802",
+    "cliente": "Duilio Vargas (Ampliação)",
+    "presenca": [
+      "Moisés",
+      "Gabriel M",
+      "Hyan",
+      "Gustavo"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 10.0,
+      "Fábio": 10.0,
+      "Moisés": 10.0,
+      "Gabriel M": 10.0,
+      "Hyan": 10.0,
+      "Gustavo G": 10.0,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P811",
+    "cliente": "Lucimar José da Costa",
+    "presenca": [
+      "Moisés",
+      "Gustavo",
+      "Kauã"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 10.0,
+      "Moisés": 10.0,
+      "Gabriel T": 10.0,
+      "Gustavo G": 10.0,
+      "Elivelton": 10.0,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P394",
+    "cliente": "Romeu José (Ampliação)",
+    "presenca": [
+      "Moisés",
+      "Gustavo",
+      "Kauã"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 10.0,
+      "Moisés": 10.0,
+      "Gabriel T": 10.0,
+      "Gustavo G": 10.0,
+      "Elivelton": 10.0,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P322",
+    "cliente": "Ronalt Marques (Ampliação)",
+    "presenca": [
+      "Gabriel M",
+      "Hyan",
+      "Gustavo",
+      "Enderson"
+    ],
+    "mediasPorColaborador": {
+      "Gabriel M": 10.0,
+      "Hyan": 8.0,
+      "Gustavo G": 10.0,
+      "Enderson": 10.0,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P805",
+    "cliente": "Agostinho Alkimin",
+    "presenca": [
+      "Moisés",
+      "Gabriel M",
+      "Hyan",
+      "Gustavo",
+      "Kauã",
+      "Enderson"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 8.8,
+      "Moisés": 10.0,
+      "Gabriel T": 10.0,
+      "Gabriel M": 10.0,
+      "Hyan": 10.0,
+      "Gustavo G": 10.0,
+      "Elivelton": 10.0,
+      "Enderson": 10.0,
+      "Material": 9.666666667,
+      "Projeto": 9.5
+    }
+  },
+  {
+    "projeto": "P809",
+    "cliente": "Leandro De Souza",
+    "presenca": [
+      "Elivelton",
+      "Gabriel M",
+      "Hyan",
+      "Gustavo P"
+    ],
+    "mediasPorColaborador": {
+      "Gabriel M": 10.0,
+      "Hyan": 10.0,
+      "Elivelton": 10.0,
+      "Gustavo P": 10.0,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P807",
+    "cliente": "Evandro Gonçalves",
+    "presenca": [
+      "Elivelton",
+      "Moisés",
+      "Gabriel M",
+      "Hyan",
+      "Gustavo"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 10.0,
+      "Moisés": 10.0,
+      "Gabriel M": 9.666666667,
+      "Hyan": 10.0,
+      "Gustavo G": 10.0,
+      "Elivelton": 10.0,
+      "Material": 10.0,
+      "Projeto": 8.2
+    }
+  },
+  {
+    "projeto": "P740",
+    "cliente": "Barrigão (Manutenção)",
+    "presenca": [
+      "Moisés",
+      "Gabriel T",
+      "Kauã"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 10.0,
+      "Moisés": 10.0,
+      "Gabriel T": 10.0,
+      "Gabriel M": 10.0,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P817",
+    "cliente": "Pedro Romualdo",
+    "presenca": [
+      "Elivelton",
+      "Gabriel M",
+      "Hyan",
+      "Gustavo"
+    ],
+    "mediasPorColaborador": {
+      "Gabriel M": 10.0,
+      "Hyan": 10.0,
+      "Gustavo G": 10.0,
+      "Elivelton": 10.0,
+      "Material": 8.75,
+      "Projeto": 9.75
+    }
+  },
+  {
+    "projeto": "P813",
+    "cliente": "Celio de Paula",
+    "presenca": [
+      "Moisés",
+      "Gabriel T",
+      "Gustavo",
+      "Kauã"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 10.0,
+      "Moisés": 10.0,
+      "Gabriel T": 10.0,
+      "Gabriel M": 10.0,
+      "Gustavo G": 10.0,
+      "Elivelton": 10.0,
+      "Material": 9.5,
+      "Projeto": 9.5
+    }
+  },
+  {
+    "projeto": "P853",
+    "cliente": "João Sergio Louback (Ampliação)",
+    "presenca": [
+      "Moisés",
+      "Gabriel T",
+      "Kauã"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 10.0,
+      "Moisés": 10.0,
+      "Gabriel T": 10.0,
+      "Gabriel M": 10.0,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P814",
+    "cliente": "Francisco Cler",
+    "presenca": [
+      "Elivelton",
+      "Gabriel M",
+      "Hyan",
+      "Gustavo"
+    ],
+    "mediasPorColaborador": {
+      "Gabriel M": 10.0,
+      "Hyan": 10.0,
+      "Gustavo G": 10.0,
+      "Elivelton": 10.0,
+      "Material": 8.75,
+      "Projeto": 7.5
+    }
+  },
+  {
+    "projeto": "P828",
+    "cliente": "Welton Guilherme de Souza",
+    "presenca": [
+      "Elivelton",
+      "Gabriel M",
+      "Hyan",
+      "Gustavo"
+    ],
+    "mediasPorColaborador": {
+      "Gabriel M": 9.5,
+      "Hyan": 10.0,
+      "Gustavo G": 9.0,
+      "Elivelton": 9.0,
+      "Material": 9.75,
+      "Projeto": 9.5
+    }
+  },
+  {
+    "projeto": "P829",
+    "cliente": "Eliomar Francisco (Mutum)",
+    "presenca": [
+      "Elivelton",
+      "Moisés",
+      "Gabriel T",
+      "Gabriel M",
+      "Hyan",
+      "Gustavo",
+      "Kauã"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 8.5,
+      "Moisés": 9.0,
+      "Gabriel T": 9.166666667,
+      "Gabriel M": 8.833333333,
+      "Hyan": 10.0,
+      "Gustavo G": 9.666666667,
+      "Elivelton": 9.666666667,
+      "Material": 7.142857143,
+      "Projeto": 9.285714286
+    }
+  },
+  {
+    "projeto": "P909",
+    "cliente": "Thiago Cordeiro de Souza",
+    "presenca": [
+      "Moisés",
+      "Gabriel T",
+      "Gabriel M",
+      "Kauã"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 10.0,
+      "Moisés": 10.0,
+      "Gabriel T": 10.0,
+      "Gabriel M": 10.0,
+      "Hyan": 10.0,
+      "Material": 9.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P815",
+    "cliente": "Julio Maria (Mutum)",
+    "presenca": [
+      "Elivelton",
+      "Moisés",
+      "Gabriel T",
+      "Gustavo",
+      "Kauã"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 10.0,
+      "Moisés": 10.0,
+      "Gabriel T": 10.0,
+      "Gabriel M": 10.0,
+      "Gustavo G": 10.0,
+      "Elivelton": 10.0,
+      "Material": 5.2,
+      "Projeto": 9.0
+    }
+  },
+  {
+    "projeto": "P830",
+    "cliente": "Maria José Ferreira",
+    "presenca": [
+      "Moisés",
+      "Gabriel T",
+      "Gabriel M"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 10.0,
+      "Moisés": 10.0,
+      "Gabriel T": 10.0,
+      "Gabriel M": 10.0,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P816",
+    "cliente": "Guilherme Henrique",
+    "presenca": [
+      "Moisés",
+      "Gabriel T",
+      "Gabriel M",
+      "Hyan",
+      "Kauã"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 9.25,
+      "Moisés": 10.0,
+      "Gabriel T": 10.0,
+      "Gabriel M": 10.0,
+      "Hyan": 10.0,
+      "Gustavo G": 10.0,
+      "Material": 9.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P901",
+    "cliente": "José Geraldo Veríssimo",
+    "presenca": [
+      "Moisés",
+      "Gabriel T",
+      "Gabriel M",
+      "Kauã"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 10.0,
+      "Moisés": 10.0,
+      "Gabriel T": 10.0,
+      "Gabriel M": 10.0,
+      "Hyan": 10.0,
+      "Material": 9.5,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P808",
+    "cliente": "Eduardo Cerqueira",
+    "presenca": [
+      "Elivelton",
+      "Moisés",
+      "Gabriel M",
+      "Hyan",
+      "Gustavo",
+      "Kauã"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 10.0,
+      "Moisés": 10.0,
+      "Gabriel T": 10.0,
+      "Gabriel M": 10.0,
+      "Hyan": 10.0,
+      "Gustavo G": 10.0,
+      "Elivelton": 10.0,
+      "Material": 7.8,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P873",
+    "cliente": "Alessandro da Silva - Ampliação P727",
+    "presenca": [
+      "Elivelton",
+      "Gabriel M",
+      "Hyan"
+    ],
+    "mediasPorColaborador": {
+      "Gabriel M": 10.0,
+      "Hyan": 10.0,
+      "Elivelton": 10.0,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P733",
+    "cliente": "Ricardo Viveiros",
+    "presenca": [
+      "Moisés",
+      "Gabriel T",
+      "Gustavo",
+      "Kauã"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 10.0,
+      "Moisés": 10.0,
+      "Gabriel T": 10.0,
+      "Gabriel M": 8.5,
+      "Gustavo G": 10.0,
+      "Elivelton": 10.0,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P905",
+    "cliente": "Thaynan",
+    "presenca": [
+      "Elivelton",
+      "Gabriel M",
+      "Hyan",
+      "Gustavo"
+    ],
+    "mediasPorColaborador": {
+      "Gabriel M": 9.0,
+      "Hyan": 10.0,
+      "Gustavo G": 10.0,
+      "Elivelton": 10.0,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P902",
+    "cliente": "Maria Luiza Nora Emerick",
+    "presenca": [
+      "Elivelton",
+      "Gabriel M",
+      "Hyan",
+      "Gustavo"
+    ],
+    "mediasPorColaborador": {
+      "Gabriel M": 10.0,
+      "Hyan": 9.333333333,
+      "Gustavo G": 10.0,
+      "Elivelton": 10.0,
+      "Material": 10.0,
+      "Projeto": 8.5
+    }
+  },
+  {
+    "projeto": "P914",
+    "cliente": "Helio Lucio",
+    "presenca": [
+      "Elivelton",
+      "Hyan",
+      "Gustavo"
+    ],
+    "mediasPorColaborador": {
+      "Hyan": 10.0,
+      "Gustavo G": 10.0,
+      "Elivelton": 10.0,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P790",
+    "cliente": "Gilmar Gomes",
+    "presenca": [
+      "Elivelton",
+      "Hyan",
+      "Gustavo"
+    ],
+    "mediasPorColaborador": {
+      "Hyan": 10.0,
+      "Gustavo G": 8.0,
+      "Elivelton": 9.0,
+      "Material": 5.0,
+      "Projeto": 5.333333333
+    }
+  },
+  {
+    "projeto": "P827",
+    "cliente": "Gean Gomes Ferreira",
+    "presenca": [
+      "Elivelton",
+      "Hyan",
+      "Gustavo"
+    ],
+    "mediasPorColaborador": {
+      "Hyan": 10.0,
+      "Gustavo G": 10.0,
+      "Elivelton": 10.0,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P852",
+    "cliente": "Posto MAP (Ampliação)",
+    "presenca": [
+      "Elivelton",
+      "Moisés",
+      "Gabriel T",
+      "Gabriel M",
+      "Hyan",
+      "Gustavo"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 10.0,
+      "Moisés": 9.8,
+      "Gabriel T": 9.8,
+      "Gabriel M": 9.8,
+      "Hyan": 10.0,
+      "Gustavo G": 9.8,
+      "Elivelton": 9.8,
+      "Material": 10.0,
+      "Projeto": 9.166666667
+    }
+  },
+  {
+    "projeto": "P761",
+    "cliente": "Paulo Cesar Maria",
+    "presenca": [
+      "Moisés",
+      "Gabriel T",
+      "Gustavo",
+      "Kauã"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 10.0,
+      "Moisés": 10.0,
+      "Gabriel T": 9.333333333,
+      "Gabriel M": 9.0,
+      "Gustavo G": 10.0,
+      "Elivelton": 10.0,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P806",
+    "cliente": "Andreia Aparecida",
+    "presenca": [],
+    "mediasPorColaborador": {}
+  },
+  {
+    "projeto": "P908",
+    "cliente": "Paulo H. Miranda",
+    "presenca": [
+      "Elivelton",
+      "Fábio",
+      "Moisés",
+      "Gabriel T",
+      "Gabriel M",
+      "Hyan",
+      "Gustavo",
+      "Kauã"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 9.5,
+      "Fábio": 10.0,
+      "Moisés": 10.0,
+      "Gabriel T": 10.0,
+      "Gabriel M": 10.0,
+      "Hyan": 10.0,
+      "Gustavo G": 10.0,
+      "Elivelton": 10.0,
+      "Material": 8.0,
+      "Projeto": 5.5
+    }
+  },
+  {
+    "projeto": "P906",
+    "cliente": "Luiz Ribeiro (Lajinha)",
+    "presenca": [
+      "Elivelton",
+      "Gabriel M",
+      "Hyan",
+      "Gustavo"
+    ],
+    "mediasPorColaborador": {
+      "Fábio": 10.0,
+      "Gabriel M": 10.0,
+      "Hyan": 10.0,
+      "Gustavo G": 10.0,
+      "Elivelton": 10.0,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P826",
+    "cliente": "Renato Tinoco",
+    "presenca": [
+      "Elivelton",
+      "Gabriel M",
+      "Hyan"
+    ],
+    "mediasPorColaborador": {
+      "Gabriel M": 10.0,
+      "Hyan": 10.0,
+      "Gustavo G": 10.0,
+      "Elivelton": 10.0,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P913",
+    "cliente": "Valtair Alvernaz",
+    "presenca": [
+      "Moisés",
+      "Gabriel T",
+      "Gustavo",
+      "Kauã"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 10.0,
+      "Moisés": 10.0,
+      "Gabriel T": 10.0,
+      "Gabriel M": 10.0,
+      "Gustavo G": 10.0,
+      "Elivelton": 10.0,
+      "Material": 10.0,
+      "Projeto": 7.25
+    }
+  },
+  {
+    "projeto": "P903",
+    "cliente": "Bernardo Brenner II",
+    "presenca": [
+      "Elivelton",
+      "Gabriel M",
+      "Hyan",
+      "Gustavo"
+    ],
+    "mediasPorColaborador": {
+      "Gabriel M": 10.0,
+      "Hyan": 10.0,
+      "Gustavo G": 10.0,
+      "Elivelton": 10.0,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P904",
+    "cliente": "Fábio Júnior (Santana)",
+    "presenca": [
+      "Elivelton",
+      "Gabriel M",
+      "Hyan"
+    ],
+    "mediasPorColaborador": {
+      "Gabriel M": 9.5,
+      "Hyan": 8.0,
+      "Elivelton": 10.0,
+      "Material": 10.0,
+      "Projeto": 8.666666667
+    }
+  },
+  {
+    "projeto": "P915",
+    "cliente": "Viviane",
+    "presenca": [
+      "Elivelton",
+      "Gabriel M",
+      "Hyan"
+    ],
+    "mediasPorColaborador": {
+      "Gabriel M": 10.0,
+      "Hyan": 10.0,
+      "Elivelton": 10.0,
+      "Material": 10.0,
+      "Projeto": 9.0
+    }
+  },
+  {
+    "projeto": "P918",
+    "cliente": "Elias",
+    "presenca": [
+      "Moisés",
+      "Gabriel T",
+      "Gustavo",
+      "Kauã"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 10.0,
+      "Moisés": 10.0,
+      "Gabriel T": 10.0,
+      "Gabriel M": 10.0,
+      "Gustavo G": 10.0,
+      "Elivelton": 10.0,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P921",
+    "cliente": "Ariosto",
+    "presenca": [
+      "Elivelton",
+      "Fábio",
+      "Moisés",
+      "Gabriel T",
+      "Gabriel M",
+      "Hyan",
+      "Gustavo",
+      "Kauã"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 8.285714286,
+      "Fábio": 10.0,
+      "Moisés": 8.142857143,
+      "Gabriel T": 8.142857143,
+      "Gabriel M": 8.714285714,
+      "Hyan": 9.714285714,
+      "Gustavo G": 8.142857143,
+      "Elivelton": 9.714285714,
+      "Material": 10.0,
+      "Projeto": 8.375
+    }
+  },
+  {
+    "projeto": "P920",
+    "cliente": "Aurineide (Recanto Rural)",
+    "presenca": [
+      "Elivelton",
+      "Fábio",
+      "Gabriel M",
+      "Hyan"
+    ],
+    "mediasPorColaborador": {
+      "Fábio": 10.0,
+      "Gabriel M": 10.0,
+      "Hyan": 10.0,
+      "Elivelton": 10.0,
+      "Material": 9.5,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P876",
+    "cliente": "Everaldo (Ampliação P70)",
+    "presenca": [
+      "Elivelton",
+      "Fábio",
+      "Gabriel M",
+      "Hyan"
+    ],
+    "mediasPorColaborador": {
+      "Fábio": 10.0,
+      "Gabriel M": 10.0,
+      "Hyan": 10.0,
+      "Elivelton": 10.0,
+      "Material": 9.75,
+      "Projeto": 9.75
+    }
+  },
+  {
+    "projeto": "P875",
+    "cliente": "Eliane (Ampliação)",
+    "presenca": [
+      "Elivelton",
+      "Fábio",
+      "Gabriel M",
+      "Hyan"
+    ],
+    "mediasPorColaborador": {
+      "Fábio": 10.0,
+      "Gabriel M": 10.0,
+      "Hyan": 10.0,
+      "Elivelton": 10.0,
+      "Material": 9.75,
+      "Projeto": 9.75
+    }
+  },
+  {
+    "projeto": "P917",
+    "cliente": "Andreia",
+    "presenca": [
+      "Moisés",
+      "Gabriel T",
+      "Kauã"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 10.0,
+      "Moisés": 10.0,
+      "Gabriel T": 10.0,
+      "Gabriel M": 10.0,
+      "Material": 9.333333333,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P912",
+    "cliente": "Barbearia Sr. Eneas II",
+    "presenca": [
+      "Fábio",
+      "Moisés",
+      "Gabriel T",
+      "Gabriel M",
+      "Gustavo"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 10.0,
+      "Fábio": 10.0,
+      "Moisés": 10.0,
+      "Gabriel T": 10.0,
+      "Gabriel M": 10.0,
+      "Gustavo G": 10.0,
+      "Material": 10.0,
+      "Projeto": 9.0
+    }
+  },
+  {
+    "projeto": "P758",
+    "cliente": "Prefeitura Simonésia (Escola)",
+    "presenca": [
+      "Fábio",
+      "Moisés",
+      "Gabriel T",
+      "Gabriel M",
+      "Hyan",
+      "Gustavo",
+      "Kauã"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 9.666666667,
+      "Fábio": 10.0,
+      "Moisés": 9.833333333,
+      "Gabriel T": 9.5,
+      "Gabriel M": 8.666666667,
+      "Hyan": 9.0,
+      "Gustavo G": 9.0,
+      "Elivelton": 10.0,
+      "Material": 8.142857143,
+      "Projeto": 8.714285714
+    }
+  },
+  {
+    "projeto": "P931",
+    "cliente": "João Paulo Calegar",
+    "presenca": [
+      "Fábio",
+      "Moisés",
+      "Gabriel T",
+      "Gustavo",
+      "Kauã"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 10.0,
+      "Fábio": 10.0,
+      "Moisés": 10.0,
+      "Gabriel T": 10.0,
+      "Gabriel M": 10.0,
+      "Gustavo G": 10.0,
+      "Elivelton": 10.0,
+      "Material": 10.0,
+      "Projeto": 7.75
+    }
+  },
+  {
+    "projeto": "P854",
+    "cliente": "Lucas Cândido",
+    "presenca": [],
+    "mediasPorColaborador": {}
+  },
+  {
+    "projeto": "P930",
+    "cliente": "Daniel Rosa",
+    "presenca": [],
+    "mediasPorColaborador": {}
+  },
+  {
+    "projeto": "P549",
+    "cliente": "JP Máquinas (Mudança de local)",
+    "presenca": [
+      "Elivelton",
+      "Fábio",
+      "Moisés",
+      "Gabriel T",
+      "Gustavo P"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 10.0,
+      "Fábio": 10.0,
+      "Moisés": 10.0,
+      "Gabriel T": 10.0,
+      "Elivelton": 10.0,
+      "Gustavo P": 10.0,
+      "Material": 10.0,
+      "Projeto": 8.2
+    }
+  },
+  {
+    "projeto": "P932",
+    "cliente": "Thiago Inácio",
+    "presenca": [
+      "Moisés",
+      "Gabriel T",
+      "Gustavo",
+      "Kauã"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 10.0,
+      "Moisés": 10.0,
+      "Gabriel T": 8.333333333,
+      "Gabriel M": 4.5,
+      "Gustavo G": 10.0,
+      "Elivelton": 10.0,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P57/P877",
+    "cliente": "Ailson Faria (Ampliação)",
+    "presenca": [
+      "Elivelton",
+      "Fábio",
+      "Gabriel M",
+      "Gustavo P"
+    ],
+    "mediasPorColaborador": {
+      "Fábio": 10.0,
+      "Gabriel M": 10.0,
+      "Elivelton": 10.0,
+      "Gustavo P": 10.0,
+      "Material": 8.333333333,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P929",
+    "cliente": "José Gomes",
+    "presenca": [
+      "Moisés",
+      "Gabriel T",
+      "Gustavo",
+      "Kauã"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 10.0,
+      "Moisés": 10.0,
+      "Gabriel T": 10.0,
+      "Gabriel M": 8.0,
+      "Gustavo G": 10.0,
+      "Elivelton": 10.0,
+      "Material": 10.0,
+      "Projeto": 3.75
+    }
+  },
+  {
+    "projeto": "P911",
+    "cliente": "Arthur Laitano",
+    "presenca": [
+      "Moisés",
+      "Gabriel T",
+      "Gustavo",
+      "Kauã",
+      "Gustavo P",
+      "Enderson"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 10.0,
+      "Moisés": 10.0,
+      "Gabriel T": 9.0,
+      "Gabriel M": 7.0,
+      "Gustavo G": 10.0,
+      "Elivelton": 10.0,
+      "Enderson": 10.0,
+      "Gustavo P": 10.0,
+      "Material": 8.2,
+      "Projeto": 4.166666667
+    }
+  },
+  {
+    "projeto": "P926",
+    "cliente": "Fábio Antônio",
+    "presenca": [
+      "Moisés",
+      "Gabriel T",
+      "Gustavo",
+      "Kauã"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 10.0,
+      "Moisés": 10.0,
+      "Gabriel T": 10.0,
+      "Gabriel M": 10.0,
+      "Gustavo G": 10.0,
+      "Elivelton": 10.0,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P764",
+    "cliente": "Luiz da Costa Meneguci",
+    "presenca": [
+      "Elivelton",
+      "Fábio",
+      "Gabriel M",
+      "Hyan"
+    ],
+    "mediasPorColaborador": {
+      "Fábio": 10.0,
+      "Gabriel M": 9.333333333,
+      "Hyan": 10.0,
+      "Elivelton": 9.333333333,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P757",
+    "cliente": "Pref. de Simonésia (Almoxarifado)",
+    "presenca": [
+      "Moisés",
+      "Gabriel T",
+      "Gustavo",
+      "Kauã"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 10.0,
+      "Moisés": 10.0,
+      "Gabriel T": 9.0,
+      "Gabriel M": 7.0,
+      "Gustavo G": 10.0,
+      "Elivelton": 10.0,
+      "Material": 7.75,
+      "Projeto": 5.25
+    }
+  },
+  {
+    "projeto": "P315/P887",
+    "cliente": "Alisson Barbosa",
+    "presenca": [
+      "Gustavo P",
+      "Enderson"
+    ],
+    "mediasPorColaborador": {
+      "Enderson": 10.0,
+      "Gustavo P": 10.0,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P878",
+    "cliente": "Josias do Amaral",
+    "presenca": [
+      "Gustavo P",
+      "Enderson"
+    ],
+    "mediasPorColaborador": {
+      "Enderson": 10.0,
+      "Gustavo P": 10.0,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P747",
+    "cliente": "Rafael Carrara II",
+    "presenca": [
+      "Elivelton",
+      "Fábio",
+      "Gabriel M",
+      "Hyan"
+    ],
+    "mediasPorColaborador": {
+      "Fábio": 10.0,
+      "Gabriel M": 10.0,
+      "Hyan": 10.0,
+      "Elivelton": 9.333333333,
+      "Material": 7.75,
+      "Projeto": 6.75
+    }
+  },
+  {
+    "projeto": "P924",
+    "cliente": "Celso Dutra",
+    "presenca": [
+      "Moisés",
+      "Gabriel T",
+      "Gabriel M",
+      "Gustavo",
+      "Kauã"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 10.0,
+      "Moisés": 10.0,
+      "Gabriel T": 10.0,
+      "Gabriel M": 8.0,
+      "Hyan": 10.0,
+      "Gustavo G": 10.0,
+      "Elivelton": 10.0,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P919",
+    "cliente": "Jorge Luiz",
+    "presenca": [
+      "Moisés",
+      "Gustavo",
+      "Kauã"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 10.0,
+      "Moisés": 10.0,
+      "Gabriel T": 10.0,
+      "Gustavo G": 10.0,
+      "Elivelton": 10.0,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P939",
+    "cliente": "José Xavier Neto",
+    "presenca": [
+      "Moisés",
+      "Gustavo",
+      "Kauã"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 10.0,
+      "Moisés": 10.0,
+      "Gabriel T": 10.0,
+      "Gustavo G": 10.0,
+      "Elivelton": 10.0,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P937",
+    "cliente": "Pref. Simonésia (Poliesportivo)",
+    "presenca": [
+      "Elivelton",
+      "Fábio",
+      "Gabriel M",
+      "Hyan"
+    ],
+    "mediasPorColaborador": {
+      "Fábio": 10.0,
+      "Gabriel M": 10.0,
+      "Hyan": 10.0,
+      "Elivelton": 10.0,
+      "Material": 10.0,
+      "Projeto": 9.5
+    }
+  },
+  {
+    "projeto": "P889",
+    "cliente": "Altair Ventura (Ampliação)",
+    "presenca": [
+      "Gustavo P",
+      "Enderson"
+    ],
+    "mediasPorColaborador": {
+      "Enderson": 10.0,
+      "Gustavo P": 10.0,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P927",
+    "cliente": "Glaucio Peron",
+    "presenca": [
+      "Moisés",
+      "Gabriel T",
+      "Gustavo",
+      "Kauã"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 10.0,
+      "Moisés": 10.0,
+      "Gabriel T": 10.0,
+      "Gabriel M": 10.0,
+      "Gustavo G": 10.0,
+      "Elivelton": 10.0,
+      "Material": 8.5,
+      "Projeto": 7.75
+    }
+  },
+  {
+    "projeto": "P940",
+    "cliente": "Gilberto de Oliveira",
+    "presenca": [
+      "Moisés",
+      "Gabriel T"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 10.0,
+      "Moisés": 9.0,
+      "Gabriel T": 10.0,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P933",
+    "cliente": "João Marcos Souza",
+    "presenca": [
+      "Moisés",
+      "Gabriel T",
+      "Gustavo",
+      "Kauã"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 10.0,
+      "Moisés": 10.0,
+      "Gabriel T": 10.0,
+      "Gabriel M": 10.0,
+      "Gustavo G": 10.0,
+      "Elivelton": 10.0,
+      "Material": 10.0,
+      "Projeto": 6.5
+    }
+  },
+  {
+    "projeto": "P928",
+    "cliente": "Devaldo (Ampliação)",
+    "presenca": [
+      "Moisés",
+      "Gabriel T",
+      "Gabriel M",
+      "Gustavo",
+      "Kauã",
+      "Gustavo P",
+      "Enderson"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 10.0,
+      "Moisés": 10.0,
+      "Gabriel T": 10.0,
+      "Gabriel M": 9.166666667,
+      "Hyan": 6.0,
+      "Gustavo G": 10.0,
+      "Elivelton": 10.0,
+      "Enderson": 10.0,
+      "Gustavo P": 10.0,
+      "Material": 9.666666667,
+      "Projeto": 6.714285714
+    }
+  },
+  {
+    "projeto": "P711",
+    "cliente": "Sandro Lúcio",
+    "presenca": [
+      "Elivelton",
+      "Fábio",
+      "Moisés",
+      "Gabriel M",
+      "Hyan",
+      "Gustavo",
+      "Kauã"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 10.0,
+      "Fábio": 10.0,
+      "Moisés": 10.0,
+      "Gabriel T": 10.0,
+      "Gabriel M": 10.0,
+      "Hyan": 10.0,
+      "Gustavo G": 10.0,
+      "Elivelton": 10.0,
+      "Enderson": 10.0,
+      "Gustavo P": 10.0,
+      "Material": 9.833333333,
+      "Projeto": 7.833333333
+    }
+  },
+  {
+    "projeto": "P669",
+    "cliente": "Alam Saraiva",
+    "presenca": [
+      "Elivelton",
+      "Fábio",
+      "Gabriel T",
+      "Gabriel M",
+      "Hyan"
+    ],
+    "mediasPorColaborador": {
+      "Fábio": 10.0,
+      "Gabriel T": 10.0,
+      "Gabriel M": 9.5,
+      "Hyan": 10.0,
+      "Elivelton": 9.333333333,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P935",
+    "cliente": "Bernardo (Márcia Giovani)",
+    "presenca": [
+      "Gabriel T",
+      "Gabriel M",
+      "Hyan",
+      "Gustavo",
+      "Ley"
+    ],
+    "mediasPorColaborador": {
+      "Gabriel T": 10.0,
+      "Gabriel M": 7.5,
+      "Hyan": 8.333333333,
+      "Gustavo G": 8.333333333,
+      "Ley": 7.5,
+      "Material": 8.75,
+      "Projeto": 7.25
+    }
+  },
+  {
+    "projeto": "P943",
+    "cliente": "Carla Aparecida",
+    "presenca": [
+      "Gabriel T",
+      "Gabriel M",
+      "Hyan",
+      "Gustavo",
+      "Ley"
+    ],
+    "mediasPorColaborador": {
+      "Gabriel T": 10.0,
+      "Gabriel M": 6.5,
+      "Hyan": 10.0,
+      "Gustavo G": 10.0,
+      "Ley": 10.0,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P973",
+    "cliente": "Câmara Municipal de Reduto",
+    "presenca": [
+      "Elivelton",
+      "Fábio",
+      "Moisés",
+      "Gabriel T",
+      "Gabriel M",
+      "Kauã"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 9.6,
+      "Fábio": 10.0,
+      "Moisés": 9.6,
+      "Gabriel T": 9.4,
+      "Gabriel M": 10.0,
+      "Hyan": 7.0,
+      "Elivelton": 9.5,
+      "Material": 10.0,
+      "Projeto": 9.333333333
+    }
+  },
+  {
+    "projeto": "P947",
+    "cliente": "Welinton José Amaral",
+    "presenca": [
+      "Elivelton",
+      "Fábio",
+      "Moisés",
+      "Gabriel T",
+      "Kauã"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 10.0,
+      "Fábio": 10.0,
+      "Moisés": 10.0,
+      "Gabriel T": 10.0,
+      "Gabriel M": 10.0,
+      "Elivelton": 10.0,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P944",
+    "cliente": "Alessandro Emerick",
+    "presenca": [
+      "Moisés",
+      "Gabriel T",
+      "Gabriel M",
+      "Hyan",
+      "Gustavo",
+      "Ley"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 10.0,
+      "Moisés": 10.0,
+      "Gabriel T": 10.0,
+      "Gabriel M": 10.0,
+      "Hyan": 10.0,
+      "Gustavo G": 9.6,
+      "Ley": 10.0,
+      "Material": 9.833333333,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P900",
+    "cliente": "Renata Rosa",
+    "presenca": [
+      "Elivelton",
+      "Fábio",
+      "Moisés",
+      "Gabriel T",
+      "Gabriel M",
+      "Gustavo",
+      "Kauã"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 8.5,
+      "Fábio": 10.0,
+      "Moisés": 10.0,
+      "Gabriel T": 9.0,
+      "Gabriel M": 10.0,
+      "Hyan": 2.0,
+      "Gustavo G": 10.0,
+      "Elivelton": 7.0,
+      "Material": 9.857142857,
+      "Projeto": 9.285714286
+    }
+  },
+  {
+    "projeto": "P923",
+    "cliente": "Bruno Bertani Simão",
+    "presenca": [
+      "Elivelton",
+      "Fábio",
+      "Moisés",
+      "Gabriel T",
+      "Hyan",
+      "Gustavo",
+      "Kauã"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 9.833333333,
+      "Fábio": 9.8,
+      "Moisés": 9.833333333,
+      "Gabriel T": 9.833333333,
+      "Gabriel M": 10.0,
+      "Hyan": 8.4,
+      "Gustavo G": 9.833333333,
+      "Elivelton": 9.833333333,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P941",
+    "cliente": "Luan Junio (Lajinha)",
+    "presenca": [
+      "Moisés",
+      "Gabriel T",
+      "Gabriel M",
+      "Hyan",
+      "Gustavo"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 10.0,
+      "Moisés": 10.0,
+      "Gabriel T": 10.0,
+      "Gabriel M": 10.0,
+      "Hyan": 10.0,
+      "Gustavo G": 10.0,
+      "Material": 9.8,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P879",
+    "cliente": "Renato Santana (ampliação)",
+    "presenca": [
+      "Gustavo P",
+      "Enderson"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 10.0,
+      "Fábio": 10.0,
+      "Moisés": 10.0,
+      "Gabriel M": 10.0,
+      "Gustavo G": 10.0,
+      "Enderson": 10.0,
+      "Gustavo P": 10.0,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P977",
+    "cliente": "Leandro Firmino",
+    "presenca": [
+      "Elivelton",
+      "Fábio",
+      "Moisés",
+      "Gabriel T",
+      "Gabriel M",
+      "Kauã"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 10.0,
+      "Fábio": 10.0,
+      "Moisés": 10.0,
+      "Gabriel T": 10.0,
+      "Gabriel M": 9.8,
+      "Hyan": 7.666666667,
+      "Gustavo G": 10.0,
+      "Elivelton": 7.75,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P979",
+    "cliente": "Edson Acácio",
+    "presenca": [
+      "Gabriel T",
+      "Gabriel M",
+      "Hyan",
+      "Gustavo",
+      "Ley"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 10.0,
+      "Moisés": 10.0,
+      "Gabriel T": 10.0,
+      "Gabriel M": 10.0,
+      "Hyan": 10.0,
+      "Gustavo G": 10.0,
+      "Elivelton": 10.0,
+      "Ley": 10.0,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P980",
+    "cliente": "Zélia Maria",
+    "presenca": [
+      "Gabriel T",
+      "Gabriel M",
+      "Gustavo",
+      "Kauã",
+      "Ley"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 10.0,
+      "Gabriel T": 10.0,
+      "Gabriel M": 10.0,
+      "Hyan": 5.0,
+      "Gustavo G": 10.0,
+      "Elivelton": 10.0,
+      "Ley": 10.0,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P958",
+    "cliente": "Carlos Roberto Florenço",
+    "presenca": [
+      "Elivelton",
+      "Fábio",
+      "Moisés",
+      "Gabriel T"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 10.0,
+      "Fábio": 10.0,
+      "Moisés": 10.0,
+      "Gabriel T": 10.0,
+      "Elivelton": 9.0,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P961",
+    "cliente": "Rute Kelle",
+    "presenca": [
+      "Fábio",
+      "Gabriel T",
+      "Gabriel M",
+      "Gustavo",
+      "Kauã"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 10.0,
+      "Fábio": 10.0,
+      "Moisés": 10.0,
+      "Gabriel T": 10.0,
+      "Gabriel M": 10.0,
+      "Hyan": 10.0,
+      "Gustavo G": 10.0,
+      "Elivelton": 10.0,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P946",
+    "cliente": "Rafael Bertani",
+    "presenca": [
+      "Elivelton",
+      "Fábio",
+      "Moisés",
+      "Gabriel T",
+      "Ley"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 10.0,
+      "Fábio": 10.0,
+      "Moisés": 10.0,
+      "Gabriel T": 10.0,
+      "Elivelton": 10.0,
+      "Ley": 10.0,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P948",
+    "cliente": "Inova Gesso",
+    "presenca": [
+      "Gabriel T",
+      "Gabriel M",
+      "Gustavo",
+      "Kauã"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 10.0,
+      "Gabriel T": 10.0,
+      "Gabriel M": 10.0,
+      "Hyan": 10.0,
+      "Gustavo G": 10.0,
+      "Elivelton": 10.0,
+      "Ley": 10.0,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P955",
+    "cliente": "Vinícios Cerqueira",
+    "presenca": [
+      "Elivelton",
+      "Fábio",
+      "Gabriel T",
+      "Gustavo",
+      "Kauã",
+      "Ley"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 10.0,
+      "Fábio": 10.0,
+      "Moisés": 10.0,
+      "Gabriel T": 10.0,
+      "Gabriel M": 10.0,
+      "Gustavo G": 10.0,
+      "Elivelton": 10.0,
+      "Ley": 10.0,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P960",
+    "cliente": "Maria Aparecida de Oliveira",
+    "presenca": [
+      "Gabriel T",
+      "Gabriel M",
+      "Gustavo",
+      "Kauã",
+      "Ley"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 10.0,
+      "Gabriel T": 10.0,
+      "Gabriel M": 10.0,
+      "Hyan": 10.0,
+      "Gustavo G": 10.0,
+      "Elivelton": 10.0,
+      "Ley": 10.0,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P971",
+    "cliente": "Abedias Cândido",
+    "presenca": [
+      "Gabriel T",
+      "Gabriel M",
+      "Gustavo",
+      "Kauã",
+      "Ley"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 10.0,
+      "Gabriel T": 10.0,
+      "Gabriel M": 10.0,
+      "Hyan": 10.0,
+      "Gustavo G": 10.0,
+      "Elivelton": 10.0,
+      "Ley": 10.0,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P967",
+    "cliente": "João Carlos Melo",
+    "presenca": [
+      "Gabriel T",
+      "Gabriel M",
+      "Gustavo",
+      "Kauã",
+      "Ley"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 10.0,
+      "Gabriel T": 10.0,
+      "Gabriel M": 10.0,
+      "Hyan": 10.0,
+      "Gustavo G": 10.0,
+      "Elivelton": 10.0,
+      "Ley": 10.0,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P975",
+    "cliente": "Gilcimar Felix da Silva",
+    "presenca": [
+      "Gabriel T",
+      "Gabriel M",
+      "Gustavo",
+      "Kauã",
+      "Ley"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 10.0,
+      "Gabriel T": 10.0,
+      "Gabriel M": 10.0,
+      "Hyan": 10.0,
+      "Gustavo G": 10.0,
+      "Elivelton": 10.0,
+      "Ley": 10.0,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P972",
+    "cliente": "Deyverson de Souza",
+    "presenca": [
+      "Fábio",
+      "Gabriel T",
+      "Gabriel M",
+      "Gustavo",
+      "Kauã",
+      "Ley"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 10.0,
+      "Fábio": 10.0,
+      "Moisés": 10.0,
+      "Gabriel T": 10.0,
+      "Gabriel M": 10.0,
+      "Hyan": 10.0,
+      "Gustavo G": 10.0,
+      "Elivelton": 10.0,
+      "Ley": 10.0,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P976",
+    "cliente": "Bruno da Lux",
+    "presenca": [
+      "Gabriel T",
+      "Gustavo",
+      "Kauã",
+      "Gustavo P",
+      "Ley"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 9.333333333,
+      "Gabriel T": 10.0,
+      "Gabriel M": 10.0,
+      "Gustavo G": 10.0,
+      "Elivelton": 10.0,
+      "Enderson": 10.0,
+      "Gustavo P": 9.333333333,
+      "Ley": 10.0,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P984",
+    "cliente": "Luis Carlos Frutuoso [Ampliação P800]",
+    "presenca": [
+      "Gustavo",
+      "Kauã",
+      "Gustavo P",
+      "Ley"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 10.0,
+      "Fábio": 10.0,
+      "Moisés": 10.0,
+      "Gabriel T": 10.0,
+      "Gabriel M": 10.0,
+      "Hyan": 10.0,
+      "Gustavo G": 10.0,
+      "Elivelton": 10.0,
+      "Enderson": 10.0,
+      "Ley": 10.0,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P274",
+    "cliente": "Elson Veríssimo [Ampliação]",
+    "presenca": [
+      "Gustavo P",
+      "Enderson"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 10.0,
+      "Gabriel T": 4.0,
+      "Gabriel M": 10.0,
+      "Enderson": 10.0,
+      "Gustavo P": 10.0,
+      "Flávio": 7.5,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P965",
+    "cliente": "Júlio Cezar Pereira",
+    "presenca": [
+      "Gabriel T",
+      "Gabriel M",
+      "Gustavo",
+      "Kauã",
+      "Ley"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 10.0,
+      "Fábio": 10.0,
+      "Gabriel T": 10.0,
+      "Gabriel M": 10.0,
+      "Hyan": 10.0,
+      "Gustavo G": 10.0,
+      "Elivelton": 10.0,
+      "Ley": 10.0,
+      "Material": 10.0,
+      "Projeto": 9.6
+    }
+  },
+  {
+    "projeto": "P978",
+    "cliente": "Fabiana Fialho",
+    "presenca": [
+      "Moisés",
+      "Gabriel T",
+      "Kauã",
+      "Flávio"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 10.0,
+      "Moisés": 5.5,
+      "Gabriel T": 8.0,
+      "Gabriel M": 10.0,
+      "Hyan": 10.0,
+      "Flávio": 7.666666667,
+      "Ley": 10.0,
+      "Élder": 10.0,
+      "Material": 9.75,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P966",
+    "cliente": "Ivaír Júlio",
+    "presenca": [
+      "Fábio",
+      "Gabriel T",
+      "Gabriel M",
+      "Gustavo",
+      "Ley"
+    ],
+    "mediasPorColaborador": {
+      "Fábio": 10.0,
+      "Gabriel T": 10.0,
+      "Gabriel M": 10.0,
+      "Gustavo G": 10.0,
+      "Ley": 10.0,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P974",
+    "cliente": "José Carlos Dias da Silva",
+    "presenca": [
+      "Fábio",
+      "Gabriel T",
+      "Gabriel M",
+      "Gustavo",
+      "Kauã",
+      "Ley"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 7.75,
+      "Fábio": 10.0,
+      "Moisés": 10.0,
+      "Gabriel T": 10.0,
+      "Gabriel M": 10.0,
+      "Hyan": 10.0,
+      "Gustavo G": 10.0,
+      "Elivelton": 10.0,
+      "Ley": 9.8,
+      "Material": 10.0,
+      "Projeto": 9.166666667
+    }
+  },
+  {
+    "projeto": "P986",
+    "cliente": "Renan Baia de Souza",
+    "presenca": [
+      "Moisés",
+      "Gabriel T",
+      "Gabriel M",
+      "Kauã"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 7.0,
+      "Moisés": 10.0,
+      "Gabriel T": 10.0,
+      "Gabriel M": 10.0,
+      "Hyan": 10.0,
+      "Flávio": 10.0,
+      "Élder": 10.0,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P987",
+    "cliente": "Sebastião Vieira Porto",
+    "presenca": [
+      "Fábio",
+      "Gabriel T",
+      "Gabriel M",
+      "Gustavo",
+      "Ley"
+    ],
+    "mediasPorColaborador": {
+      "Fábio": 10.0,
+      "Gabriel T": 10.0,
+      "Gabriel M": 10.0,
+      "Gustavo G": 10.0,
+      "Ley": 10.0,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P985",
+    "cliente": "Elton Nascimento Guerra",
+    "presenca": [
+      "Fábio",
+      "Gabriel T",
+      "Gabriel M",
+      "Gustavo",
+      "Kauã",
+      "Ley"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 9.4,
+      "Fábio": 10.0,
+      "Moisés": 10.0,
+      "Gabriel T": 10.0,
+      "Gabriel M": 10.0,
+      "Hyan": 10.0,
+      "Gustavo G": 10.0,
+      "Elivelton": 10.0,
+      "Flávio": 10.0,
+      "Ley": 9.5,
+      "Élder": 10.0,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P993",
+    "cliente": "Geraldo Ventura de Oliveira",
+    "presenca": [
+      "Moisés",
+      "Gabriel T",
+      "Kauã",
+      "Flávio",
+      "Élder"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 10.0,
+      "Fábio": 10.0,
+      "Moisés": 9.4,
+      "Gabriel T": 9.2,
+      "Gabriel M": 10.0,
+      "Hyan": 10.0,
+      "Gustavo G": 10.0,
+      "Elivelton": 10.0,
+      "Flávio": 9.0,
+      "Ley": 10.0,
+      "Élder": 10.0,
+      "Material": 9.8,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P992",
+    "cliente": "Sebastiana da Silva Stock",
+    "presenca": [
+      "Fábio",
+      "Gabriel T",
+      "Gabriel M",
+      "Gustavo",
+      "Ley"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 10.0,
+      "Fábio": 10.0,
+      "Gabriel T": 10.0,
+      "Gabriel M": 10.0,
+      "Gustavo G": 9.6,
+      "Elivelton": 10.0,
+      "Enderson": 10.0,
+      "Gustavo P": 10.0,
+      "Ley": 10.0,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P945",
+    "cliente": "Agenor Estevam",
+    "presenca": [
+      "Moisés",
+      "Gabriel T",
+      "Kauã",
+      "Flávio",
+      "Élder"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 10.0,
+      "Gabriel T": 10.0,
+      "Gabriel M": 10.0,
+      "Flávio": 8.0,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "projeto": "P916",
+    "cliente": "Lucimar Freitas III (Muriaé)",
+    "presenca": [
+      "Elivelton",
+      "Fábio",
+      "Moisés",
+      "Gabriel T",
+      "Gabriel M",
+      "Hyan",
+      "Gustavo",
+      "Kauã",
+      "Ley"
+    ],
+    "mediasPorColaborador": {
+      "Kauã": 10.0,
+      "Fábio": 10.0,
+      "Moisés": 10.0,
+      "Gabriel T": 9.142857143,
+      "Gabriel M": 10.0,
+      "Hyan": 10.0,
+      "Gustavo G": 10.0,
+      "Elivelton": 8.571428571,
+      "Ley": 10.0,
+      "Projeto": 9.142857143
+    }
+  },
+  {
+    "projeto": "P988",
+    "cliente": "Vitória Alves Cerqueira",
+    "presenca": [],
+    "mediasPorColaborador": {}
+  },
+  {
+    "projeto": "P952",
+    "cliente": "Marcio Adriano",
+    "presenca": [],
+    "mediasPorColaborador": {}
+  },
+  {
+    "projeto": "P996",
+    "cliente": "Veronilson Viana",
+    "presenca": [],
+    "mediasPorColaborador": {}
+  },
+  {
+    "projeto": "P968",
+    "cliente": "Leandro Guerra - avaliar em março",
+    "presenca": [],
+    "mediasPorColaborador": {}
+  },
+  {
+    "projeto": "P990",
+    "cliente": "Mário da Silva Diniz",
+    "presenca": [],
+    "mediasPorColaborador": {}
+  },
+  {
+    "projeto": "P981",
+    "cliente": "Bruno Alvim",
+    "presenca": [],
+    "mediasPorColaborador": {}
+  },
+  {
+    "projeto": "P994",
+    "cliente": "Gabriel Vinícius Atílio",
+    "presenca": [],
+    "mediasPorColaborador": {}
+  },
+  {
+    "projeto": "P964",
+    "cliente": "Josias de Souza Lima",
+    "presenca": [],
+    "mediasPorColaborador": {}
+  },
+  {
+    "projeto": "P989",
+    "cliente": "Rosimeire Gomes",
+    "presenca": [],
+    "mediasPorColaborador": {}
+  }
+]

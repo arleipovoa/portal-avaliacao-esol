@@ -3,8 +3,103 @@ import { z } from "zod";
 import { getDb } from "../db";
 import { projects, projectMembers, obraScores, obraEvaluations, obraCriteria, users } from "../../drizzle/schema";
 import { eq, and } from "drizzle-orm";
-import { fetchPbiProjects, generatePbiDocuments } from "../lib/pbiClient";
+import { fetchPbiProjects, generatePbiDocuments, isPbiConfigured } from "../lib/pbiClient";
+import { MOCK_PROJECTS } from "../lib/mockProjects";
+import { MOCK_OBRA_CRITERIA_GROUPED } from "../lib/mockObraCriteria";
+import { getEvaluationWindow, isEligibleForEvaluation } from "../lib/evaluationRules";
+import { historyByMonth, historyQuarterly, historyYearly } from "../lib/historicoAggregations";
+import { peerReviewYearly, peerReviewMatrix, peerReviewByObra } from "../lib/peerReviewAggregations";
 // import { canAccessObras } from "../_core/accessControl";
+
+
+// ── Modo mock ──
+// Quando PBI_API_URL nao esta configurada, evitamos qualquer escrita no DB
+// (a tabela `projects` nao necessariamente existe no DATABASE_URL legado).
+// IDs sao derivados do codigo: P1001 -> 1001, permitindo getById/submitScores
+// funcionarem de forma estavel.
+function mockProjectId(codigoProjeto: string): number {
+  const numeric = parseInt(codigoProjeto.replace(/\D/g, ""), 10);
+  return Number.isFinite(numeric) ? numeric : 1;
+}
+
+function buildMockProjectList() {
+  return MOCK_PROJECTS.map((p) => ({
+    id: mockProjectId(p.codigoProjeto),
+    code: p.codigoProjeto,
+    clientName: p.clientName,
+    address: p.address ?? null,
+    city: p.city ?? null,
+    state: p.state ?? null,
+    powerKwp: p.powerKwp ? String(p.powerKwp) : null,
+    category: p.category,
+    status: p.status,
+    moduleCount: p.moduleCount ?? null,
+    startDate: p.startDate ? new Date(p.startDate) : null,
+    endDate: p.endDate ? new Date(p.endDate) : null,
+    completedDate: null,
+    modulePower: null,
+    paymentMonth: null,
+    actualDays: null,
+    expectedDaysOverride: null,
+    hasFinancialLoss: false,
+    financialLossReason: null,
+    forceMajeureJustification: null,
+    photosLink: null,
+    reportLink: null,
+    nps: null,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    projectScore: null,
+    baseValue: 0,
+    correctedValue: 0,
+    fromPbi: false,
+    installacaoFinalizada: p.installacaoFinalizada,
+    pedidoVistoriaDate: p.pedidoVistoriaDate,
+    vendedor: p.vendedor,
+  }));
+}
+
+// Retorna projetos da API (real ou mock) ja no shape do PbiProject + projectScore.
+async function fetchAllProjectsForUI() {
+  if (!isPbiConfigured()) {
+    return buildMockProjectList();
+  }
+  const pbi = await fetchPbiProjects();
+  return pbi.map((p) => ({
+    id: mockProjectId(p.codigoProjeto),
+    code: p.codigoProjeto,
+    clientName: p.clientName,
+    address: p.address ?? null,
+    city: p.city ?? null,
+    state: p.state ?? null,
+    powerKwp: p.powerKwp ? String(p.powerKwp) : null,
+    category: p.category,
+    status: p.status,
+    moduleCount: p.moduleCount ?? null,
+    startDate: p.startDate ? new Date(p.startDate) : null,
+    endDate: p.endDate ? new Date(p.endDate) : null,
+    completedDate: null,
+    modulePower: null,
+    paymentMonth: null,
+    actualDays: null,
+    expectedDaysOverride: null,
+    hasFinancialLoss: false,
+    financialLossReason: null,
+    forceMajeureJustification: null,
+    photosLink: null,
+    reportLink: null,
+    nps: null,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    projectScore: null,
+    baseValue: 0,
+    correctedValue: 0,
+    fromPbi: true,
+    installacaoFinalizada: p.installacaoFinalizada,
+    pedidoVistoriaDate: p.pedidoVistoriaDate,
+    vendedor: p.vendedor,
+  }));
+}
 
 export const projectsRouter = router({
   // GET /api/projects - List all projects
@@ -42,16 +137,14 @@ export const projectsRouter = router({
   }),
 
   // GET /api/projects/:id - Get project details with members
+  // Sempre busca da fonte de verdade (PBI ou mocks), sem DB local.
   getById: protectedProcedure
     .input(z.object({ id: z.number() }))
     .query(async ({ input }) => {
-      const db = await getDb();
-      if (!db) throw new Error("Database unavailable");
-      const projectRes = await db.select().from(projects).where(eq(projects.id, input.id));
-      if (!projectRes.length) throw new Error("Project not found");
-
-      const members = await db.select().from(projectMembers).where(eq(projectMembers.projectId, input.id));
-      return { ...projectRes[0], members };
+      const all = await fetchAllProjectsForUI();
+      const found = all.find((p) => p.id === input.id);
+      if (!found) throw new Error("Project not found");
+      return { ...found, members: [] };
     }),
 
   calculateExpectedDays: protectedProcedure
@@ -138,20 +231,12 @@ export const projectsRouter = router({
     }),
 
   // GET /api/projects/:id/criteria - Get obra criteria for evaluation
+  // Por enquanto sempre devolve os criterios mockados (3 categorias: seguranca,
+  // funcionalidade, estetica). Quando popular tabela `obra_criteria` no banco
+  // de obras, voltar a ler do DB.
   getCriteria: protectedProcedure
     .query(async () => {
-      const db = await getDb();
-      if (!db) throw new Error("Database unavailable");
-      const criteria = await db.select().from(obraCriteria).where(eq(obraCriteria.active, true));
-      
-      const grouped = criteria.reduce((acc, criterion) => {
-        const cat = criterion.category || "outros";
-        if (!acc[cat]) acc[cat] = [];
-        acc[cat].push(criterion);
-        return acc;
-      }, {} as Record<string, typeof criteria>);
-
-      return grouped;
+      return MOCK_OBRA_CRITERIA_GROUPED;
     }),
 
   // POST /api/projects/:id/scores - Submit obra evaluation scores
@@ -167,71 +252,37 @@ export const projectsRouter = router({
       npsCliente: z.number(),
     }))
     .mutation(async ({ input }) => {
-      const db = await getDb();
-      if (!db) throw new Error("Database unavailable");
       const { projectId, userId, notaSeguranca, notaFuncionalidade, notaEstetica, mediaOs, eficiencia, npsCliente } = input;
 
       const baseScore = ((notaSeguranca * 2 + notaFuncionalidade * 2 + notaEstetica * 1) / 5);
       const notaObraPercentual = (baseScore * 0.5) + (mediaOs * 0.2) + (eficiencia * 0.15) + (npsCliente * 0.15);
 
-      const projectRes = await db.select().from(projects).where(eq(projects.id, projectId));
-      if (!projectRes.length) throw new Error("Project not found");
-
-      const bonusMap: Record<string, number> = {
+      // Sempre simula: busca o projeto na fonte (PBI/mock) pra pegar a categoria,
+      // calcula o bonus mas nao persiste.
+      // TODO quando o banco de obras estiver acessivel: gravar em `obraScores`.
+      const all = await fetchAllProjectsForUI();
+      const found = all.find((p) => p.id === projectId);
+      if (!found) throw new Error("Project not found");
+      const bonusMapAlways: Record<string, number> = {
         B1: 200, B2: 300, B3: 500, B4: 750, B5: 1000, B6: 1500, B7: 2000,
       };
-
-      const baseCategory = typeof projectRes[0].category === "string" ? projectRes[0].category : "B1";
-      const bonusValorBase = bonusMap[baseCategory] || 200;
-      const bonusValorCorrigido = bonusValorBase * (notaObraPercentual / 100);
-
-      const existingScore = await db.select().from(obraScores).where(
-        and(eq(obraScores.projectId, projectId), eq(obraScores.userId, userId))
-      );
-
-      if (existingScore.length) {
-        await db.update(obraScores).set({
-          notaSeguranca: String(notaSeguranca), 
-          notaFuncionalidade: String(notaFuncionalidade), 
-          notaEstetica: String(notaEstetica), 
-          mediaOs: String(mediaOs), 
-          eficiencia: String(eficiencia), 
-          npsCliente: String(npsCliente),
-          notaObraPercentual: String(notaObraPercentual),
-          bonusValorBase: String(bonusValorBase),
-          bonusValorCorrigido: String(bonusValorCorrigido),
-        }).where(eq(obraScores.id, existingScore[0].id));
-      } else {
-        await db.insert(obraScores).values({
-          projectId, 
-          userId, 
-          notaSeguranca: String(notaSeguranca), 
-          notaFuncionalidade: String(notaFuncionalidade), 
-          notaEstetica: String(notaEstetica), 
-          mediaOs: String(mediaOs), 
-          eficiencia: String(eficiencia), 
-          npsCliente: String(npsCliente),
-          notaObraPercentual: String(notaObraPercentual),
-          bonusValorBase: String(bonusValorBase),
-          bonusValorCorrigido: String(bonusValorCorrigido),
-        });
-      }
-
+      const baseCategoryAlways = found.category ?? "B1";
+      const bonusValorBaseAlways = bonusMapAlways[baseCategoryAlways] || 200;
+      const bonusValorCorrigidoAlways = bonusValorBaseAlways * (notaObraPercentual / 100);
       return {
         notaObraPercentual,
-        bonusValorBase,
-        bonusValorCorrigido,
-        message: "Scores submitted successfully",
+        bonusValorBase: bonusValorBaseAlways,
+        bonusValorCorrigido: bonusValorCorrigidoAlways,
+        message: "Avaliacao registrada (ainda nao persistida — ligar ao banco de obras quando pronto)",
       };
     }),
 
+  // Por enquanto sem persistencia: scores nao sao salvos, entao getScores
+  // sempre retorna lista vazia. Quando o banco de obras estiver acessivel, ler dali.
   getScores: protectedProcedure
     .input(z.object({ projectId: z.number() }))
-    .query(async ({ input }) => {
-      const db = await getDb();
-      if (!db) throw new Error("Database unavailable");
-      const scores = await db.select().from(obraScores).where(eq(obraScores.projectId, input.projectId));
-      return scores;
+    .query(async () => {
+      return [] as unknown[];
     }),
 
   // Gera contrato e procuração via API do form-pbi
@@ -241,67 +292,64 @@ export const projectsRouter = router({
       return generatePbiDocuments(input);
     }),
 
-  // Busca projetos do form-pbi, sincroniza na tabela local e retorna com scores
+  // Lista projetos do form-pbi (ou mocks se nao configurado).
+  // NAO faz upsert no DB local: a fonte de verdade eh a planilha via API.
+  // Quando voltar a salvar scores reais, usaremos `obraScores` separado por code.
   listFromPbi: protectedProcedure.query(async () => {
-    const db = await getDb();
-    if (!db) throw new Error("Database unavailable");
-
-    let pbiProjects: Awaited<ReturnType<typeof fetchPbiProjects>> = [];
-    try {
-      pbiProjects = await fetchPbiProjects();
-    } catch (err) {
-      console.error('[PBI] Falha ao buscar projetos da API:', err);
-      // Fallback: retorna projetos locais se a API estiver indisponível
-      const localProjects = await db.select().from(projects);
-      const allScores = await db.select().from(obraScores);
-      return localProjects.map(proj => {
-        const score = allScores.find(s => s.projectId === proj.id);
-        return { ...proj, projectScore: score?.notaObraPercentual ?? null, baseValue: 0, correctedValue: 0, fromPbi: false };
-      });
-    }
-
-    // Upsert cada projeto do form-pbi na tabela local (keyed by code)
-    for (const p of pbiProjects) {
-      await db.insert(projects).values({
-        code: p.codigoProjeto,
-        clientName: p.clientName,
-        address: p.address || null,
-        city: p.city || null,
-        state: p.state || null,
-        powerKwp: p.powerKwp ? String(p.powerKwp) : null,
-        category: p.category,
-        status: p.status,
-        moduleCount: p.moduleCount || null,
-        startDate: p.startDate ? new Date(p.startDate) : null,
-        endDate: p.endDate ? new Date(p.endDate) : null,
-      } as any).onDuplicateKeyUpdate({
-        set: {
-          clientName: p.clientName,
-          city: p.city || null,
-          state: p.state || null,
-          powerKwp: p.powerKwp ? String(p.powerKwp) : null,
-          category: p.category,
-          status: p.status,
-          moduleCount: p.moduleCount || null,
-          startDate: p.startDate ? new Date(p.startDate) : null,
-          endDate: p.endDate ? new Date(p.endDate) : null,
-        },
-      });
-    }
-
-    // Retorna a lista local (agora sincronizada) com scores
-    const allProjects = await db.select().from(projects);
-    const allScores = await db.select().from(obraScores);
-
-    return allProjects.map(proj => {
-      const score = allScores.find(s => s.projectId === proj.id);
-      return {
-        ...proj,
-        projectScore: score?.notaObraPercentual ?? null,
-        baseValue: parseFloat(String(score?.bonusValorBase ?? 0)),
-        correctedValue: parseFloat(String(score?.bonusValorCorrigido ?? 0)),
-        fromPbi: true,
-      };
-    });
+    return fetchAllProjectsForUI();
   }),
+
+  // ── Lista projetos ELEGIVEIS para avaliacao em um mes especifico ──
+  // Input: monthYear no formato "YYYY-MM" (ex: "2026-04").
+  // Janela considerada: o MES ANTERIOR ao selecionado.
+  // Regra: installacaoFinalizada=true E pedidoVistoriaDate dentro da janela.
+  listEvaluable: protectedProcedure
+    .input(z.object({ monthYear: z.string().regex(/^\d{4}-\d{2}$/) }))
+    .query(async ({ input }) => {
+      const window = getEvaluationWindow(input.monthYear);
+      const all = await fetchAllProjectsForUI();
+      const eligible = all.filter((p) =>
+        isEligibleForEvaluation(
+          {
+            installacaoFinalizada: p.installacaoFinalizada,
+            pedidoVistoriaDate: p.pedidoVistoriaDate,
+          } as any,
+          window
+        )
+      );
+      return { window, projects: eligible };
+    }),
+
+  // ── HISTORICO DE AVALIACOES ──
+  // Le do JSON estatico server/lib/historicoAvaliacoes.json (175 obras avaliadas)
+  // Quando integrar com a planilha "Avaliação de Qualidade de Obras 2025" via API,
+  // substituir o data source no historicoData.ts.
+
+  historyByMonth: protectedProcedure
+    .input(z.object({ year: z.number().int().min(2020).max(2100) }))
+    .query(async ({ input }) => historyByMonth(input.year)),
+
+  historyQuarterly: protectedProcedure
+    .input(z.object({ year: z.number().int().min(2020).max(2100) }))
+    .query(async ({ input }) => historyQuarterly(input.year)),
+
+  historyYearly: protectedProcedure
+    .input(z.object({ year: z.number().int().min(2020).max(2100) }))
+    .query(async ({ input }) => historyYearly(input.year)),
+
+  // ── PEER REVIEW (Avaliação dos Pares — INTRA-OBRA) ──
+  // Notas que os instaladores deram entre si nas obras em que trabalharam juntos.
+  // Vem da planilha "Matriz Geral" (NotaObras + Matriz). Nada a ver com o módulo
+  // /360 do portal (que será a avaliação 360 da empresa toda, escopo diferente).
+
+  peerReviewYearly: protectedProcedure
+    .input(z.object({ year: z.number().int().min(2020).max(2100) }))
+    .query(async ({ input }) => peerReviewYearly(input.year)),
+
+  peerReviewMatrix: protectedProcedure
+    .query(async () => peerReviewMatrix()),
+
+  peerReviewByObra: protectedProcedure
+    .input(z.object({ projeto: z.string() }))
+    .query(async ({ input }) => peerReviewByObra(input.projeto)),
 });

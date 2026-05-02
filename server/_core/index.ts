@@ -3,46 +3,32 @@ import express from "express";
 import { createServer } from "http";
 import net from "net";
 import { createExpressMiddleware } from "@trpc/server/adapters/express";
-import { registerOAuthRoutes } from "./oauth";
 import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
 
-// Uses a connection attempt instead of bind+close to avoid Windows TIME_WAIT race condition
 function isPortAvailable(port: number): Promise<boolean> {
-  return new Promise(resolve => {
-    const socket = net.createConnection({ port, host: '127.0.0.1' });
-    socket.on('connect', () => { socket.destroy(); resolve(false); }); // someone is listening
-    socket.on('error', () => { socket.destroy(); resolve(true); });    // ECONNREFUSED = free
+  return new Promise((resolve) => {
+    const socket = net.createConnection({ port, host: "127.0.0.1" });
+    socket.on("connect", () => { socket.destroy(); resolve(false); });
+    socket.on("error", () => { socket.destroy(); resolve(true); });
   });
 }
 
-async function findAvailablePort(startPort: number = 3000): Promise<number> {
+async function findAvailablePort(startPort = 3000): Promise<number> {
   for (let port = startPort; port < startPort + 50; port++) {
-    if (await isPortAvailable(port)) {
-      return port;
-    }
+    if (await isPortAvailable(port)) return port;
   }
-  throw new Error(`No available port found starting from ${startPort}`);
+  throw new Error(`No available port from ${startPort}`);
 }
 
 async function startServer() {
   const app = express();
   const server = createServer(app);
-  // Configure body parser with larger size limit for file uploads
+
   app.use(express.json({ limit: "50mb" }));
   app.use(express.urlencoded({ limit: "50mb", extended: true }));
-  // OAuth callback under /api/oauth/callback
-  registerOAuthRoutes(app);
-  // tRPC API (mounted under /obras/ base path for production deploy)
-  app.use(
-    "/obras/api/trpc",
-    createExpressMiddleware({
-      router: appRouter,
-      createContext,
-    })
-  );
-  // Also mount at /api/trpc for backward compatibility in dev
+
   app.use(
     "/api/trpc",
     createExpressMiddleware({
@@ -50,7 +36,7 @@ async function startServer() {
       createContext,
     })
   );
-  // Use Vite in any non-production environment to avoid static build requirements in local dev.
+
   const isProduction = process.env.NODE_ENV === "production";
   if (!isProduction) {
     await setupVite(app, server);
@@ -58,14 +44,13 @@ async function startServer() {
     serveStatic(app);
   }
 
-  const preferredPort = parseInt(process.env.PORT || "3000");
+  const preferredPort = parseInt(process.env.PORT ?? "3000", 10);
   const port = await findAvailablePort(preferredPort);
-
   if (port !== preferredPort) {
-    console.log(`Port ${preferredPort} is busy, using port ${port} instead`);
+    console.log(`Port ${preferredPort} busy, using ${port}`);
   }
 
-  server.listen(port,"0.0.0.0", () => {
+  server.listen(port, "0.0.0.0", () => {
     console.log(`Server running on http://localhost:${port}/`);
   });
 }

@@ -12,7 +12,6 @@ import {
   auditFlags,
   type User,
 } from "../drizzle/schema";
-import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
 
@@ -50,7 +49,6 @@ export async function upsertUser(user: InsertUser): Promise<void> {
 
   if (user.lastSignedIn !== undefined) { values.lastSignedIn = user.lastSignedIn; updateSet.lastSignedIn = user.lastSignedIn; }
   if (user.role !== undefined) { values.role = user.role; updateSet.role = user.role; }
-  else if (user.openId === ENV.ownerOpenId) { values.role = 'admin'; updateSet.role = 'admin'; }
   if (user.jobCategory !== undefined) { values.jobCategory = user.jobCategory; updateSet.jobCategory = user.jobCategory; }
   if (user.appRole !== undefined) { values.appRole = user.appRole; updateSet.appRole = user.appRole; }
   if (user.areaId !== undefined) { values.areaId = user.areaId; updateSet.areaId = user.areaId; }

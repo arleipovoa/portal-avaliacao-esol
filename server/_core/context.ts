@@ -1,7 +1,6 @@
 import type { CreateExpressContextOptions } from "@trpc/server/adapters/express";
 import type { User } from "../../drizzle/schema";
-import { sdk } from "./sdk";
-import { getUserByEmail } from "../db";
+import * as db from "../db";
 
 export type TrpcContext = {
   req: CreateExpressContextOptions["req"];
@@ -9,25 +8,24 @@ export type TrpcContext = {
   user: User | null;
 };
 
+// DEV MODE: sem login. Retorna sempre o admin padrão (Árlei) cacheado.
+let cachedAdmin: User | null = null;
+
+async function getDefaultAdmin(): Promise<User | null> {
+  if (cachedAdmin) return cachedAdmin;
+  try {
+    const user = await db.getUserByEmail("arlei@grupoesol.com.br");
+    if (user) { cachedAdmin = user; return user; }
+    console.error("[Auth] Admin padrão (arlei@grupoesol.com.br) não encontrado no DB.");
+  } catch (e) {
+    console.error("[Auth] Erro ao buscar admin padrão:", e);
+  }
+  return null;
+}
+
 export async function createContext(
   opts: CreateExpressContextOptions
 ): Promise<TrpcContext> {
-  let user: User | null = null;
-
-  try {
-    user = await sdk.authenticateRequest(opts.req);
-  } catch {
-    // No valid session — auto-login as default admin (login disabled temporarily)
-    try {
-      user = (await getUserByEmail("arlei@grupoesol.com.br")) ?? null;
-    } catch {
-      user = null;
-    }
-  }
-
-  return {
-    req: opts.req,
-    res: opts.res,
-    user,
-  };
+  const user = await getDefaultAdmin();
+  return { req: opts.req, res: opts.res, user };
 }
