@@ -135,21 +135,14 @@ export const projectsRouter = router({
   }),
 
   // GET /api/projects/:id - Get project details with members
+  // Sempre busca da fonte de verdade (PBI ou mocks), sem DB local.
   getById: protectedProcedure
     .input(z.object({ id: z.number() }))
     .query(async ({ input }) => {
-      if (!isPbiConfigured()) {
-        const mock = buildMockProjectList().find((p) => p.id === input.id);
-        if (!mock) throw new Error("Project not found");
-        return { ...mock, members: [] };
-      }
-      const db = await getDb();
-      if (!db) throw new Error("Database unavailable");
-      const projectRes = await db.select().from(projects).where(eq(projects.id, input.id));
-      if (!projectRes.length) throw new Error("Project not found");
-
-      const members = await db.select().from(projectMembers).where(eq(projectMembers.projectId, input.id));
-      return { ...projectRes[0], members };
+      const all = await fetchAllProjectsForUI();
+      const found = all.find((p) => p.id === input.id);
+      if (!found) throw new Error("Project not found");
+      return { ...found, members: [] };
     }),
 
   calculateExpectedDays: protectedProcedure
@@ -236,23 +229,12 @@ export const projectsRouter = router({
     }),
 
   // GET /api/projects/:id/criteria - Get obra criteria for evaluation
+  // Por enquanto sempre devolve os criterios mockados (3 categorias: seguranca,
+  // funcionalidade, estetica). Quando popular tabela `obra_criteria` no banco
+  // de obras, voltar a ler do DB.
   getCriteria: protectedProcedure
     .query(async () => {
-      if (!isPbiConfigured()) {
-        return MOCK_OBRA_CRITERIA_GROUPED;
-      }
-      const db = await getDb();
-      if (!db) throw new Error("Database unavailable");
-      const criteria = await db.select().from(obraCriteria).where(eq(obraCriteria.active, true));
-
-      const grouped = criteria.reduce((acc, criterion) => {
-        const cat = criterion.category || "outros";
-        if (!acc[cat]) acc[cat] = [];
-        acc[cat].push(criterion);
-        return acc;
-      }, {} as Record<string, typeof criteria>);
-
-      return grouped;
+      return MOCK_OBRA_CRITERIA_GROUPED;
     }),
 
   // POST /api/projects/:id/scores - Submit obra evaluation scores
@@ -268,89 +250,37 @@ export const projectsRouter = router({
       npsCliente: z.number(),
     }))
     .mutation(async ({ input }) => {
-      const db = await getDb();
-      if (!db) throw new Error("Database unavailable");
       const { projectId, userId, notaSeguranca, notaFuncionalidade, notaEstetica, mediaOs, eficiencia, npsCliente } = input;
 
       const baseScore = ((notaSeguranca * 2 + notaFuncionalidade * 2 + notaEstetica * 1) / 5);
       const notaObraPercentual = (baseScore * 0.5) + (mediaOs * 0.2) + (eficiencia * 0.15) + (npsCliente * 0.15);
 
-      // Mock mode: simula calculo sem persistir
-      if (!isPbiConfigured()) {
-        const mock = buildMockProjectList().find((p) => p.id === projectId);
-        if (!mock) throw new Error("Project not found");
-        const bonusMap: Record<string, number> = {
-          B1: 200, B2: 300, B3: 500, B4: 750, B5: 1000, B6: 1500, B7: 2000,
-        };
-        const baseCategory = mock.category ?? "B1";
-        const bonusValorBase = bonusMap[baseCategory] || 200;
-        const bonusValorCorrigido = bonusValorBase * (notaObraPercentual / 100);
-        return {
-          notaObraPercentual,
-          bonusValorBase,
-          bonusValorCorrigido,
-          message: "Scores submitted successfully (mock — nao persistido)",
-        };
-      }
-
-      const projectRes = await db.select().from(projects).where(eq(projects.id, projectId));
-      if (!projectRes.length) throw new Error("Project not found");
-
-      const bonusMap: Record<string, number> = {
+      // Sempre simula: busca o projeto na fonte (PBI/mock) pra pegar a categoria,
+      // calcula o bonus mas nao persiste.
+      // TODO quando o banco de obras estiver acessivel: gravar em `obraScores`.
+      const all = await fetchAllProjectsForUI();
+      const found = all.find((p) => p.id === projectId);
+      if (!found) throw new Error("Project not found");
+      const bonusMapAlways: Record<string, number> = {
         B1: 200, B2: 300, B3: 500, B4: 750, B5: 1000, B6: 1500, B7: 2000,
       };
-
-      const baseCategory = typeof projectRes[0].category === "string" ? projectRes[0].category : "B1";
-      const bonusValorBase = bonusMap[baseCategory] || 200;
-      const bonusValorCorrigido = bonusValorBase * (notaObraPercentual / 100);
-
-      const existingScore = await db.select().from(obraScores).where(
-        and(eq(obraScores.projectId, projectId), eq(obraScores.userId, userId))
-      );
-
-      if (existingScore.length) {
-        await db.update(obraScores).set({
-          notaSeguranca: String(notaSeguranca), 
-          notaFuncionalidade: String(notaFuncionalidade), 
-          notaEstetica: String(notaEstetica), 
-          mediaOs: String(mediaOs), 
-          eficiencia: String(eficiencia), 
-          npsCliente: String(npsCliente),
-          notaObraPercentual: String(notaObraPercentual),
-          bonusValorBase: String(bonusValorBase),
-          bonusValorCorrigido: String(bonusValorCorrigido),
-        }).where(eq(obraScores.id, existingScore[0].id));
-      } else {
-        await db.insert(obraScores).values({
-          projectId, 
-          userId, 
-          notaSeguranca: String(notaSeguranca), 
-          notaFuncionalidade: String(notaFuncionalidade), 
-          notaEstetica: String(notaEstetica), 
-          mediaOs: String(mediaOs), 
-          eficiencia: String(eficiencia), 
-          npsCliente: String(npsCliente),
-          notaObraPercentual: String(notaObraPercentual),
-          bonusValorBase: String(bonusValorBase),
-          bonusValorCorrigido: String(bonusValorCorrigido),
-        });
-      }
-
+      const baseCategoryAlways = found.category ?? "B1";
+      const bonusValorBaseAlways = bonusMapAlways[baseCategoryAlways] || 200;
+      const bonusValorCorrigidoAlways = bonusValorBaseAlways * (notaObraPercentual / 100);
       return {
         notaObraPercentual,
-        bonusValorBase,
-        bonusValorCorrigido,
-        message: "Scores submitted successfully",
+        bonusValorBase: bonusValorBaseAlways,
+        bonusValorCorrigido: bonusValorCorrigidoAlways,
+        message: "Avaliacao registrada (ainda nao persistida — ligar ao banco de obras quando pronto)",
       };
     }),
 
+  // Por enquanto sem persistencia: scores nao sao salvos, entao getScores
+  // sempre retorna lista vazia. Quando o banco de obras estiver acessivel, ler dali.
   getScores: protectedProcedure
     .input(z.object({ projectId: z.number() }))
-    .query(async ({ input }) => {
-      const db = await getDb();
-      if (!db) throw new Error("Database unavailable");
-      const scores = await db.select().from(obraScores).where(eq(obraScores.projectId, input.projectId));
-      return scores;
+    .query(async () => {
+      return [] as unknown[];
     }),
 
   // Gera contrato e procuração via API do form-pbi
