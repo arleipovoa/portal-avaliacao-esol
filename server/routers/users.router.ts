@@ -2,7 +2,22 @@ import { protectedProcedure, adminProcedure, router } from "../_core/trpc";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import bcrypt from "bcryptjs";
+import { eq } from "drizzle-orm";
 import * as db from "../db";
+import { dbObras } from "../_core/db";
+import { installers } from "../../drizzle/schema-obras-diario";
+
+// Sincroniza status do instalador (matched by name) com o do user operacional
+async function syncInstallerStatus(userName: string | null, status: "active" | "inactive") {
+  if (!userName) return;
+  try {
+    const data: any = { status };
+    data.leftAt = status === "inactive" ? new Date() : null;
+    await dbObras.update(installers).set(data).where(eq(installers.name, userName));
+  } catch (e) {
+    console.error("[sync] Falha ao sincronizar instalador:", e);
+  }
+}
 
 export const usersRouter = router({
   list: protectedProcedure.query(async () => {
@@ -57,6 +72,21 @@ export const usersRouter = router({
         jobCategory: input.jobCategory || "administrativo",
         areaId: input.areaId, leaderId: input.leaderId,
       });
+      // Cria registro de installer auto se for operacional
+      if (input.jobCategory === "operacional" && user?.name) {
+        try {
+          const exists = await dbObras
+            .select()
+            .from(installers)
+            .where(eq(installers.name, user.name))
+            .limit(1);
+          if (exists.length === 0) {
+            await dbObras.insert(installers).values({ name: user.name, status: "active" });
+          }
+        } catch (e) {
+          console.error("[sync] Falha ao criar installer:", e);
+        }
+      }
       return { success: true, user };
     }),
 
@@ -72,10 +102,19 @@ export const usersRouter = router({
     }))
     .mutation(async ({ input }) => {
       const { id, ...data } = input;
+      const before = await db.getUserById(id);
       if (data.status === "inactive") {
         await db.deactivateUser(id);
       } else {
         await db.updateUser(id, data as any);
+      }
+      // Sync com installers se for operacional
+      const after = await db.getUserById(id);
+      if (after?.jobCategory === "operacional") {
+        await syncInstallerStatus(after.name, after.status as "active" | "inactive");
+      } else if (before?.jobCategory === "operacional") {
+        // era operacional e mudou ou foi inativado → desativa o installer
+        await syncInstallerStatus(before.name, "inactive");
       }
       return { success: true };
     }),
