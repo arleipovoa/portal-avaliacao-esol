@@ -3,6 +3,10 @@ import { MOCK_PROJECTS } from "./mockProjects";
 const PBI_API_URL = process.env.PBI_API_URL ?? "";
 const PBI_API_KEY = process.env.PBI_API_KEY ?? "";
 
+console.log(
+  `[PBI] Boot: PBI_API_URL=${JSON.stringify(PBI_API_URL)} | PBI_API_KEY length=${PBI_API_KEY.length}`
+);
+
 export interface PbiProject {
   codigoProjeto: string;
   clientName: string;
@@ -28,12 +32,17 @@ let _cache: { data: any[]; ts: number } | null = null;
 const CACHE_TTL = 5 * 60 * 1000;
 
 export function isPbiConfigured(): boolean {
-  return Boolean(PBI_API_URL && !PBI_API_URL.includes("localhost") || PBI_API_URL.startsWith("http://127."));
+  if (!PBI_API_URL) return false;
+  // Ainda em dev local? Trate "localhost" sem IP como nao-configurado para usar mocks.
+  // 127.0.0.1 (loopback explicito, usado em containers/VPS) eh aceito como configurado.
+  if (PBI_API_URL.includes("localhost")) return false;
+  return true;
 }
 
 export async function fetchPbiProjects(): Promise<PbiProject[]> {
+  console.log(`[PBI] fetchPbiProjects() called. Configured=${isPbiConfigured()} URL=${PBI_API_URL}`);
   if (!isPbiConfigured()) {
-    console.log(`[PBI] PBI_API_URL nao configurada — usando ${MOCK_PROJECTS.length} projetos simulados (modo dev).`);
+    console.log(`[PBI] usando ${MOCK_PROJECTS.length} projetos simulados (modo dev).`);
     return MOCK_PROJECTS;
   }
 
