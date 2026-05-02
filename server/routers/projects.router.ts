@@ -6,6 +6,7 @@ import { eq, and } from "drizzle-orm";
 import { fetchPbiProjects, generatePbiDocuments, isPbiConfigured } from "../lib/pbiClient";
 import { MOCK_PROJECTS } from "../lib/mockProjects";
 import { MOCK_OBRA_CRITERIA_GROUPED } from "../lib/mockObraCriteria";
+import { getEvaluationWindow, isEligibleForEvaluation } from "../lib/evaluationRules";
 // import { canAccessObras } from "../_core/accessControl";
 
 
@@ -50,6 +51,51 @@ function buildMockProjectList() {
     baseValue: 0,
     correctedValue: 0,
     fromPbi: false,
+    installacaoFinalizada: p.installacaoFinalizada,
+    pedidoVistoriaDate: p.pedidoVistoriaDate,
+    vendedor: p.vendedor,
+  }));
+}
+
+// Retorna projetos da API (real ou mock) ja no shape do PbiProject + projectScore.
+async function fetchAllProjectsForUI() {
+  if (!isPbiConfigured()) {
+    return buildMockProjectList();
+  }
+  const pbi = await fetchPbiProjects();
+  return pbi.map((p) => ({
+    id: mockProjectId(p.codigoProjeto),
+    code: p.codigoProjeto,
+    clientName: p.clientName,
+    address: p.address ?? null,
+    city: p.city ?? null,
+    state: p.state ?? null,
+    powerKwp: p.powerKwp ? String(p.powerKwp) : null,
+    category: p.category,
+    status: p.status,
+    moduleCount: p.moduleCount ?? null,
+    startDate: p.startDate ? new Date(p.startDate) : null,
+    endDate: p.endDate ? new Date(p.endDate) : null,
+    completedDate: null,
+    modulePower: null,
+    paymentMonth: null,
+    actualDays: null,
+    expectedDaysOverride: null,
+    hasFinancialLoss: false,
+    financialLossReason: null,
+    forceMajeureJustification: null,
+    photosLink: null,
+    reportLink: null,
+    nps: null,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    projectScore: null,
+    baseValue: 0,
+    correctedValue: 0,
+    fromPbi: true,
+    installacaoFinalizada: p.installacaoFinalizada,
+    pedidoVistoriaDate: p.pedidoVistoriaDate,
+    vendedor: p.vendedor,
   }));
 }
 
@@ -382,4 +428,25 @@ export const projectsRouter = router({
       };
     });
   }),
+
+  // ── Lista projetos ELEGIVEIS para avaliacao em um mes especifico ──
+  // Input: monthYear no formato "YYYY-MM" (ex: "2026-04").
+  // Janela considerada: o MES ANTERIOR ao selecionado.
+  // Regra: installacaoFinalizada=true E pedidoVistoriaDate dentro da janela.
+  listEvaluable: protectedProcedure
+    .input(z.object({ monthYear: z.string().regex(/^\d{4}-\d{2}$/) }))
+    .query(async ({ input }) => {
+      const window = getEvaluationWindow(input.monthYear);
+      const all = await fetchAllProjectsForUI();
+      const eligible = all.filter((p) =>
+        isEligibleForEvaluation(
+          {
+            installacaoFinalizada: p.installacaoFinalizada,
+            pedidoVistoriaDate: p.pedidoVistoriaDate,
+          } as any,
+          window
+        )
+      );
+      return { window, projects: eligible };
+    }),
 });

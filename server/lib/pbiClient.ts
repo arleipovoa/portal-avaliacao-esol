@@ -16,16 +16,19 @@ export interface PbiProject {
   startDate: string | null;
   endDate: string | null;
   vendedor: string;
+  // ── Campos da regra de elegibilidade (BM e BN da planilha) ──
+  // BM "Instalacao Finalizada": TRUE quando o tecnico finalizou a obra
+  installacaoFinalizada: boolean;
+  // BN "Pedido de Vistoria": data preenchida pelo tecnico ao finalizar.
+  // Formato ISO (YYYY-MM-DD), null quando ainda nao preenchida.
+  pedidoVistoriaDate: string | null;
 }
 
 let _cache: { data: any[]; ts: number } | null = null;
 const CACHE_TTL = 5 * 60 * 1000;
 
-// Quando PBI_API_URL nao esta configurada (modo dev/sem integracao), devolve
-// projetos simulados — permite testar toda a UI do modulo Obras sem dependencia
-// externa. Remover este branch quando a API form-pbi estiver acessivel.
 export function isPbiConfigured(): boolean {
-  return Boolean(PBI_API_URL && !PBI_API_URL.includes("localhost"));
+  return Boolean(PBI_API_URL && !PBI_API_URL.includes("localhost") || PBI_API_URL.startsWith("http://127."));
 }
 
 export async function fetchPbiProjects(): Promise<PbiProject[]> {
@@ -40,13 +43,18 @@ export async function fetchPbiProjects(): Promise<PbiProject[]> {
 
   const resp = await fetch(`${PBI_API_URL}/projetos?limit=2000&offset=0`, {
     headers: { "x-api-key": PBI_API_KEY },
-    signal: AbortSignal.timeout(15_000),
+    signal: AbortSignal.timeout(20_000),
   });
 
   if (!resp.ok) throw new Error(`PBI API ${resp.status}: ${resp.statusText}`);
 
   const raw = await resp.json();
-  const items: any[] = Array.isArray(raw) ? raw : Array.isArray(raw?.data) ? raw.data : [];
+  // Resposta da API: { total, data: [...], limit, offset }
+  const items: any[] = Array.isArray(raw)
+    ? raw
+    : Array.isArray(raw?.data)
+    ? raw.data
+    : [];
   _cache = { data: items, ts: Date.now() };
   return items.map(mapRawProject);
 }
@@ -59,7 +67,6 @@ export async function generatePbiDocuments(
   codigoProjeto: string
 ): Promise<{ contrato?: string; procuracao?: string }> {
   if (!isPbiConfigured()) {
-    console.log(`[PBI] generateDocuments simulado para ${codigoProjeto} — sem PBI_API_URL.`);
     return {
       contrato: `https://exemplo.com/contratos/${codigoProjeto}.pdf`,
       procuracao: `https://exemplo.com/procuracoes/${codigoProjeto}.pdf`,
@@ -76,6 +83,33 @@ export async function generatePbiDocuments(
     throw new Error(`Falha ao gerar documentos (HTTP ${resp.status}): ${body}`);
   }
   return resp.json();
+}
+
+// ── Helpers de parsing ──
+
+// "TRUE", "VERDADEIRO", "1", "yes" → true ; outros → false
+function parseSheetBoolean(v: any): boolean {
+  if (typeof v === "boolean") return v;
+  const s = String(v ?? "").trim().toUpperCase();
+  return s === "TRUE" || s === "VERDADEIRO" || s === "1" || s === "SIM" || s === "YES";
+}
+
+// Aceita "DD/MM/YYYY", "DD/MM/YYYY HH:MM", "YYYY-MM-DD" e devolve ISO YYYY-MM-DD ou null
+function parseSheetDateBR(v: any): string | null {
+  const s = String(v ?? "").trim();
+  if (!s) return null;
+  // ISO ja
+  const isoMatch = s.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (isoMatch) return `${isoMatch[1]}-${isoMatch[2]}-${isoMatch[3]}`;
+  // BR DD/MM/YYYY
+  const brMatch = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+  if (brMatch) {
+    const day = brMatch[1].padStart(2, "0");
+    const month = brMatch[2].padStart(2, "0");
+    const year = brMatch[3];
+    return `${year}-${month}-${day}`;
+  }
+  return null;
 }
 
 function mapStatus(s = ""): "planning" | "in_progress" | "completed" | "cancelled" {
@@ -96,18 +130,20 @@ function mapCategory(kwp: number): "B1" | "B2" | "B3" | "B4" | "B5" | "B6" | "B7
   return "B7";
 }
 
+// Headers exatos vindos do form-pbi
 const F_CODIGO = "Código P";
 const F_KWP = "Potência (kWp)";
 const F_LOGRADOURO = "Logradouro/Córrego";
 const F_MODULOS = "Qnt. de Módulos";
 const F_INSTALACAO_INI = "Instalação Iniciada";
-const F_INSTALACAO_FIM = "Instalação Finalizada";
+const F_INSTALACAO_FIM = "Instalação Finalizada"; // BM
+const F_PEDIDO_VISTORIA = "Pedido de Vistoria";    // BN
 const F_STATUS = "Status da Usina";
 const F_APELIDO = "Apelido da Usina";
 const F_TITULAR = "Titular do Projeto";
 
 function mapRawProject(p: any): PbiProject {
-  const rawCode = String(p[F_CODIGO] ?? p["Codigo P"] ?? p.p ?? p.P ?? p["A2"] ?? "").trim();
+  const rawCode = String(p[F_CODIGO] ?? p["Codigo P"] ?? p.p ?? p.P ?? "").trim();
   const codigoProjeto = /^P\d/i.test(rawCode)
     ? rawCode.toUpperCase()
     : rawCode
@@ -127,8 +163,10 @@ function mapRawProject(p: any): PbiProject {
     category: mapCategory(powerKwp),
     status: mapStatus(p[F_STATUS]),
     moduleCount: Number(p[F_MODULOS]) || 0,
-    startDate: p[F_INSTALACAO_INI] || null,
-    endDate: p[F_INSTALACAO_FIM] || null,
+    startDate: parseSheetDateBR(p[F_INSTALACAO_INI]),
+    endDate: parseSheetDateBR(p[F_INSTALACAO_FIM]),
     vendedor: p["Vendedor"] || "",
+    installacaoFinalizada: parseSheetBoolean(p[F_INSTALACAO_FIM]),
+    pedidoVistoriaDate: parseSheetDateBR(p[F_PEDIDO_VISTORIA]),
   };
 }

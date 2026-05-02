@@ -1,9 +1,8 @@
-// Projetos simulados — usados quando PBI_API_URL nao esta configurada.
-// Cobrem todas as categorias (B1..B7) e os 4 status do schema.
-// Remover quando integrar a API form-pbi de verdade.
-
 import type { PbiProject } from "./pbiClient";
 
+// Em modo dev (sem PBI_API_URL): 8 mocks cobrindo categorias B1-B7 e os 4 status.
+// 3 deles (P1001, P1002, P1004) ficaram elegiveis para avaliacao em ABRIL/2026
+// — instalacaoFinalizada=true e pedidoVistoriaDate dentro de marco/2026.
 export const MOCK_PROJECTS: PbiProject[] = [
   {
     codigoProjeto: "P1001",
@@ -15,9 +14,11 @@ export const MOCK_PROJECTS: PbiProject[] = [
     category: "B1",
     status: "completed",
     moduleCount: 9,
-    startDate: "2025-12-10",
-    endDate: "2025-12-12",
+    startDate: "2026-03-08",
+    endDate: "2026-03-10",
     vendedor: "Carlos Vieira",
+    installacaoFinalizada: true,
+    pedidoVistoriaDate: "2026-03-12",
   },
   {
     codigoProjeto: "P1002",
@@ -29,9 +30,11 @@ export const MOCK_PROJECTS: PbiProject[] = [
     category: "B2",
     status: "completed",
     moduleCount: 16,
-    startDate: "2026-01-15",
-    endDate: "2026-01-18",
+    startDate: "2026-03-15",
+    endDate: "2026-03-18",
     vendedor: "Ana Cardoso",
+    installacaoFinalizada: true,
+    pedidoVistoriaDate: "2026-03-19",
   },
   {
     codigoProjeto: "P1003",
@@ -46,6 +49,8 @@ export const MOCK_PROJECTS: PbiProject[] = [
     startDate: "2026-04-22",
     endDate: null,
     vendedor: "Carlos Vieira",
+    installacaoFinalizada: false,
+    pedidoVistoriaDate: null,
   },
   {
     codigoProjeto: "P1004",
@@ -57,9 +62,11 @@ export const MOCK_PROJECTS: PbiProject[] = [
     category: "B4",
     status: "completed",
     moduleCount: 56,
-    startDate: "2026-02-05",
-    endDate: "2026-02-15",
+    startDate: "2026-03-25",
+    endDate: "2026-03-29",
     vendedor: "Roberto Lima",
+    installacaoFinalizada: true,
+    pedidoVistoriaDate: "2026-03-30",
   },
   {
     codigoProjeto: "P1005",
@@ -74,6 +81,8 @@ export const MOCK_PROJECTS: PbiProject[] = [
     startDate: "2026-04-10",
     endDate: null,
     vendedor: "Ana Cardoso",
+    installacaoFinalizada: false,
+    pedidoVistoriaDate: null,
   },
   {
     codigoProjeto: "P1006",
@@ -88,6 +97,8 @@ export const MOCK_PROJECTS: PbiProject[] = [
     startDate: null,
     endDate: null,
     vendedor: "Roberto Lima",
+    installacaoFinalizada: false,
+    pedidoVistoriaDate: null,
   },
   {
     codigoProjeto: "P1007",
@@ -97,11 +108,14 @@ export const MOCK_PROJECTS: PbiProject[] = [
     state: "MG",
     powerKwp: 95,
     category: "B7",
-    status: "in_progress",
+    // Concluido mas vistoria foi em FEVEREIRO — nao deve aparecer na janela de marco
+    status: "completed",
     moduleCount: 190,
-    startDate: "2026-03-18",
-    endDate: null,
+    startDate: "2026-02-18",
+    endDate: "2026-02-25",
     vendedor: "Carlos Vieira",
+    installacaoFinalizada: true,
+    pedidoVistoriaDate: "2026-02-27",
   },
   {
     codigoProjeto: "P1008",
@@ -116,5 +130,7 @@ export const MOCK_PROJECTS: PbiProject[] = [
     startDate: "2026-01-30",
     endDate: null,
     vendedor: "Ana Cardoso",
+    installacaoFinalizada: false,
+    pedidoVistoriaDate: null,
   },
 ];
