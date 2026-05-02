@@ -21,11 +21,12 @@ export interface PbiProject {
   endDate: string | null;
   vendedor: string;
   // ── Campos da regra de elegibilidade (BM e BN da planilha) ──
-  // BM "Instalacao Finalizada": TRUE quando o tecnico finalizou a obra
   installacaoFinalizada: boolean;
-  // BN "Pedido de Vistoria": data preenchida pelo tecnico ao finalizar.
-  // Formato ISO (YYYY-MM-DD), null quando ainda nao preenchida.
   pedidoVistoriaDate: string | null;
+  // ── Equipe de instaladores (lido das colunas "Inst. <Nome>" da planilha) ──
+  // Quando essas colunas existirem, esta lista traz quem estah na obra.
+  // Vazia se nenhuma "Inst. *" foi preenchida ainda.
+  equipe: string[];
 }
 
 let _cache: { data: any[]; ts: number } | null = null;
@@ -137,6 +138,12 @@ function mapCategory(kwp: number): "B1" | "B2" | "B3" | "B4" | "B5" | "B6" | "B7
   return "B7";
 }
 
+// Lista canonica de instaladores (13 pessoas). Headers da planilha: "Inst. <Nome>".
+const INSTALADORES = [
+  "Elivelton", "Fábio", "Moisés", "Gabriel T", "Gabriel M", "Hyan",
+  "Gustavo", "Kauã", "Gustavo P", "Enderson", "Flávio", "Ley", "Élder",
+];
+
 // Headers exatos vindos do form-pbi
 const F_CODIGO = "Código P";
 const F_KWP = "Potência (kWp)";
@@ -175,5 +182,6 @@ function mapRawProject(p: any): PbiProject {
     vendedor: p["Vendedor"] || "",
     installacaoFinalizada: parseSheetBoolean(p[F_INSTALACAO_FIM]),
     pedidoVistoriaDate: parseSheetDateBR(p[F_PEDIDO_VISTORIA]),
+    equipe: INSTALADORES.filter((nome) => parseSheetBoolean(p[`Inst. ${nome}`])),
   };
 }

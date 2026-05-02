@@ -1,0 +1,201 @@
+[
+  {
+    "avaliado": "Elivelton",
+    "notasRecebidas": {
+      "Fábio": 10.0,
+      "Moisés": 9.789473684,
+      "Gabriel T": 8.866666667,
+      "Gabriel M": 9.913793103,
+      "Hyan": 9.847457627,
+      "Gustavo": 9.914893617,
+      "Kauã": 9.6,
+      "Gustavo P": 9.571428571,
+      "Ley": 10.0,
+      "Material": 9.357142857,
+      "Projeto": 9.042857143
+    }
+  },
+  {
+    "avaliado": "Fábio",
+    "notasRecebidas": {
+      "Elivelton": 10.0,
+      "Moisés": 10.0,
+      "Gabriel T": 10.0,
+      "Gabriel M": 10.0,
+      "Hyan": 10.0,
+      "Gustavo": 10.0,
+      "Kauã": 10.0,
+      "Gustavo P": 10.0,
+      "Ley": 10.0,
+      "Material": 9.935483871,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "avaliado": "Moisés",
+    "notasRecebidas": {
+      "Elivelton": 10.0,
+      "Fábio": 10.0,
+      "Gabriel T": 10.0,
+      "Gabriel M": 10.0,
+      "Hyan": 10.0,
+      "Gustavo": 10.0,
+      "Kauã": 9.949367089,
+      "Gustavo P": 9.2,
+      "Enderson": 10.0,
+      "Material": 9.74025974,
+      "Projeto": 9.623376623
+    }
+  },
+  {
+    "avaliado": "Gabriel T",
+    "notasRecebidas": {
+      "Elivelton": 9.933333333,
+      "Fábio": 9.830769231,
+      "Moisés": 8.25,
+      "Gabriel M": 9.769230769,
+      "Hyan": 9.111111111,
+      "Gustavo": 9.730769231,
+      "Kauã": 9.76056338,
+      "Gustavo P": 10.0,
+      "Enderson": 10.0,
+      "Flávio": 9.0,
+      "Ley": 9.705882353,
+      "Élder": 10.0,
+      "Material": 9.325842697,
+      "Projeto": 8.696629213
+    }
+  },
+  {
+    "avaliado": "Gabriel M",
+    "notasRecebidas": {
+      "Elivelton": 9.964285714,
+      "Fábio": 10.0,
+      "Moisés": 9.75,
+      "Gabriel T": 9.868421053,
+      "Hyan": 9.953846154,
+      "Gustavo": 9.927536232,
+      "Kauã": 9.787878788,
+      "Gustavo P": 10.0,
+      "Enderson": 10.0,
+      "Material": 9.77173913,
+      "Projeto": 9.880434783
+    }
+  },
+  {
+    "avaliado": "Hyan",
+    "notasRecebidas": {
+      "Elivelton": 9.637931034,
+      "Fábio": 9.631578947,
+      "Moisés": 9.45,
+      "Gabriel T": 9.470588235,
+      "Gabriel M": 9.676923077,
+      "Gustavo": 9.517857143,
+      "Kauã": 8.823529412,
+      "Gustavo P": 9.4,
+      "Enderson": 10.0,
+      "Material": 9.432432432,
+      "Projeto": 9.662162162
+    }
+  },
+  {
+    "avaliado": "Gustavo",
+    "notasRecebidas": {
+      "Elivelton": 9.431818182,
+      "Fábio": 9.75,
+      "Moisés": 9.761904762,
+      "Gabriel T": 9.35483871,
+      "Gabriel M": 9.647887324,
+      "Hyan": 9.660714286,
+      "Kauã": 8.979591837,
+      "Gustavo P": 9.428571429,
+      "Enderson": 10.0,
+      "Material": 9.69,
+      "Projeto": 8.98989899
+    }
+  },
+  {
+    "avaliado": "Kauã",
+    "notasRecebidas": {
+      "Fábio": 9.902439024,
+      "Moisés": 9.902439024,
+      "Gabriel T": 9.636363636,
+      "Gabriel M": 9.253333333,
+      "Hyan": 9.085714286,
+      "Gustavo": 9.625,
+      "Gustavo P": 10.0,
+      "Enderson": 10.0,
+      "Material": 9.76744186,
+      "Projeto": 9.523255814
+    }
+  },
+  {
+    "avaliado": "Gustavo P",
+    "notasRecebidas": {
+      "Elivelton": 10.0,
+      "Fábio": 10.0,
+      "Moisés": 10.0,
+      "Gabriel T": 10.0,
+      "Gabriel M": 10.0,
+      "Hyan": 10.0,
+      "Gustavo": 10.0,
+      "Kauã": 10.0,
+      "Enderson": 10.0,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "avaliado": "Enderson",
+    "notasRecebidas": {
+      "Elivelton": 8.0,
+      "Fábio": 10.0,
+      "Moisés": 10.0,
+      "Gabriel T": 8.333333333,
+      "Gabriel M": 10.0,
+      "Hyan": 8.333333333,
+      "Gustavo": 10.0,
+      "Kauã": 10.0,
+      "Gustavo P": 10.0,
+      "Material": 10.0,
+      "Projeto": 9.8
+    }
+  },
+  {
+    "avaliado": "Flávio",
+    "notasRecebidas": {
+      "Moisés": 10.0,
+      "Gabriel T": 10.0,
+      "Kauã": 10.0,
+      "Ley": 10.0,
+      "Élder": 10.0,
+      "Material": 9.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "avaliado": "Ley",
+    "notasRecebidas": {
+      "Elivelton": 10.0,
+      "Fábio": 10.0,
+      "Moisés": 10.0,
+      "Gabriel T": 10.0,
+      "Gabriel M": 10.0,
+      "Hyan": 10.0,
+      "Gustavo": 10.0,
+      "Kauã": 10.0,
+      "Gustavo P": 10.0,
+      "Material": 10.0,
+      "Projeto": 10.0
+    }
+  },
+  {
+    "avaliado": "Élder",
+    "notasRecebidas": {
+      "Moisés": 6.5,
+      "Gabriel T": 7.0,
+      "Kauã": 7.0,
+      "Flávio": 6.0
+    }
+  }
+]

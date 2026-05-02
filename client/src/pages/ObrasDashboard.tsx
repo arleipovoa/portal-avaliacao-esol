@@ -3,30 +3,7 @@ import { useLocation } from "wouter";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { trpc } from "@/lib/trpc";
 import { cn } from "@/lib/utils";
-
-const STATUS_MAP: Record<string, string> = {
-  planning: "pendente",
-  in_progress: "em_andamento",
-  completed: "concluido",
-  cancelled: "cancelado",
-};
-
-const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string }> = {
-  pendente:     { label: "Pendente",    color: "text-yellow-400", bg: "bg-yellow-400/10" },
-  em_andamento: { label: "Em Andamento", color: "text-blue-400",   bg: "bg-blue-400/10"   },
-  concluido:    { label: "Concluído",   color: "text-green-400",  bg: "bg-green-400/10"  },
-  cancelado:    { label: "Cancelado",   color: "text-red-400",    bg: "bg-red-400/10"    },
-};
-
-type FilterKey = "all" | "pendente" | "em_andamento" | "concluido" | "para_avaliar";
-
-const FILTER_TABS: { key: FilterKey; label: string }[] = [
-  { key: "all",          label: "Todos"        },
-  { key: "pendente",     label: "Pendentes"    },
-  { key: "em_andamento", label: "Em Andamento" },
-  { key: "concluido",    label: "Concluídos"   },
-  { key: "para_avaliar", label: "Para Avaliar" },
-];
+import HistoricoSection from "@/components/obras/HistoricoSection";
 
 // Mês corrente em YYYY-MM (ex: "2026-04")
 function currentMonthYear(): string {
@@ -39,7 +16,6 @@ function currentMonthYear(): string {
 export default function ObrasDashboard() {
   const { user } = useAuth({ redirectOnUnauthenticated: true });
   const [, navigate] = useLocation();
-  const [filter, setFilter] = useState<FilterKey>("all");
   const [selectedMonth, setSelectedMonth] = useState<string>(currentMonthYear());
   const [generatingDocs, setGeneratingDocs] = useState<string | null>(null);
   const [docsResult, setDocsResult] = useState<{ code: string; contrato?: string; procuracao?: string } | null>(null);
@@ -55,50 +31,28 @@ export default function ObrasDashboard() {
     },
   });
 
-  // Lista geral (todos os projetos, modos pendente/em andamento/concluido/all)
-  const listQuery = trpc.projects.listFromPbi.useQuery(undefined, {
-    enabled: !!user && filter !== "para_avaliar",
-  });
-
-  // Lista filtrada por elegibilidade (aba Para Avaliar)
+  // Lista de obras elegíveis para o ciclo selecionado
   const evaluableQuery = trpc.projects.listEvaluable.useQuery(
     { monthYear: selectedMonth },
-    { enabled: !!user && filter === "para_avaliar" }
+    { enabled: !!user }
   );
 
-  const isEvaluablesTab = filter === "para_avaliar";
-  const isLoading = isEvaluablesTab ? evaluableQuery.isLoading : listQuery.isLoading;
-  const error     = isEvaluablesTab ? evaluableQuery.error     : listQuery.error;
-  const refetch   = isEvaluablesTab ? evaluableQuery.refetch   : listQuery.refetch;
+  const { isLoading, error, refetch } = evaluableQuery;
+  const projects = evaluableQuery.data?.projects ?? [];
+  const evalWindow = evaluableQuery.data?.window ?? null;
 
-  const projects = isEvaluablesTab ? (evaluableQuery.data?.projects ?? []) : (listQuery.data ?? []);
-  const evalWindow = isEvaluablesTab ? evaluableQuery.data?.window : null;
-
-  // Stats sempre baseadas na lista geral (não na de elegíveis)
-  const allMapped = useMemo(() => (listQuery.data ?? []).map((p) => ({
-    ...p,
-    statusKey: STATUS_MAP[p.status] ?? "pendente",
-    powerKwp: parseFloat(String(p.powerKwp ?? 0)),
-  })), [listQuery.data]);
-
-  const stats = {
-    total:         allMapped.length,
-    emAndamento:   allMapped.filter((p) => p.statusKey === "em_andamento").length,
-    concluidos:    allMapped.filter((p) => p.statusKey === "concluido").length,
-    potenciaTotal: allMapped.reduce((s, p) => s + p.powerKwp, 0),
-  };
-
-  // Lista atual já mapeada para UI
   const mapped = useMemo(() => projects.map((p: any) => ({
     ...p,
-    statusKey: STATUS_MAP[p.status] ?? "pendente",
     powerKwpNum: parseFloat(String(p.powerKwp ?? 0)),
     score: p.projectScore ? parseFloat(String(p.projectScore)) : null,
   })), [projects]);
 
-  const filtered = isEvaluablesTab
-    ? mapped
-    : (filter === "all" ? mapped : mapped.filter((p) => p.statusKey === filter));
+  const stats = {
+    total:         mapped.length,
+    avaliadas:     mapped.filter((p) => p.score !== null && p.score > 0).length,
+    aAvaliar:      mapped.filter((p) => p.score === null || p.score === 0).length,
+    potenciaTotal: mapped.reduce((s, p) => s + p.powerKwpNum, 0),
+  };
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -108,26 +62,46 @@ export default function ObrasDashboard() {
           <p className="text-xs font-semibold text-flux-orange uppercase tracking-widest mb-1">
             Portal de Obras
           </p>
-          <h1 className="text-2xl font-display font-semibold text-white">Dashboard de Obras</h1>
+          <h1 className="text-2xl font-display font-semibold text-white">Avaliação da Equipe</h1>
           <p className="text-sm text-slate-400 mt-1">
-            Gerencie projetos e avaliações da equipe de instalação
+            Obras elegíveis e avaliadas no ciclo selecionado.
           </p>
         </div>
-        <button
-          onClick={() => navigate("/obras/avaliacao")}
-          className="px-5 py-2.5 bg-flux-orange text-void font-semibold text-sm rounded-lg hover:bg-flux-orange/90 transition-all"
-        >
-          Nova Avaliação
-        </button>
+      </div>
+
+      {/* Seletor de Mês */}
+      <div className="rounded-xl border border-flux-orange/20 bg-flux-orange/5 p-5 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div>
+          <p className="text-xs font-semibold text-flux-orange uppercase tracking-widest mb-1">
+            Ciclo de Avaliação
+          </p>
+          <p className="text-sm text-white">
+            Mostrando obras finalizadas no <strong>mês anterior</strong> ao selecionado.
+          </p>
+          {evalWindow && (
+            <p className="text-xs text-slate-400 mt-2">
+              Janela: <strong className="text-flux-orange">{evalWindow.start}</strong> a <strong className="text-flux-orange">{evalWindow.end}</strong> ({evalWindow.label}).
+            </p>
+          )}
+        </div>
+        <div className="flex items-center gap-3 shrink-0">
+          <label className="text-xs text-slate-400">Mês de avaliação:</label>
+          <input
+            type="month"
+            value={selectedMonth}
+            onChange={(e) => setSelectedMonth(e.target.value)}
+            className="bg-void/60 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:border-flux-orange/40 focus:outline-none"
+          />
+        </div>
       </div>
 
       {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {[
-          { label: "Total de Obras",  value: stats.total,                              icon: "🏗️", accent: "text-flux-orange" },
-          { label: "Em Andamento",    value: stats.emAndamento,                        icon: "⚡", accent: "text-blue-400"    },
-          { label: "Concluídas",      value: stats.concluidos,                         icon: "✅", accent: "text-green-400"   },
-          { label: "Potência Total",  value: `${stats.potenciaTotal.toFixed(1)} kWp`,  icon: "☀️", accent: "text-yellow-400"  },
+          { label: "Elegíveis no Ciclo", value: stats.total,                              icon: "🏗️", accent: "text-flux-orange" },
+          { label: "A Avaliar",          value: stats.aAvaliar,                           icon: "📝", accent: "text-yellow-400"  },
+          { label: "Avaliadas",          value: stats.avaliadas,                          icon: "✅", accent: "text-green-400"   },
+          { label: "Potência Total",     value: `${stats.potenciaTotal.toFixed(1)} kWp`,  icon: "☀️", accent: "text-yellow-400"  },
         ].map((stat) => (
           <div key={stat.label} className="rounded-xl border border-white/5 p-5 bg-white/5">
             <div className="flex items-center justify-between mb-3">
@@ -138,54 +112,6 @@ export default function ObrasDashboard() {
           </div>
         ))}
       </div>
-
-      {/* Tabs */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-2">
-        {FILTER_TABS.map((tab) => (
-          <button
-            key={tab.key}
-            onClick={() => setFilter(tab.key)}
-            className={cn(
-              "px-4 py-2 rounded-lg text-xs font-medium transition-all whitespace-nowrap",
-              filter === tab.key
-                ? (tab.key === "para_avaliar"
-                    ? "bg-flux-orange/20 text-flux-orange border border-flux-orange/40"
-                    : "bg-flux-orange/10 text-flux-orange border border-flux-orange/20")
-                : "text-slate-400 hover:text-white hover:bg-white/5 border border-transparent"
-            )}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </div>
-
-      {/* Mês selector — só na aba Para Avaliar */}
-      {isEvaluablesTab && (
-        <div className="rounded-xl border border-flux-orange/20 bg-flux-orange/5 p-5 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          <div>
-            <p className="text-xs font-semibold text-flux-orange uppercase tracking-widest mb-1">
-              Ciclo de Avaliação
-            </p>
-            <p className="text-sm text-white">
-              Selecione o mês de avaliação. As obras elegíveis são as que foram <strong>finalizadas no mês anterior</strong>.
-            </p>
-            {evalWindow && (
-              <p className="text-xs text-slate-400 mt-2">
-                Mostrando obras com pedido de vistoria entre <strong className="text-flux-orange">{evalWindow.start}</strong> e <strong className="text-flux-orange">{evalWindow.end}</strong> ({evalWindow.label}).
-              </p>
-            )}
-          </div>
-          <div className="flex items-center gap-3 shrink-0">
-            <label className="text-xs text-slate-400">Mês de avaliação:</label>
-            <input
-              type="month"
-              value={selectedMonth}
-              onChange={(e) => setSelectedMonth(e.target.value)}
-              className="bg-void/60 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:border-flux-orange/40 focus:outline-none"
-            />
-          </div>
-        </div>
-      )}
 
       {/* Lista */}
       {isLoading ? (
@@ -203,30 +129,26 @@ export default function ObrasDashboard() {
             Tentar novamente
           </button>
         </div>
-      ) : filtered.length === 0 ? (
+      ) : mapped.length === 0 ? (
         <div className="rounded-xl border border-white/5 p-12 text-center bg-white/5">
-          <p className="text-4xl mb-4">{isEvaluablesTab ? "🗓️" : "🏗️"}</p>
-          <h3 className="text-lg font-semibold text-white mb-2">
-            {isEvaluablesTab ? "Nenhuma obra elegível para avaliação" : "Nenhuma obra encontrada"}
-          </h3>
+          <p className="text-4xl mb-4">🗓️</p>
+          <h3 className="text-lg font-semibold text-white mb-2">Nenhuma obra elegível</h3>
           <p className="text-sm text-slate-400">
-            {isEvaluablesTab
-              ? `Nenhuma obra foi finalizada em ${evalWindow?.label ?? "este período"}.`
-              : (filter === "all" ? "Nenhum projeto cadastrado ainda." : `Nenhum projeto com status "${filter}".`)}
+            Nenhuma obra foi finalizada em {evalWindow?.label ?? "este período"}.
           </p>
         </div>
       ) : (
         <div className="space-y-3">
-          {filtered.map((project: any, index: number) => {
-            const statusCfg = STATUS_CONFIG[project.statusKey] ?? STATUS_CONFIG.pendente;
+          {mapped.map((project: any, index: number) => {
+            const isAvaliada = project.score !== null && project.score > 0;
             return (
               <div
                 key={project.id}
                 className={cn(
                   "rounded-xl border p-5 transition-all cursor-pointer group bg-white/5",
-                  isEvaluablesTab
-                    ? "border-flux-orange/30 hover:border-flux-orange/60"
-                    : "border-white/5 hover:border-white/10"
+                  isAvaliada
+                    ? "border-green-500/30 hover:border-green-500/60"
+                    : "border-flux-orange/30 hover:border-flux-orange/60"
                 )}
                 style={{ animationDelay: `${index * 50}ms`, animationFillMode: "both" }}
                 onClick={() => navigate(`/obras/avaliacao?projectId=${project.id}`)}
@@ -238,10 +160,11 @@ export default function ObrasDashboard() {
                       <h3 className="text-sm font-semibold text-white truncate group-hover:text-flux-orange transition-colors">
                         {project.clientName}
                       </h3>
-                      <span className={cn("px-2.5 py-0.5 rounded-full text-[10px] font-medium shrink-0", statusCfg.bg, statusCfg.color)}>
-                        {statusCfg.label}
-                      </span>
-                      {isEvaluablesTab && (
+                      {isAvaliada ? (
+                        <span className="px-2.5 py-0.5 rounded-full text-[10px] font-medium bg-green-500/15 text-green-400 border border-green-500/30">
+                          Avaliada
+                        </span>
+                      ) : (
                         <span className="px-2.5 py-0.5 rounded-full text-[10px] font-medium bg-flux-orange/15 text-flux-orange border border-flux-orange/30">
                           Avaliação aberta
                         </span>
@@ -257,7 +180,7 @@ export default function ObrasDashboard() {
                     </div>
                   </div>
 
-                  {project.score !== null && project.score > 0 && (
+                  {isAvaliada && (
                     <div className="text-right ml-4">
                       <p className="text-xs text-slate-500">Nota</p>
                       <p className={cn(
@@ -294,6 +217,9 @@ export default function ObrasDashboard() {
           })}
         </div>
       )}
+
+      {/* Histórico de Avaliações — anual / trimestral / mensal / ranking */}
+      <HistoricoSection />
 
       {/* Modal de documentos */}
       {docsResult && (

@@ -19,6 +19,7 @@ export const MOCK_PROJECTS: PbiProject[] = [
     vendedor: "Carlos Vieira",
     installacaoFinalizada: true,
     pedidoVistoriaDate: "2026-03-12",
+    equipe: [],
   },
   {
     codigoProjeto: "P1002",
@@ -35,6 +36,7 @@ export const MOCK_PROJECTS: PbiProject[] = [
     vendedor: "Ana Cardoso",
     installacaoFinalizada: true,
     pedidoVistoriaDate: "2026-03-19",
+    equipe: [],
   },
   {
     codigoProjeto: "P1003",
@@ -51,6 +53,7 @@ export const MOCK_PROJECTS: PbiProject[] = [
     vendedor: "Carlos Vieira",
     installacaoFinalizada: false,
     pedidoVistoriaDate: null,
+    equipe: [],
   },
   {
     codigoProjeto: "P1004",
@@ -67,6 +70,7 @@ export const MOCK_PROJECTS: PbiProject[] = [
     vendedor: "Roberto Lima",
     installacaoFinalizada: true,
     pedidoVistoriaDate: "2026-03-30",
+    equipe: [],
   },
   {
     codigoProjeto: "P1005",
@@ -83,6 +87,7 @@ export const MOCK_PROJECTS: PbiProject[] = [
     vendedor: "Ana Cardoso",
     installacaoFinalizada: false,
     pedidoVistoriaDate: null,
+    equipe: [],
   },
   {
     codigoProjeto: "P1006",
@@ -99,6 +104,7 @@ export const MOCK_PROJECTS: PbiProject[] = [
     vendedor: "Roberto Lima",
     installacaoFinalizada: false,
     pedidoVistoriaDate: null,
+    equipe: [],
   },
   {
     codigoProjeto: "P1007",
@@ -116,6 +122,7 @@ export const MOCK_PROJECTS: PbiProject[] = [
     vendedor: "Carlos Vieira",
     installacaoFinalizada: true,
     pedidoVistoriaDate: "2026-02-27",
+    equipe: [],
   },
   {
     codigoProjeto: "P1008",
@@ -132,5 +139,6 @@ export const MOCK_PROJECTS: PbiProject[] = [
     vendedor: "Ana Cardoso",
     installacaoFinalizada: false,
     pedidoVistoriaDate: null,
+    equipe: [],
   },
 ];

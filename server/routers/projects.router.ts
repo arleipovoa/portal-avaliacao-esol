@@ -7,6 +7,8 @@ import { fetchPbiProjects, generatePbiDocuments, isPbiConfigured } from "../lib/
 import { MOCK_PROJECTS } from "../lib/mockProjects";
 import { MOCK_OBRA_CRITERIA_GROUPED } from "../lib/mockObraCriteria";
 import { getEvaluationWindow, isEligibleForEvaluation } from "../lib/evaluationRules";
+import { historyByMonth, historyQuarterly, historyYearly } from "../lib/historicoAggregations";
+import { peerReviewYearly, peerReviewMatrix, peerReviewByObra } from "../lib/peerReviewAggregations";
 // import { canAccessObras } from "../_core/accessControl";
 
 
@@ -317,4 +319,37 @@ export const projectsRouter = router({
       );
       return { window, projects: eligible };
     }),
+
+  // ── HISTORICO DE AVALIACOES ──
+  // Le do JSON estatico server/lib/historicoAvaliacoes.json (175 obras avaliadas)
+  // Quando integrar com a planilha "Avaliação de Qualidade de Obras 2025" via API,
+  // substituir o data source no historicoData.ts.
+
+  historyByMonth: protectedProcedure
+    .input(z.object({ year: z.number().int().min(2020).max(2100) }))
+    .query(async ({ input }) => historyByMonth(input.year)),
+
+  historyQuarterly: protectedProcedure
+    .input(z.object({ year: z.number().int().min(2020).max(2100) }))
+    .query(async ({ input }) => historyQuarterly(input.year)),
+
+  historyYearly: protectedProcedure
+    .input(z.object({ year: z.number().int().min(2020).max(2100) }))
+    .query(async ({ input }) => historyYearly(input.year)),
+
+  // ── PEER REVIEW (Avaliação dos Pares — INTRA-OBRA) ──
+  // Notas que os instaladores deram entre si nas obras em que trabalharam juntos.
+  // Vem da planilha "Matriz Geral" (NotaObras + Matriz). Nada a ver com o módulo
+  // /360 do portal (que será a avaliação 360 da empresa toda, escopo diferente).
+
+  peerReviewYearly: protectedProcedure
+    .input(z.object({ year: z.number().int().min(2020).max(2100) }))
+    .query(async ({ input }) => peerReviewYearly(input.year)),
+
+  peerReviewMatrix: protectedProcedure
+    .query(async () => peerReviewMatrix()),
+
+  peerReviewByObra: protectedProcedure
+    .input(z.object({ projeto: z.string() }))
+    .query(async ({ input }) => peerReviewByObra(input.projeto)),
 });

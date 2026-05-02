@@ -12,6 +12,7 @@ import Evaluations from "@/pages/Evaluations";
 // Modulo Obras
 import ObrasDashboard from "@/pages/ObrasDashboard";
 import ObrasEvaluation from "@/pages/ObrasEvaluation";
+import AvaliacaoCruzada from "@/pages/AvaliacaoCruzada";
 
 // Modulo NPS
 import NpsDashboard from "@/pages/NpsDashboard";
@@ -23,6 +24,8 @@ import { EditUserForm } from "@/pages/admin/EditUserForm";
 import { AreasTab as AdminAreas } from "@/pages/admin/AreasTab";
 import { CyclesTab as AdminCycles } from "@/pages/admin/CyclesTab";
 import { CalculateTab as AdminCalculate } from "@/pages/admin/CalculateTab";
+import InstaladoresTab from "@/pages/admin/InstaladoresTab";
+import VeiculosTab from "@/pages/admin/VeiculosTab";
 
 export default function App() {
   return (
@@ -41,6 +44,7 @@ export default function App() {
         <Route path="/obras"><Redirect to="/obras/dashboard" /></Route>
         <Route path="/obras/dashboard" component={ObrasDashboard} />
         <Route path="/obras/avaliacao" component={ObrasEvaluation} />
+        <Route path="/obras/avaliacao-cruzada" component={AvaliacaoCruzada} />
 
         {/* Modulo NPS */}
         <Route path="/nps"><Redirect to="/nps/dashboard" /></Route>
@@ -54,6 +58,8 @@ export default function App() {
         <Route path="/admin/areas" component={AdminAreas} />
         <Route path="/admin/cycles" component={AdminCycles} />
         <Route path="/admin/calculate" component={AdminCalculate} />
+        <Route path="/admin/instaladores" component={InstaladoresTab} />
+        <Route path="/admin/veiculos" component={VeiculosTab} />
 
         {/* 404 */}
         <Route>

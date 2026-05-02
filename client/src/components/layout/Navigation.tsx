@@ -27,6 +27,7 @@ const NAV_ITEMS: NavItem[] = [
     children: [
       { label: "Dashboard", route: "/obras/dashboard" },
       { label: "Avaliacao da Equipe", route: "/obras/avaliacao" },
+      { label: "Avaliacao Cruzada", route: "/obras/avaliacao-cruzada" },
     ],
   },
   {
@@ -44,6 +45,8 @@ const NAV_ITEMS: NavItem[] = [
     route: "/admin",
     children: [
       { label: "Usuarios", route: "/admin/users" },
+      { label: "Instaladores", route: "/admin/instaladores" },
+      { label: "Veiculos", route: "/admin/veiculos" },
       { label: "Areas", route: "/admin/areas" },
       { label: "Ciclos", route: "/admin/cycles" },
       { label: "Calcular Bonus", route: "/admin/calculate" },
