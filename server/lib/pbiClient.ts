@@ -32,11 +32,9 @@ let _cache: { data: any[]; ts: number } | null = null;
 const CACHE_TTL = 5 * 60 * 1000;
 
 export function isPbiConfigured(): boolean {
-  if (!PBI_API_URL) return false;
-  // Ainda em dev local? Trate "localhost" sem IP como nao-configurado para usar mocks.
-  // 127.0.0.1 (loopback explicito, usado em containers/VPS) eh aceito como configurado.
-  if (PBI_API_URL.includes("localhost")) return false;
-  return true;
+  // Configurado se PBI_API_URL existe. Quem quiser usar os mocks, deixa vazio.
+  // Aceita localhost, 127.0.0.1, dominio publico — qualquer URL nao vazia.
+  return Boolean(PBI_API_URL);
 }
 
 export async function fetchPbiProjects(): Promise<PbiProject[]> {
