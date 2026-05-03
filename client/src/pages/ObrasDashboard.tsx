@@ -62,7 +62,7 @@ export default function ObrasDashboard() {
           <p className="text-xs font-semibold text-flux-orange uppercase tracking-widest mb-1">
             Portal de Obras
           </p>
-          <h1 className="text-2xl font-display font-semibold text-white">Avaliação da Equipe</h1>
+          <h1 className="text-2xl font-display font-semibold text-white">Avaliação da Obra</h1>
           <p className="text-sm text-slate-400 mt-1">
             Obras elegíveis e avaliadas no ciclo selecionado.
           </p>

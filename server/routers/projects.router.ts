@@ -244,36 +244,65 @@ export const projectsRouter = router({
     .input(z.object({
       projectId: z.number(),
       userId: z.number(),
-      notaSeguranca: z.number(),
-      notaFuncionalidade: z.number(),
-      notaEstetica: z.number(),
-      mediaOs: z.number(),
-      eficiencia: z.number(),
-      npsCliente: z.number(),
+      // Notas por categoria (0–10), calculadas como média dos critérios individuais
+      notaSeguranca: z.number().min(0).max(10),
+      notaFuncionalidade: z.number().min(0).max(10),
+      notaEstetica: z.number().min(0).max(10),
+      // OS (Ordens de Serviço) — Módulos e Inversores (0–10 cada)
+      osModulos: z.number().min(0).max(10),
+      osInversores: z.number().min(0).max(10),
+      // NPS do cliente (0–10)
+      npsCliente: z.number().min(0).max(10),
+      // Critérios individuais com observações
+      itemScores: z.array(z.object({
+        criteriaId: z.number(),
+        score: z.number().min(0).max(10),
+        obs: z.string().optional(),
+      })).optional(),
+      // Observações globais e link de fotos
+      driveLink: z.string().optional(),
+      observacaoGeral: z.string().optional(),
     }))
     .mutation(async ({ input }) => {
-      const { projectId, userId, notaSeguranca, notaFuncionalidade, notaEstetica, mediaOs, eficiencia, npsCliente } = input;
+      const {
+        projectId, userId,
+        notaSeguranca, notaFuncionalidade, notaEstetica,
+        osModulos, osInversores, npsCliente,
+      } = input;
 
-      const baseScore = ((notaSeguranca * 2 + notaFuncionalidade * 2 + notaEstetica * 1) / 5);
-      const notaObraPercentual = (baseScore * 0.5) + (mediaOs * 0.2) + (eficiencia * 0.15) + (npsCliente * 0.15);
+      // Fórmula conforme planilha "Avaliação de Qualidade de Obras 2025":
+      //   Eficiência = (Seg + Func + Est) / 3
+      //   Média OS   = (OS Módulos + OS Inversores) / 2
+      //   Nota Final = (Eficiência + Média OS + NPS) / 3 × 10  →  escala 0–100
+      const eficiencia = (notaSeguranca + notaFuncionalidade + notaEstetica) / 3;
+      const mediaOs    = (osModulos + osInversores) / 2;
+      const notaObraPercentual = ((eficiencia + mediaOs + npsCliente) / 3) * 10;
 
-      // Sempre simula: busca o projeto na fonte (PBI/mock) pra pegar a categoria,
-      // calcula o bonus mas nao persiste.
-      // TODO quando o banco de obras estiver acessivel: gravar em `obraScores`.
       const all = await fetchAllProjectsForUI();
       const found = all.find((p) => p.id === projectId);
       if (!found) throw new Error("Project not found");
-      const bonusMapAlways: Record<string, number> = {
+
+      const bonusMap: Record<string, number> = {
         B1: 200, B2: 300, B3: 500, B4: 750, B5: 1000, B6: 1500, B7: 2000,
       };
-      const baseCategoryAlways = found.category ?? "B1";
-      const bonusValorBaseAlways = bonusMapAlways[baseCategoryAlways] || 200;
-      const bonusValorCorrigidoAlways = bonusValorBaseAlways * (notaObraPercentual / 100);
+      const bonusValorBase = bonusMap[found.category ?? "B1"] || 200;
+      const bonusValorCorrigido = bonusValorBase * (notaObraPercentual / 100);
+
       return {
         notaObraPercentual,
-        bonusValorBase: bonusValorBaseAlways,
-        bonusValorCorrigido: bonusValorCorrigidoAlways,
-        message: "Avaliacao registrada (ainda nao persistida — ligar ao banco de obras quando pronto)",
+        eficiencia,
+        mediaOs,
+        bonusValorBase,
+        bonusValorCorrigido,
+        breakdown: {
+          seguranca: notaSeguranca,
+          funcionalidade: notaFuncionalidade,
+          estetica: notaEstetica,
+          osModulos,
+          osInversores,
+          npsCliente,
+        },
+        message: "Avaliação registrada (persistência será ativada quando banco de obras estiver disponível)",
       };
     }),
 
