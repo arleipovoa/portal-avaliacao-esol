@@ -262,21 +262,23 @@ export const projectsRouter = router({
       // Observações globais e link de fotos
       driveLink: z.string().optional(),
       observacaoGeral: z.string().optional(),
+      hasFinancialLoss: z.boolean().optional(),
     }))
     .mutation(async ({ input }) => {
       const {
         projectId, userId,
         notaSeguranca, notaFuncionalidade, notaEstetica,
         osModulos, osInversores, npsCliente,
+        hasFinancialLoss,
       } = input;
 
-      // Fórmula conforme planilha "Avaliação de Qualidade de Obras 2025":
+      // Nota Final (escala 0–10):
       //   Eficiência = (Seg + Func + Est) / 3
       //   Média OS   = (OS Módulos + OS Inversores) / 2
-      //   Nota Final = (Eficiência + Média OS + NPS) / 3 × 10  →  escala 0–100
-      const eficiencia = (notaSeguranca + notaFuncionalidade + notaEstetica) / 3;
-      const mediaOs    = (osModulos + osInversores) / 2;
-      const notaObraPercentual = ((eficiencia + mediaOs + npsCliente) / 3) * 10;
+      //   Nota Final = (Eficiência + Média OS + NPS) / 3   ← sem × 10
+      const eficiencia   = (notaSeguranca + notaFuncionalidade + notaEstetica) / 3;
+      const mediaOs      = (osModulos + osInversores) / 2;
+      const notaFinal    = (eficiencia + mediaOs + npsCliente) / 3;
 
       const all = await fetchAllProjectsForUI();
       const found = all.find((p) => p.id === projectId);
@@ -286,14 +288,19 @@ export const projectsRouter = router({
         B1: 200, B2: 300, B3: 500, B4: 750, B5: 1000, B6: 1500, B7: 2000,
       };
       const bonusValorBase = bonusMap[found.category ?? "B1"] || 200;
-      const bonusValorCorrigido = bonusValorBase * (notaObraPercentual / 100);
+
+      // Prejuízo financeiro → bônus zerado e avaliação desconsiderada
+      const bonusValorCorrigido = hasFinancialLoss
+        ? 0
+        : bonusValorBase * (notaFinal / 10);
 
       return {
-        notaObraPercentual,
+        notaFinal,
         eficiencia,
         mediaOs,
         bonusValorBase,
         bonusValorCorrigido,
+        hasFinancialLoss: !!hasFinancialLoss,
         breakdown: {
           seguranca: notaSeguranca,
           funcionalidade: notaFuncionalidade,
@@ -302,7 +309,9 @@ export const projectsRouter = router({
           osInversores,
           npsCliente,
         },
-        message: "Avaliação registrada (persistência será ativada quando banco de obras estiver disponível)",
+        message: hasFinancialLoss
+          ? "Avaliação desconsiderada — prejuízo financeiro registrado. Bônus zerado."
+          : "Avaliação registrada (persistência será ativada quando banco de obras estiver disponível)",
       };
     }),
 
