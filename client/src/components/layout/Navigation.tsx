@@ -27,6 +27,7 @@ const NAV_ITEMS: NavItem[] = [
     children: [
       { label: "Dashboard", route: "/obras/dashboard" },
       { label: "Avaliação da Obra", route: "/obras/avaliacao" },
+      { label: "Regras e Critérios", route: "/obras/regras" },
       { label: "Avaliacao Cruzada", route: "/obras/avaliacao-cruzada" },
     ],
   },
