@@ -6,8 +6,9 @@ param(
     [switch]$SkipBuild
 )
 
-$Port = 3000
-$LogFile = "$env:TEMP\portal-esol.log"
+$Port    = 3000
+$LogOut  = "$PSScriptRoot\portal-esol.log"
+$LogErr  = "$PSScriptRoot\portal-esol-err.log"
 
 # ── 1. Encerrar processo que ocupa a porta ─────────────────────────────────
 Write-Host "`n[1/3] Verificando porta $Port..." -ForegroundColor Cyan
@@ -40,24 +41,33 @@ if (-not $SkipBuild) {
 Write-Host "`n[3/3] Iniciando servidor..." -ForegroundColor Cyan
 
 $env:NODE_ENV = "production"
+
+# stdout e stderr em arquivos separados (exigencia do PowerShell)
 $process = Start-Process -FilePath "node" `
     -ArgumentList "dist/index.js" `
-    -RedirectStandardOutput $LogFile `
-    -RedirectStandardError $LogFile `
+    -RedirectStandardOutput $LogOut `
+    -RedirectStandardError  $LogErr `
     -NoNewWindow `
     -PassThru
 
 Start-Sleep -Seconds 4
 
-# Verificar se subiu
+# ── 4. Verificar se subiu ──────────────────────────────────────────────────
 try {
     $resp = Invoke-WebRequest -Uri "http://localhost:$Port/" -TimeoutSec 5 -UseBasicParsing -ErrorAction Stop
     Write-Host "      Servidor no ar — HTTP $($resp.StatusCode)" -ForegroundColor Green
-    Write-Host "      PID: $($process.Id)" -ForegroundColor DarkGray
-    Write-Host "      Log: $LogFile" -ForegroundColor DarkGray
+    Write-Host "      PID : $($process.Id)" -ForegroundColor DarkGray
+    Write-Host "      Log : $LogOut" -ForegroundColor DarkGray
     Write-Host "`n  Acesse: http://localhost:$Port/`n" -ForegroundColor White
 } catch {
     Write-Host "      AVISO: servidor nao respondeu na porta $Port." -ForegroundColor Red
-    Write-Host "      Verifique o log: $LogFile" -ForegroundColor Yellow
-    Get-Content $LogFile -Tail 20
+    Write-Host ""
+    if (Test-Path $LogErr) {
+        Write-Host "--- STDERR ---" -ForegroundColor Yellow
+        Get-Content $LogErr -Tail 20
+    }
+    if (Test-Path $LogOut) {
+        Write-Host "--- STDOUT ---" -ForegroundColor Yellow
+        Get-Content $LogOut -Tail 20
+    }
 }
