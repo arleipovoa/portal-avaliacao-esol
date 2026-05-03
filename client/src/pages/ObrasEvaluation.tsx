@@ -4,6 +4,11 @@ import { useAuth } from '@/_core/hooks/useAuth';
 import { trpc } from '@/lib/trpc';
 import { cn } from '@/lib/utils';
 
+// ── Mapa de bônus por categoria ────────────────────────────────────────────
+const BONUS_MAP: Record<string, number> = {
+  B1: 200, B2: 300, B3: 500, B4: 750, B5: 1000, B6: 1500, B7: 2000,
+};
+
 // ── Configuração visual por categoria ──────────────────────────────────────
 const CAT_CFG = {
   seguranca:      { label: 'Segurança',      icon: '🛡️', color: 'text-red-400',    bg: 'bg-red-400/10',    border: 'border-red-400/20',    weight: 2, trackColor: '#f87171' },
@@ -297,7 +302,7 @@ export default function ObrasEvaluation() {
   const mediaOs   = avg([osModulosNa ? null : osModulos, osInversoresNa ? null : osInversores]);
   const eficiencia = avg([notaSeg, notaFunc, notaEst]);
   const npsValue  = npsNa ? null : nps;
-  const notaFinal = (() => { const v = avg([eficiencia, mediaOs, npsValue]); return v !== null ? v * 10 : null; })();
+  const notaFinal = avg([eficiencia, mediaOs, npsValue]);
 
   // Submit
   const [submitted, setSubmitted] = useState(false);
@@ -319,6 +324,7 @@ export default function ObrasEvaluation() {
       osModulos:          osModulosNa    ? 0 : osModulos,
       osInversores:       osInversoresNa ? 0 : osInversores,
       npsCliente:         npsNa ? 0 : nps,
+      hasFinancialLoss:   hasFinancialLoss,
       driveLink:          driveLink || undefined,
       observacaoGeral:    hasFinancialLoss ? `PREJUÍZO FINANCEIRO: ${financialLossReason}` : undefined,
       itemScores: allCriteria
@@ -360,14 +366,18 @@ export default function ObrasEvaluation() {
           </div>
           <div className="bg-white/5 rounded-xl border border-white/5 p-4 mb-6">
             <p className="text-xs text-slate-500 mb-1">Nota Final</p>
-            <p className={cn('text-4xl font-bold font-mono', scoreColor(result.notaObraPercentual / 10))}>
-              {result.notaObraPercentual.toFixed(1)}%
+            <p className={cn('text-4xl font-bold font-mono', scoreColor(result.notaFinal))}>
+              {result.notaFinal.toFixed(2)}
             </p>
-            {result.bonusValorCorrigido > 0 && (
+            {result.hasFinancialLoss ? (
+              <p className="text-xs text-red-400 mt-2">
+                ⚠️ Prejuízo financeiro registrado — avaliação desconsiderada. Bônus zerado.
+              </p>
+            ) : result.bonusValorCorrigido > 0 ? (
               <p className="text-xs text-slate-500 mt-1">
                 Bônus estimado: <span className="text-flux-orange font-semibold">R$ {result.bonusValorCorrigido.toFixed(2)}</span>
               </p>
-            )}
+            ) : null}
           </div>
           <a href="/obras/dashboard"
             className="inline-flex items-center gap-2 px-5 py-2.5 bg-flux-orange text-void font-semibold text-sm rounded-lg hover:bg-flux-orange/90 transition-all">
@@ -423,6 +433,15 @@ export default function ObrasEvaluation() {
             </div>
             {project.city && (
               <p className="text-xs text-slate-600 mt-1">{project.city}{project.state ? `, ${project.state}` : ''}</p>
+            )}
+            {project.category && BONUS_MAP[project.category] != null && (
+              <div className="flex items-center gap-2 mt-2">
+                <span className="text-xs text-slate-500">Prêmio base:</span>
+                <span className="text-xs font-semibold text-flux-orange">
+                  R$ {BONUS_MAP[project.category].toLocaleString('pt-BR')}
+                </span>
+                <span className="text-xs text-slate-600">/ valor antes da correção proporcional</span>
+              </div>
             )}
           </div>
 
@@ -532,8 +551,8 @@ export default function ObrasEvaluation() {
           </div>
           <div className="ml-auto text-right">
             <p className="text-[10px] text-slate-500 uppercase">Nota Final</p>
-            <p className={cn('text-2xl font-bold font-mono', notaFinal === null ? 'text-slate-600' : scoreColor(notaFinal / 10))}>
-              {notaFinal === null ? 'N/A' : `${notaFinal.toFixed(1)}%`}
+            <p className={cn('text-2xl font-bold font-mono', notaFinal === null ? 'text-slate-600' : scoreColor(notaFinal))}>
+              {notaFinal === null ? 'N/A' : notaFinal.toFixed(2)}
             </p>
           </div>
         </div>
@@ -647,10 +666,10 @@ export default function ObrasEvaluation() {
         </div>
         <div className="text-center mt-3 pt-3 border-t border-white/5">
           <p className="text-[10px] text-slate-500 mb-1">
-            Nota Final = média(Eficiência, Média OS, NPS) × 10
+            Nota Final = média(Eficiência, Média OS, NPS)
           </p>
-          <p className={cn('text-3xl font-bold font-mono', notaFinal === null ? 'text-slate-600' : scoreColor(notaFinal / 10))}>
-            {notaFinal === null ? '—' : `${notaFinal.toFixed(1)}%`}
+          <p className={cn('text-3xl font-bold font-mono', notaFinal === null ? 'text-slate-600' : scoreColor(notaFinal))}>
+            {notaFinal === null ? '—' : notaFinal.toFixed(2)}
           </p>
         </div>
       </div>
