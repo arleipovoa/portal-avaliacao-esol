@@ -318,13 +318,17 @@ export default function ObrasEvaluation() {
     if (!projectId || !userId) { setError('Projeto ou usuário não identificado.'); return; }
     submitMutation.mutate({
       projectId, userId,
+      projectCode:        project?.code ?? '',
       notaSeguranca:      notaSeg     ?? 0,
       notaFuncionalidade: notaFunc    ?? 0,
       notaEstetica:       notaEst     ?? 0,
-      osModulos:          osModulosNa    ? 0 : osModulos,
-      osInversores:       osInversoresNa ? 0 : osInversores,
-      npsCliente:         npsNa ? 0 : nps,
-      hasFinancialLoss:   hasFinancialLoss,
+      osModulos:          osModulos,
+      osInversores:       osInversores,
+      npsCliente:         nps,
+      osModulosNa,
+      osInversoresNa,
+      npsNa,
+      hasFinancialLoss,
       driveLink:          driveLink || undefined,
       observacaoGeral:    hasFinancialLoss ? `PREJUÍZO FINANCEIRO: ${financialLossReason}` : undefined,
       itemScores: allCriteria
@@ -349,7 +353,8 @@ export default function ObrasEvaluation() {
           </div>
           <h2 className="text-xl font-semibold text-white mb-1">Avaliação Enviada!</h2>
           <p className="text-xs text-slate-500 mb-6">{project?.code} · {project?.clientName}</p>
-          <div className="grid grid-cols-3 gap-3 mb-6 text-left">
+          {/* Breakdown dos componentes da nota */}
+          <div className="grid grid-cols-3 gap-2 mb-4 text-left">
             {[
               { label: 'Segurança',      value: result.breakdown.seguranca },
               { label: 'Funcionalidade', value: result.breakdown.funcionalidade },
@@ -360,25 +365,78 @@ export default function ObrasEvaluation() {
             ].map(({ label, value }) => (
               <div key={label} className="bg-white/5 rounded-lg p-2">
                 <p className="text-[10px] text-slate-500 mb-0.5">{label}</p>
-                <p className={cn('text-sm font-bold font-mono', scoreColor(value))}>{value.toFixed(1)}</p>
+                {value === null
+                  ? <p className="text-xs text-slate-600 italic">N/A</p>
+                  : <p className={cn('text-sm font-bold font-mono', scoreColor(value))}>{value.toFixed(1)}</p>
+                }
               </div>
             ))}
           </div>
-          <div className="bg-white/5 rounded-xl border border-white/5 p-4 mb-6">
+
+          {/* Nota Final */}
+          <div className="bg-white/5 rounded-xl border border-white/5 p-4 mb-4">
             <p className="text-xs text-slate-500 mb-1">Nota Final</p>
             <p className={cn('text-4xl font-bold font-mono', scoreColor(result.notaFinal))}>
               {result.notaFinal.toFixed(2)}
             </p>
-            {result.hasFinancialLoss ? (
+            {result.hasFinancialLoss && (
               <p className="text-xs text-red-400 mt-2">
                 ⚠️ Prejuízo financeiro registrado — avaliação desconsiderada. Bônus zerado.
               </p>
-            ) : result.bonusValorCorrigido > 0 ? (
-              <p className="text-xs text-slate-500 mt-1">
-                Bônus estimado: <span className="text-flux-orange font-semibold">R$ {result.bonusValorCorrigido.toFixed(2)}</span>
-              </p>
-            ) : null}
+            )}
           </div>
+
+          {/* Tabela de bônus por participante */}
+          {!result.hasFinancialLoss && result.hasDiaryData && result.participantBonuses?.length > 0 ? (
+            <div className="bg-white/5 rounded-xl border border-white/5 p-4 mb-6 text-left space-y-3">
+              <div className="flex items-center justify-between">
+                <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest">
+                  Distribuição de Bônus
+                </p>
+                <span className="text-[10px] text-slate-600">{result.totalDias} dia(s) de obra</span>
+              </div>
+              <div className="space-y-2">
+                {result.participantBonuses.map((p: any) => {
+                  const freqPct = Math.round(p.frequencia * 100);
+                  const freqColor = freqPct >= 80 ? 'text-green-400' : freqPct >= 50 ? 'text-flux-orange' : 'text-red-400';
+                  return (
+                    <div key={p.installerId} className="flex items-center gap-2 py-1.5 border-b border-white/5 last:border-0">
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-medium text-slate-200 truncate">{p.nome}</p>
+                        <div className="flex items-center gap-2 mt-0.5">
+                          <span className="text-[10px] text-slate-600">P {p.peso.toFixed(1)}</span>
+                          <span className={cn('text-[10px] font-mono', freqColor)}>{freqPct}%</span>
+                          <span className="text-[10px] text-slate-600">{p.diasPresentes}/{p.totalDias}d</span>
+                          {p.nota360 < 10 && (
+                            <span className="text-[10px] text-purple-400">360: {p.nota360.toFixed(1)}</span>
+                          )}
+                        </div>
+                      </div>
+                      <span className={cn(
+                        'text-sm font-bold font-mono shrink-0',
+                        p.bonusIndividual >= 100 ? 'text-flux-orange' : 'text-slate-400',
+                      )}>
+                        R$ {p.bonusIndividual.toFixed(2)}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+              <div className="flex items-center justify-between pt-1 border-t border-white/10">
+                <span className="text-xs text-slate-500">Total distribuído</span>
+                <span className="text-sm font-bold text-flux-orange font-mono">
+                  R$ {result.participantBonuses.reduce((s: number, p: any) => s + p.bonusIndividual, 0).toFixed(2)}
+                </span>
+              </div>
+            </div>
+          ) : !result.hasFinancialLoss && result.bonusValorCorrigido > 0 ? (
+            <div className="bg-white/5 rounded-xl border border-white/5 p-4 mb-6 space-y-1 text-left">
+              <p className="text-xs text-slate-500">
+                Valor corrigido pela nota: <span className="text-flux-orange font-semibold font-mono">R$ {result.bonusValorCorrigido.toFixed(2)}</span>
+              </p>
+              <p className="text-[10px] text-slate-600">Diário de obra não cadastrado — distribuição por participante indisponível</p>
+            </div>
+          ) : null}
           <a href="/obras/dashboard"
             className="inline-flex items-center gap-2 px-5 py-2.5 bg-flux-orange text-void font-semibold text-sm rounded-lg hover:bg-flux-orange/90 transition-all">
             Voltar ao Dashboard

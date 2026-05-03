@@ -2,7 +2,9 @@ import { protectedProcedure, router } from "../_core/trpc";
 import { z } from "zod";
 import { getDb } from "../db";
 import { projects, projectMembers, obraScores, obraEvaluations, obraCriteria, users } from "../../drizzle/schema";
-import { eq, and } from "drizzle-orm";
+import { eq, and, inArray } from "drizzle-orm";
+import { dbObras } from "../_core/db";
+import { obraDiario, installers } from "../../drizzle/schema-obras-diario";
 import { fetchPbiProjects, generatePbiDocuments, isPbiConfigured } from "../lib/pbiClient";
 import { MOCK_PROJECTS } from "../lib/mockProjects";
 import { MOCK_OBRA_CRITERIA_GROUPED } from "../lib/mockObraCriteria";
@@ -259,10 +261,16 @@ export const projectsRouter = router({
         score: z.number().min(0).max(10),
         obs: z.string().optional(),
       })).optional(),
+      // Flags de "Não avaliado" — exclui o componente da média (sem impacto na nota)
+      npsNa: z.boolean().optional(),
+      osModulosNa: z.boolean().optional(),
+      osInversoresNa: z.boolean().optional(),
       // Observações globais e link de fotos
       driveLink: z.string().optional(),
       observacaoGeral: z.string().optional(),
       hasFinancialLoss: z.boolean().optional(),
+      // Código string do projeto (ex: "P2345") para buscar diário de obra
+      projectCode: z.string().optional(),
     }))
     .mutation(async ({ input }) => {
       const {
@@ -270,15 +278,22 @@ export const projectsRouter = router({
         notaSeguranca, notaFuncionalidade, notaEstetica,
         osModulos, osInversores, npsCliente,
         hasFinancialLoss,
+        npsNa = false,
+        osModulosNa = false,
+        osInversoresNa = false,
       } = input;
 
-      // Nota Final (escala 0–10):
-      //   Eficiência = (Seg + Func + Est) / 3
-      //   Média OS   = (OS Módulos + OS Inversores) / 2
-      //   Nota Final = (Eficiência + Média OS + NPS) / 3   ← sem × 10
-      const eficiencia   = (notaSeguranca + notaFuncionalidade + notaEstetica) / 3;
-      const mediaOs      = (osModulos + osInversores) / 2;
-      const notaFinal    = (eficiencia + mediaOs + npsCliente) / 3;
+      // ── Nota Final (escala 0–10) ─────────────────────────────────────────
+      // Componentes marcados como "Não avaliado" são excluídos da média.
+      function avgNullable(vals: (number | null)[]): number | null {
+        const valid = vals.filter((v): v is number => v !== null);
+        return valid.length ? valid.reduce((a, b) => a + b, 0) / valid.length : null;
+      }
+
+      const eficiencia = (notaSeguranca + notaFuncionalidade + notaEstetica) / 3;
+      const mediaOs    = avgNullable([osModulosNa ? null : osModulos, osInversoresNa ? null : osInversores]);
+      const npsValue   = npsNa ? null : npsCliente;
+      const notaFinal  = avgNullable([eficiencia, mediaOs, npsValue]) ?? 0;
 
       const all = await fetchAllProjectsForUI();
       const found = all.find((p) => p.id === projectId);
@@ -290,28 +305,116 @@ export const projectsRouter = router({
       const bonusValorBase = bonusMap[found.category ?? "B1"] || 200;
 
       // Prejuízo financeiro → bônus zerado e avaliação desconsiderada
-      const bonusValorCorrigido = hasFinancialLoss
-        ? 0
-        : bonusValorBase * (notaFinal / 10);
+      const bonusValorCorrigido = hasFinancialLoss ? 0 : bonusValorBase * (notaFinal / 10);
+
+      // ── Cálculo de bônus por participante ───────────────────────────────
+      // Fórmula: BonusIndividual_i = DP_i × MediaPonderada × (nota360_i / 10)
+      //   onde DP_i = peso_i × frequência_i
+      //        MediaPonderada = ValorCorrigido / Σ(DP_i)
+      type ParticipantBonus = {
+        installerId: number;
+        nome: string;
+        peso: number;
+        diasPresentes: number;
+        totalDias: number;
+        frequencia: number;
+        dp: number;
+        nota360: number;
+        mediaPonderada: number;
+        bonusIndividual: number;
+      };
+
+      let participantBonuses: ParticipantBonus[] = [];
+      let hasDiaryData = false;
+      let totalDias = 0;
+
+      if (!hasFinancialLoss && input.projectCode) {
+        try {
+          // Total de dias distintos da obra
+          const allDays = await dbObras
+            .selectDistinct({ day: obraDiario.dayNumber })
+            .from(obraDiario)
+            .where(eq(obraDiario.projectCode, input.projectCode));
+
+          if (allDays.length > 0) {
+            hasDiaryData = true;
+            totalDias = allDays.length;
+
+            // Instaladores distintos que participaram
+            const participantRows = await dbObras
+              .selectDistinct({ installerId: obraDiario.installerId })
+              .from(obraDiario)
+              .where(eq(obraDiario.projectCode, input.projectCode));
+
+            const installerIds = participantRows.map(r => r.installerId);
+            const installerDetails = await dbObras
+              .select({ id: installers.id, name: installers.name, weight: installers.weight })
+              .from(installers)
+              .where(inArray(installers.id, installerIds));
+
+            // Nota360 da avaliação dos pares (histórico) — default 10 se não disponível
+            const peerData = peerReviewByObra(input.projectCode);
+
+            // 1ª passagem: calcular DP_i para cada instalador
+            const tempData: Omit<ParticipantBonus, 'nota360' | 'mediaPonderada' | 'bonusIndividual'>[] = [];
+            let sumDP = 0;
+
+            for (const inst of installerDetails) {
+              const presenceDays = await dbObras
+                .selectDistinct({ day: obraDiario.dayNumber })
+                .from(obraDiario)
+                .where(and(
+                  eq(obraDiario.projectCode, input.projectCode),
+                  eq(obraDiario.installerId, inst.id)
+                ));
+
+              const diasPresentes = presenceDays.length;
+              const frequencia    = totalDias > 0 ? diasPresentes / totalDias : 0;
+              const peso          = parseFloat(inst.weight ?? '1.0') || 1.0;
+              const dp            = peso * frequencia;
+              sumDP += dp;
+
+              tempData.push({ installerId: inst.id, nome: inst.name ?? '', peso, diasPresentes, totalDias, frequencia, dp });
+            }
+
+            // 2ª passagem: aplicar MediaPonderada e nota360
+            const mediaPonderada = sumDP > 0 ? bonusValorCorrigido / sumDP : 0;
+
+            participantBonuses = tempData.map(p => {
+              const nota360       = peerData?.mediasPorColaborador[p.nome] ?? 10;
+              const bonusIndividual = p.dp * mediaPonderada * (nota360 / 10);
+              return { ...p, nota360, mediaPonderada, bonusIndividual };
+            }).sort((a, b) => b.bonusIndividual - a.bonusIndividual);
+          }
+        } catch (e) {
+          console.error('[submitScores] Erro ao calcular bônus dos participantes:', e);
+        }
+      }
 
       return {
         notaFinal,
         eficiencia,
         mediaOs,
+        npsValue,
         bonusValorBase,
         bonusValorCorrigido,
+        hasDiaryData,
+        totalDias,
+        participantBonuses,
         hasFinancialLoss: !!hasFinancialLoss,
         breakdown: {
-          seguranca: notaSeguranca,
+          seguranca:      notaSeguranca,
           funcionalidade: notaFuncionalidade,
-          estetica: notaEstetica,
-          osModulos,
-          osInversores,
-          npsCliente,
+          estetica:       notaEstetica,
+          osModulos:      osModulosNa ? null : osModulos,
+          osInversores:   osInversoresNa ? null : osInversores,
+          npsCliente:     npsNa ? null : npsCliente,
         },
         message: hasFinancialLoss
           ? "Avaliação desconsiderada — prejuízo financeiro registrado. Bônus zerado."
-          : "Avaliação registrada (persistência será ativada quando banco de obras estiver disponível)",
+          : hasDiaryData
+          ? `Avaliação registrada. ${participantBonuses.length} participante(s) calculado(s).`
+          : "Avaliação registrada. Diário de obra não encontrado — bônus individuais não calculados.",
       };
     }),
 
