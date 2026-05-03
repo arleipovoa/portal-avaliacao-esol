@@ -9,9 +9,9 @@ ALTER TABLE installers
 -- 1.2 = Líder de Equipe
 -- 1.1 = Instalador 1
 -- 1.0 = Auxiliar de Instalação
--- 0.5 = Backend (Projeto, Material)
+-- 0.5 = Backend (Projeto, Material, Planejamento)
 
 UPDATE installers SET weight = '1.2' WHERE name IN ('Elivelton', 'Gustavo G.', 'Élder', 'Elder');
 UPDATE installers SET weight = '1.1' WHERE name IN ('Fábio', 'Hyan', 'Gustavo P.', 'Flávio', 'Ley');
 UPDATE installers SET weight = '1.0' WHERE name IN ('Moisés', 'Gabriel M.', 'Kauã', 'Enderson');
-UPDATE installers SET weight = '0.5' WHERE name IN ('Gabriel T.', 'Material', 'Projeto', 'Projetos');
+UPDATE installers SET weight = '0.5' WHERE name IN ('Planejamento', 'Material', 'Projeto');
