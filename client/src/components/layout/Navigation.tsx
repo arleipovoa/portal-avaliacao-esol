@@ -26,7 +26,7 @@ const NAV_ITEMS: NavItem[] = [
     route: "/obras",
     children: [
       { label: "Dashboard", route: "/obras/dashboard" },
-      { label: "Avaliacao da Equipe", route: "/obras/avaliacao" },
+      { label: "Avaliação da Obra", route: "/obras/avaliacao" },
       { label: "Avaliacao Cruzada", route: "/obras/avaliacao-cruzada" },
     ],
   },
