@@ -231,8 +231,8 @@ export default function ObrasRegras() {
             },
             {
               step: '4', title: 'Nota Final (col. AI)',
-              desc: 'Média dos três componentes (Eficiência, Média OS, NPS) multiplicada por 10 para escala 0–100%.',
-              formula: 'Nota Final (%) = média(Eficiência, Média OS, NPS) × 10',
+              desc: 'Média simples dos três componentes (Eficiência, Média OS, NPS). Resultado na escala 0–10.',
+              formula: 'Nota Final = média(Eficiência, Média OS, NPS)',
               color: 'text-flux-orange', bg: 'bg-flux-orange/5', border: 'border-flux-orange/15',
             },
           ].map(({ step, title, desc, formula, color, bg, border }) => (
@@ -272,9 +272,69 @@ export default function ObrasRegras() {
             ))}
           </div>
           <div className="text-center pt-2 border-t border-white/5">
-            <p className="text-xs text-slate-500 font-mono mb-1">(7,37 + 8,5 + 10,0) ÷ 3 × 10 = 86,22%</p>
-            <p className="text-2xl font-bold font-mono text-green-400">86,22%</p>
+            <p className="text-xs text-slate-500 font-mono mb-1">(7,37 + 8,5 + 10,0) ÷ 3 = 8,62</p>
+            <p className="text-2xl font-bold font-mono text-green-400">8,62 / 10</p>
           </div>
+        </div>
+      </section>
+
+      {/* Tabela de Premiação */}
+      <section className="space-y-4">
+        <h2 className="text-sm font-semibold text-white flex items-center gap-2">
+          <span>🏆</span> Tabela de Premiação por Categoria
+        </h2>
+        <div className="glass rounded-xl border border-white/5 overflow-hidden">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-white/5 bg-white/[0.02]">
+                <th className="text-left px-4 py-3 text-[10px] text-slate-500 uppercase font-semibold">Categoria</th>
+                <th className="text-right px-4 py-3 text-[10px] text-slate-500 uppercase font-semibold">Prêmio Base</th>
+                <th className="text-right px-4 py-3 text-[10px] text-slate-500 uppercase font-semibold">Com nota 10,0</th>
+                <th className="text-right px-4 py-3 text-[10px] text-slate-500 uppercase font-semibold">Com nota 8,0</th>
+              </tr>
+            </thead>
+            <tbody>
+              {([
+                { cat: 'B1', base: 200  },
+                { cat: 'B2', base: 300  },
+                { cat: 'B3', base: 500  },
+                { cat: 'B4', base: 750  },
+                { cat: 'B5', base: 1000 },
+                { cat: 'B6', base: 1500 },
+                { cat: 'B7', base: 2000 },
+              ] as const).map(({ cat, base }, idx) => (
+                <tr key={cat} className={cn('border-b border-white/5 last:border-0', idx % 2 === 0 ? '' : 'bg-white/[0.02]')}>
+                  <td className="px-4 py-3">
+                    <span className="text-xs font-bold text-flux-orange bg-flux-orange/10 border border-flux-orange/20 rounded px-2 py-0.5">{cat}</span>
+                  </td>
+                  <td className="px-4 py-3 text-right">
+                    <span className="text-sm font-semibold text-white font-mono">R$ {base.toLocaleString('pt-BR')}</span>
+                  </td>
+                  <td className="px-4 py-3 text-right">
+                    <span className="text-xs text-green-400 font-mono">R$ {base.toLocaleString('pt-BR')}</span>
+                  </td>
+                  <td className="px-4 py-3 text-right">
+                    <span className="text-xs text-yellow-400 font-mono">R$ {(base * 0.8).toLocaleString('pt-BR')}</span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <div className="glass rounded-xl border border-white/5 p-4 space-y-2 text-xs text-slate-400">
+          <p>
+            <strong className="text-slate-300">Correção proporcional:</strong>{' '}
+            O prêmio base é multiplicado pela nota final dividida por 10.
+          </p>
+          <div className="bg-black/20 rounded-lg px-3 py-2">
+            <code className="font-mono text-slate-300">Prêmio = Prêmio Base × (Nota Final ÷ 10)</code>
+          </div>
+          <p>
+            Exemplo: categoria B3 (R$ 500), nota 8,5 → <strong className="text-flux-orange">R$ 425,00</strong>
+          </p>
+          <p className="text-red-400">
+            ⚠️ Se houver prejuízo financeiro registrado, o prêmio é automaticamente zerado e a avaliação desconsiderada.
+          </p>
         </div>
       </section>
 
