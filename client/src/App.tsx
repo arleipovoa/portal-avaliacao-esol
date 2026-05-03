@@ -12,6 +12,7 @@ import Evaluations from "@/pages/Evaluations";
 // Modulo Obras
 import ObrasDashboard from "@/pages/ObrasDashboard";
 import ObrasEvaluation from "@/pages/ObrasEvaluation";
+import ObrasRegras from "@/pages/ObrasRegras";
 import AvaliacaoCruzada from "@/pages/AvaliacaoCruzada";
 
 // Modulo NPS
@@ -44,6 +45,7 @@ export default function App() {
         <Route path="/obras"><Redirect to="/obras/dashboard" /></Route>
         <Route path="/obras/dashboard" component={ObrasDashboard} />
         <Route path="/obras/avaliacao" component={ObrasEvaluation} />
+        <Route path="/obras/regras" component={ObrasRegras} />
         <Route path="/obras/avaliacao-cruzada" component={AvaliacaoCruzada} />
 
         {/* Modulo NPS */}
