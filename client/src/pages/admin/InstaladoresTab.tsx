@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { trpc } from "@/lib/trpc";
-import { cn } from "@/lib/utils";
+import { cn, formatDateBR } from "@/lib/utils";
 
 export default function InstaladoresTab() {
   const [showInactive, setShowInactive] = useState(false);
@@ -29,8 +29,8 @@ export default function InstaladoresTab() {
       <div className="flex items-center justify-between flex-wrap gap-4">
         <div>
           <p className="text-xs font-semibold text-flux-orange uppercase tracking-widest mb-1">Cadastros</p>
-          <h1 className="text-2xl font-display font-semibold text-white">Instaladores</h1>
-          <p className="text-sm text-slate-400 mt-1">Gerencie a equipe de instalação ativa e desativada.</p>
+          <h1 className="text-2xl font-display font-semibold text-foreground">Instaladores</h1>
+          <p className="text-sm text-muted-foreground mt-1">Gerencie a equipe de instalação ativa e desativada.</p>
         </div>
         <div className="flex items-center gap-3">
           <label className="flex items-center gap-2 text-xs text-slate-400 cursor-pointer">
@@ -43,8 +43,8 @@ export default function InstaladoresTab() {
         </div>
       </div>
 
-      <div className="rounded-xl border border-white/5 bg-white/5 overflow-hidden">
-        <div className="grid grid-cols-12 px-4 py-2 text-[10px] text-slate-500 uppercase tracking-wider font-medium border-b border-white/5">
+      <div className="rounded-xl border border-border bg-foreground/5 overflow-hidden">
+        <div className="grid grid-cols-12 px-4 py-2 text-[10px] text-muted-foreground uppercase tracking-wider font-medium border-b border-border">
           <div className="col-span-4">Nome</div>
           <div className="col-span-2">Status</div>
           <div className="col-span-2">Cargo</div>
@@ -58,8 +58,8 @@ export default function InstaladoresTab() {
           <div className="p-8 text-center text-slate-400 text-sm">Nenhum instalador cadastrado.</div>
         ) : (
           list.map((i: any) => (
-            <div key={i.id} className="grid grid-cols-12 px-4 py-2.5 text-sm hover:bg-white/[0.02] border-b border-white/[0.02] last:border-0">
-              <div className="col-span-4 text-white font-medium">{i.name}</div>
+            <div key={i.id} className="grid grid-cols-12 px-4 py-2.5 text-sm hover:bg-foreground/[0.02] border-b border-border/50 last:border-0">
+              <div className="col-span-4 text-foreground font-medium">{i.name}</div>
               <div className="col-span-2">
                 <span className={cn(
                   "px-2 py-0.5 rounded-full text-[10px] font-medium",
@@ -68,15 +68,15 @@ export default function InstaladoresTab() {
                   {i.status === "active" ? "Ativo" : "Inativo"}
                 </span>
               </div>
-              <div className="col-span-2 text-slate-400">{i.role ?? "—"}</div>
-              <div className="col-span-2 text-slate-500 text-xs">{i.hiredAt ? new Date(i.hiredAt).toLocaleDateString("pt-BR") : "—"}</div>
-              <div className="col-span-1 text-slate-500 text-xs">{i.leftAt ? new Date(i.leftAt).toLocaleDateString("pt-BR") : "—"}</div>
+              <div className="col-span-2 text-muted-foreground">{i.role ?? "—"}</div>
+              <div className="col-span-2 text-muted-foreground text-xs">{formatDateBR(i.hiredAt)}</div>
+              <div className="col-span-1 text-muted-foreground text-xs">{formatDateBR(i.leftAt)}</div>
               <div className="col-span-1 flex items-center justify-end gap-2">
-                <button onClick={() => setEditing(i)} title="Editar" className="text-slate-400 hover:text-flux-orange text-xs">✏️</button>
+                <button onClick={() => setEditing(i)} title="Editar" className="text-muted-foreground hover:text-flux-orange text-xs">✏️</button>
                 <button
                   onClick={() => setStatusM.mutate({ id: i.id, status: i.status === "active" ? "inactive" : "active" })}
                   title={i.status === "active" ? "Desativar" : "Reativar"}
-                  className="text-slate-400 hover:text-white text-xs"
+                  className="text-muted-foreground hover:text-foreground text-xs"
                 >{i.status === "active" ? "🔒" : "🔓"}</button>
               </div>
             </div>
@@ -103,25 +103,25 @@ export default function InstaladoresTab() {
                 createM.mutate(data);
               }
             }}
-            className="rounded-2xl border border-white/10 p-6 max-w-md w-full mx-4 bg-void/95"
+            className="rounded-2xl border border-border p-6 max-w-md w-full mx-4 bg-background/95"
           >
-            <h2 className="text-white font-semibold mb-4">{editing ? `Editar ${editing.name}` : "Novo instalador"}</h2>
+            <h2 className="text-foreground font-semibold mb-4">{editing ? `Editar ${editing.name}` : "Novo instalador"}</h2>
             <div className="space-y-3">
               <div>
-                <label className="text-xs text-slate-400">Nome*</label>
-                <input name="name" required defaultValue={editing?.name ?? ""} className="w-full mt-1 bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white" />
+                <label className="text-xs text-muted-foreground">Nome*</label>
+                <input name="name" required defaultValue={editing?.name ?? ""} className="w-full mt-1 bg-foreground/5 border border-border rounded-lg px-3 py-2 text-sm text-foreground" />
               </div>
               <div>
-                <label className="text-xs text-slate-400">Cargo (opcional)</label>
-                <input name="role" defaultValue={editing?.role ?? ""} placeholder="instalador" className="w-full mt-1 bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white" />
+                <label className="text-xs text-muted-foreground">Cargo (opcional)</label>
+                <input name="role" defaultValue={editing?.role ?? ""} placeholder="instalador" className="w-full mt-1 bg-foreground/5 border border-border rounded-lg px-3 py-2 text-sm text-foreground" />
               </div>
               <div>
-                <label className="text-xs text-slate-400">Data de admissão (opcional)</label>
-                <input name="hiredAt" type="date" defaultValue={editing?.hiredAt ? new Date(editing.hiredAt).toISOString().slice(0,10) : ""} className="w-full mt-1 bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white" />
+                <label className="text-xs text-muted-foreground">Data de admissão (opcional)</label>
+                <input name="hiredAt" type="date" defaultValue={editing?.hiredAt ? new Date(editing.hiredAt).toISOString().slice(0,10) : ""} className="w-full mt-1 bg-foreground/5 border border-border rounded-lg px-3 py-2 text-sm text-foreground" />
               </div>
             </div>
             <div className="flex justify-end gap-3 mt-6">
-              <button type="button" onClick={() => { setCreating(false); setEditing(null); }} className="px-4 py-2 text-sm text-slate-400 hover:text-white">Cancelar</button>
+              <button type="button" onClick={() => { setCreating(false); setEditing(null); }} className="px-4 py-2 text-sm text-muted-foreground hover:text-foreground">Cancelar</button>
               <button type="submit" className="px-5 py-2 bg-flux-orange text-void font-semibold text-sm rounded-lg hover:bg-flux-orange/90">
                 Salvar
               </button>

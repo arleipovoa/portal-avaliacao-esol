@@ -30,8 +30,8 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 
     const variantStyles = {
       primary: 'bg-flux-orange text-void hover:bg-flux-orange/90 shadow-lg hover:shadow-glow active:scale-95',
-      secondary: 'glass hover:bg-white/10 text-slate-200 active:scale-95',
-      ghost: 'text-slate-300 hover:text-white hover:bg-white/5 active:scale-95',
+      secondary: 'glass hover:bg-foreground/10 text-secondary-foreground active:scale-95',
+      ghost: 'text-muted-foreground hover:text-foreground hover:bg-foreground/5 active:scale-95',
       danger: 'bg-red-500/20 text-red-300 hover:bg-red-500/30 border border-red-500/30 active:scale-95',
     };
 

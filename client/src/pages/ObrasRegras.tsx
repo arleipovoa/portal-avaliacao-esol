@@ -66,20 +66,20 @@ export default function ObrasRegras() {
       <div className="flex items-start justify-between gap-4">
         <div>
           <p className="text-xs font-semibold text-flux-orange uppercase tracking-widest mb-1">Portal de Obras</p>
-          <h1 className="text-2xl font-display font-semibold text-white">Regras e Critérios de Avaliação</h1>
-          <p className="text-sm text-slate-400 mt-1">
+          <h1 className="text-2xl font-display font-semibold text-foreground">Regras e Critérios de Avaliação</h1>
+          <p className="text-sm text-muted-foreground mt-1">
             Referência completa dos critérios, categorias, pesos e fórmula de cálculo da Nota da Obra.
           </p>
         </div>
         <a href="/obras/avaliacao"
-          className="shrink-0 text-xs text-slate-500 hover:text-flux-orange transition-colors flex items-center gap-1 mt-1 border border-white/10 rounded-lg px-3 py-1.5 hover:border-flux-orange/30">
+          className="shrink-0 text-xs text-slate-500 hover:text-flux-orange transition-colors flex items-center gap-1 mt-1 border border-border rounded-lg px-3 py-1.5 hover:border-flux-orange/30">
           ✏️ Ir avaliar
         </a>
       </div>
 
       {/* Escala de notas */}
-      <section className="glass rounded-xl border border-white/5 p-5 space-y-4">
-        <h2 className="text-sm font-semibold text-white">Escala de Notas (0 a 10)</h2>
+      <section className="glass rounded-xl border border-border p-5 space-y-4">
+        <h2 className="text-sm font-semibold text-foreground">Escala de Notas (0 a 10)</h2>
         <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
           {ESCALA.map(({ faixa, label, cor }) => (
             <div key={label} className={cn('rounded-lg border px-3 py-2 text-center', cor)}>
@@ -89,8 +89,8 @@ export default function ObrasRegras() {
           ))}
         </div>
         <p className="text-xs text-slate-500">
-          Todas as notas são de <strong className="text-slate-300">0 a 10</strong> com incremento de 0,5.
-          Itens marcados como <strong className="text-slate-300">Não avaliado</strong> são excluídos da média da respectiva categoria — a nota deles não é contabilizada nem como zero.
+          Todas as notas são de <strong className="text-foreground">0 a 10</strong> com incremento de 0,5.
+          Itens marcados como <strong className="text-foreground">Não avaliado</strong> são excluídos da média da respectiva categoria — a nota deles não é contabilizada nem como zero.
         </p>
       </section>
 
@@ -114,10 +114,10 @@ export default function ObrasRegras() {
           </div>
 
           {/* Tabela de critérios */}
-          <div className="glass rounded-xl border border-white/5 overflow-hidden">
+          <div className="glass rounded-xl border border-border overflow-hidden">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-white/5">
+                <tr className="border-b border-border">
                   <th className="text-left px-4 py-2 text-[10px] text-slate-500 uppercase font-semibold w-6">#</th>
                   <th className="text-left px-4 py-2 text-[10px] text-slate-500 uppercase font-semibold">Critério</th>
                   <th className="text-left px-4 py-2 text-[10px] text-slate-500 uppercase font-semibold">O que é avaliado</th>
@@ -125,7 +125,7 @@ export default function ObrasRegras() {
               </thead>
               <tbody>
                 {cat.items.map((item, idx) => (
-                  <tr key={item.id} className={cn('border-b border-white/5 last:border-0', idx % 2 === 0 ? '' : 'bg-white/[0.02]')}>
+                  <tr key={item.id} className={cn('border-b border-border last:border-0', idx % 2 === 0 ? '' : 'bg-foreground/[0.02]')}>
                     <td className="px-4 py-3 text-xs text-slate-600 font-mono">{idx + 1}</td>
                     <td className="px-4 py-3">
                       <p className={cn('text-xs font-semibold', cat.color)}>{item.name}</p>
@@ -155,10 +155,10 @@ export default function ObrasRegras() {
             Componente independente
           </div>
         </div>
-        <div className="glass rounded-xl border border-white/5 overflow-hidden">
+        <div className="glass rounded-xl border border-border overflow-hidden">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-white/5">
+              <tr className="border-b border-border">
                 <th className="text-left px-4 py-2 text-[10px] text-slate-500 uppercase font-semibold w-16">Col.</th>
                 <th className="text-left px-4 py-2 text-[10px] text-slate-500 uppercase font-semibold">Campo</th>
                 <th className="text-left px-4 py-2 text-[10px] text-slate-500 uppercase font-semibold">O que é avaliado</th>
@@ -166,13 +166,13 @@ export default function ObrasRegras() {
             </thead>
             <tbody>
               {OS_ITEMS.map((item, idx) => (
-                <tr key={item.col} className={cn('border-b border-white/5 last:border-0', idx % 2 === 0 ? '' : 'bg-white/[0.02]')}>
+                <tr key={item.col} className={cn('border-b border-border last:border-0', idx % 2 === 0 ? '' : 'bg-foreground/[0.02]')}>
                   <td className="px-4 py-3 text-xs text-slate-600 font-mono">{item.col}</td>
                   <td className="px-4 py-3 text-xs font-semibold text-green-400">{item.name}</td>
                   <td className="px-4 py-3 text-xs text-slate-400 leading-relaxed">{item.desc}</td>
                 </tr>
               ))}
-              <tr className="bg-white/[0.02]">
+              <tr className="bg-foreground/[0.02]">
                 <td className="px-4 py-3 text-xs text-slate-600 font-mono">AF</td>
                 <td className="px-4 py-3 text-xs font-semibold text-green-300">Média OS</td>
                 <td className="px-4 py-3 text-xs text-slate-400">(OS Módulos + OS Inversores) ÷ 2</td>
@@ -191,20 +191,20 @@ export default function ObrasRegras() {
             <p className="text-[10px] text-slate-500">1 campo · Coluna AH</p>
           </div>
         </div>
-        <div className="glass rounded-xl border border-white/5 p-4 text-xs text-slate-400 leading-relaxed space-y-2">
+        <div className="glass rounded-xl border border-border p-4 text-xs text-slate-400 leading-relaxed space-y-2">
           <p>
-            O <strong className="text-slate-300">NPS (Net Promoter Score)</strong> é a nota de satisfação dada pelo cliente de 0 a 10.
-            É coletada pela equipe de <strong className="text-slate-300">Sucesso do Cliente</strong> em ligação telefônica logo após a conclusão da instalação.
+            O <strong className="text-foreground">NPS (Net Promoter Score)</strong> é a nota de satisfação dada pelo cliente de 0 a 10.
+            É coletada pela equipe de <strong className="text-foreground">Sucesso do Cliente</strong> em ligação telefônica logo após a conclusão da instalação.
           </p>
           <p>
-            Quando a ligação não foi realizada ou o cliente não atendeu, o campo deve ser marcado como <strong className="text-slate-300">Não avaliado</strong> para não impactar a nota final.
+            Quando a ligação não foi realizada ou o cliente não atendeu, o campo deve ser marcado como <strong className="text-foreground">Não avaliado</strong> para não impactar a nota final.
           </p>
         </div>
       </section>
 
       {/* Fórmula de cálculo */}
       <section className="space-y-4">
-        <h2 className="text-sm font-semibold text-white flex items-center gap-2">
+        <h2 className="text-sm font-semibold text-foreground flex items-center gap-2">
           <span>🧮</span> Fórmula de Cálculo da Nota Final
         </h2>
 
@@ -221,7 +221,7 @@ export default function ObrasRegras() {
               step: '2', title: 'Eficiência (col. AG)',
               desc: 'Média simples entre as três categorias avaliadas.',
               formula: 'Eficiência = (Nota Seg + Nota Func + Nota Est) ÷ N_categorias_avaliadas',
-              color: 'text-slate-300', bg: 'bg-white/[0.03]', border: 'border-white/5',
+              color: 'text-foreground', bg: 'bg-white/[0.03]', border: 'border-border',
             },
             {
               step: '3', title: 'Média OS (col. AF)',
@@ -245,14 +245,14 @@ export default function ObrasRegras() {
               </div>
               <p className="text-xs text-slate-400 leading-relaxed pl-9">{desc}</p>
               <div className="pl-9">
-                <code className="text-xs bg-black/30 rounded px-2 py-1 text-slate-300 font-mono">{formula}</code>
+                <code className="text-xs bg-black/30 rounded px-2 py-1 text-foreground font-mono">{formula}</code>
               </div>
             </div>
           ))}
         </div>
 
         {/* Exemplo numérico */}
-        <div className="glass rounded-xl border border-white/5 p-4 space-y-3">
+        <div className="glass rounded-xl border border-border p-4 space-y-3">
           <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest">Exemplo — Projeto P774</p>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center">
             {[
@@ -265,13 +265,13 @@ export default function ObrasRegras() {
               { label: 'Média OS', value: '8,5' },
               { label: 'NPS',      value: '10,0' },
             ].map(({ label, value }) => (
-              <div key={label} className="bg-white/5 rounded-lg p-2">
+              <div key={label} className="bg-foreground/5 rounded-lg p-2">
                 <p className="text-[10px] text-slate-500">{label}</p>
-                <p className="text-sm font-bold font-mono text-slate-300">{value}</p>
+                <p className="text-sm font-bold font-mono text-foreground">{value}</p>
               </div>
             ))}
           </div>
-          <div className="text-center pt-2 border-t border-white/5">
+          <div className="text-center pt-2 border-t border-border">
             <p className="text-xs text-slate-500 font-mono mb-1">(7,37 + 8,5 + 10,0) ÷ 3 = 8,62</p>
             <p className="text-2xl font-bold font-mono text-green-400">8,62 / 10</p>
           </div>
@@ -280,13 +280,13 @@ export default function ObrasRegras() {
 
       {/* Tabela de Premiação */}
       <section className="space-y-4">
-        <h2 className="text-sm font-semibold text-white flex items-center gap-2">
+        <h2 className="text-sm font-semibold text-foreground flex items-center gap-2">
           <span>🏆</span> Tabela de Premiação por Categoria
         </h2>
-        <div className="glass rounded-xl border border-white/5 overflow-hidden">
+        <div className="glass rounded-xl border border-border overflow-hidden">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-white/5 bg-white/[0.02]">
+              <tr className="border-b border-border bg-foreground/[0.02]">
                 <th className="text-left px-4 py-3 text-[10px] text-slate-500 uppercase font-semibold">Categoria</th>
                 <th className="text-right px-4 py-3 text-[10px] text-slate-500 uppercase font-semibold">Prêmio Base</th>
                 <th className="text-right px-4 py-3 text-[10px] text-slate-500 uppercase font-semibold">Com nota 10,0</th>
@@ -303,12 +303,12 @@ export default function ObrasRegras() {
                 { cat: 'B6', base: 1500 },
                 { cat: 'B7', base: 2000 },
               ] as const).map(({ cat, base }, idx) => (
-                <tr key={cat} className={cn('border-b border-white/5 last:border-0', idx % 2 === 0 ? '' : 'bg-white/[0.02]')}>
+                <tr key={cat} className={cn('border-b border-border last:border-0', idx % 2 === 0 ? '' : 'bg-foreground/[0.02]')}>
                   <td className="px-4 py-3">
                     <span className="text-xs font-bold text-flux-orange bg-flux-orange/10 border border-flux-orange/20 rounded px-2 py-0.5">{cat}</span>
                   </td>
                   <td className="px-4 py-3 text-right">
-                    <span className="text-sm font-semibold text-white font-mono">R$ {base.toLocaleString('pt-BR')}</span>
+                    <span className="text-sm font-semibold text-foreground font-mono">R$ {base.toLocaleString('pt-BR')}</span>
                   </td>
                   <td className="px-4 py-3 text-right">
                     <span className="text-xs text-green-400 font-mono">R$ {base.toLocaleString('pt-BR')}</span>
@@ -321,13 +321,13 @@ export default function ObrasRegras() {
             </tbody>
           </table>
         </div>
-        <div className="glass rounded-xl border border-white/5 p-4 space-y-2 text-xs text-slate-400">
+        <div className="glass rounded-xl border border-border p-4 space-y-2 text-xs text-slate-400">
           <p>
-            <strong className="text-slate-300">Correção proporcional:</strong>{' '}
+            <strong className="text-foreground">Correção proporcional:</strong>{' '}
             O prêmio base é multiplicado pela nota final dividida por 10.
           </p>
           <div className="bg-black/20 rounded-lg px-3 py-2">
-            <code className="font-mono text-slate-300">Prêmio = Prêmio Base × (Nota Final ÷ 10)</code>
+            <code className="font-mono text-foreground">Prêmio = Prêmio Base × (Nota Final ÷ 10)</code>
           </div>
           <p>
             Exemplo: categoria B3 (R$ 500), nota 8,5 → <strong className="text-flux-orange">R$ 425,00</strong>
@@ -339,10 +339,10 @@ export default function ObrasRegras() {
       </section>
 
       {/* Rodapé de referência */}
-      <div className="glass rounded-xl border border-white/5 p-4">
+      <div className="glass rounded-xl border border-border p-4">
         <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest mb-2">Referência</p>
         <p className="text-xs text-slate-500">
-          Planilha: <span className="text-slate-300">Avaliação de Qualidade de Obras 2025</span> · aba <span className="text-slate-300">Notas</span> · linha 3 (cabeçalho de critérios) · colunas G–AI.
+          Planilha: <span className="text-foreground">Avaliação de Qualidade de Obras 2025</span> · aba <span className="text-foreground">Notas</span> · linha 3 (cabeçalho de critérios) · colunas G–AI.
         </p>
       </div>
 

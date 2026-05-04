@@ -29,8 +29,8 @@ export default function VeiculosTab() {
       <div className="flex items-center justify-between flex-wrap gap-4">
         <div>
           <p className="text-xs font-semibold text-flux-orange uppercase tracking-widest mb-1">Cadastros</p>
-          <h1 className="text-2xl font-display font-semibold text-white">Veículos</h1>
-          <p className="text-sm text-slate-400 mt-1">Frota da empresa usada nas instalações.</p>
+          <h1 className="text-2xl font-display font-semibold text-foreground">Veículos</h1>
+          <p className="text-sm text-muted-foreground mt-1">Frota da empresa usada nas instalações.</p>
         </div>
         <div className="flex items-center gap-3">
           <label className="flex items-center gap-2 text-xs text-slate-400 cursor-pointer">
@@ -43,8 +43,8 @@ export default function VeiculosTab() {
         </div>
       </div>
 
-      <div className="rounded-xl border border-white/5 bg-white/5 overflow-hidden">
-        <div className="grid grid-cols-12 px-4 py-2 text-[10px] text-slate-500 uppercase tracking-wider font-medium border-b border-white/5">
+      <div className="rounded-xl border border-border bg-foreground/5 overflow-hidden">
+        <div className="grid grid-cols-12 px-4 py-2 text-[10px] text-muted-foreground uppercase tracking-wider font-medium border-b border-border">
           <div className="col-span-3">Identificador</div>
           <div className="col-span-3">Modelo</div>
           <div className="col-span-2">Placa</div>
@@ -57,10 +57,10 @@ export default function VeiculosTab() {
           <div className="p-8 text-center text-slate-400 text-sm">Nenhum veículo cadastrado.</div>
         ) : (
           list.map((v: any) => (
-            <div key={v.id} className="grid grid-cols-12 px-4 py-2.5 text-sm hover:bg-white/[0.02] border-b border-white/[0.02] last:border-0">
-              <div className="col-span-3 text-white font-medium">{v.identifier}</div>
-              <div className="col-span-3 text-slate-400">{v.model ?? "—"}</div>
-              <div className="col-span-2 text-slate-500 font-mono text-xs">{v.plate ?? "—"}</div>
+            <div key={v.id} className="grid grid-cols-12 px-4 py-2.5 text-sm hover:bg-foreground/[0.02] border-b border-border/50 last:border-0">
+              <div className="col-span-3 text-foreground font-medium">{v.identifier}</div>
+              <div className="col-span-3 text-muted-foreground">{v.model ?? "—"}</div>
+              <div className="col-span-2 text-muted-foreground font-mono text-xs">{v.plate ?? "—"}</div>
               <div className="col-span-2">
                 <span className={cn(
                   "px-2 py-0.5 rounded-full text-[10px] font-medium",
@@ -68,11 +68,11 @@ export default function VeiculosTab() {
                 )}>{v.status === "active" ? "Ativo" : "Inativo"}</span>
               </div>
               <div className="col-span-2 flex items-center justify-end gap-2">
-                <button onClick={() => setEditing(v)} title="Editar" className="text-slate-400 hover:text-flux-orange text-xs">✏️</button>
+                <button onClick={() => setEditing(v)} title="Editar" className="text-muted-foreground hover:text-flux-orange text-xs">✏️</button>
                 <button
                   onClick={() => setStatusM.mutate({ id: v.id, status: v.status === "active" ? "inactive" : "active" })}
                   title={v.status === "active" ? "Desativar" : "Reativar"}
-                  className="text-slate-400 hover:text-white text-xs"
+                  className="text-muted-foreground hover:text-foreground text-xs"
                 >{v.status === "active" ? "🔒" : "🔓"}</button>
               </div>
             </div>
@@ -99,29 +99,29 @@ export default function VeiculosTab() {
                 createM.mutate(data);
               }
             }}
-            className="rounded-2xl border border-white/10 p-6 max-w-md w-full mx-4 bg-void/95"
+            className="rounded-2xl border border-border p-6 max-w-md w-full mx-4 bg-background/95"
           >
-            <h2 className="text-white font-semibold mb-4">{editing ? `Editar ${editing.identifier}` : "Novo veículo"}</h2>
+            <h2 className="text-foreground font-semibold mb-4">{editing ? `Editar ${editing.identifier}` : "Novo veículo"}</h2>
             <div className="space-y-3">
               <div>
-                <label className="text-xs text-slate-400">Identificador*</label>
-                <input name="identifier" required defaultValue={editing?.identifier ?? ""} placeholder="L200 01" className="w-full mt-1 bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white" />
+                <label className="text-xs text-muted-foreground">Identificador*</label>
+                <input name="identifier" required defaultValue={editing?.identifier ?? ""} placeholder="L200 01" className="w-full mt-1 bg-foreground/5 border border-border rounded-lg px-3 py-2 text-sm text-foreground" />
               </div>
               <div>
-                <label className="text-xs text-slate-400">Modelo</label>
-                <input name="model" defaultValue={editing?.model ?? ""} placeholder="Mitsubishi L200" className="w-full mt-1 bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white" />
+                <label className="text-xs text-muted-foreground">Modelo</label>
+                <input name="model" defaultValue={editing?.model ?? ""} placeholder="Mitsubishi L200" className="w-full mt-1 bg-foreground/5 border border-border rounded-lg px-3 py-2 text-sm text-foreground" />
               </div>
               <div>
-                <label className="text-xs text-slate-400">Placa</label>
-                <input name="plate" defaultValue={editing?.plate ?? ""} placeholder="ABC-1234" className="w-full mt-1 bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white" />
+                <label className="text-xs text-muted-foreground">Placa</label>
+                <input name="plate" defaultValue={editing?.plate ?? ""} placeholder="ABC-1234" className="w-full mt-1 bg-foreground/5 border border-border rounded-lg px-3 py-2 text-sm text-foreground" />
               </div>
               <div>
-                <label className="text-xs text-slate-400">Observações</label>
-                <textarea name="notes" defaultValue={editing?.notes ?? ""} rows={2} className="w-full mt-1 bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white" />
+                <label className="text-xs text-muted-foreground">Observações</label>
+                <textarea name="notes" defaultValue={editing?.notes ?? ""} rows={2} className="w-full mt-1 bg-foreground/5 border border-border rounded-lg px-3 py-2 text-sm text-foreground" />
               </div>
             </div>
             <div className="flex justify-end gap-3 mt-6">
-              <button type="button" onClick={() => { setCreating(false); setEditing(null); }} className="px-4 py-2 text-sm text-slate-400 hover:text-white">Cancelar</button>
+              <button type="button" onClick={() => { setCreating(false); setEditing(null); }} className="px-4 py-2 text-sm text-muted-foreground hover:text-foreground">Cancelar</button>
               <button type="submit" className="px-5 py-2 bg-flux-orange text-void font-semibold text-sm rounded-lg hover:bg-flux-orange/90">
                 Salvar
               </button>

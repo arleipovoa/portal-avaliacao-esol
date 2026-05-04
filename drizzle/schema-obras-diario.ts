@@ -76,6 +76,29 @@ export const obraDiario = mysqlTable(
   })
 );
 
+// ─── ProjectAssets ───
+// Metadados auxiliares de cada projeto: link das fotos no Drive, etc.
+// Cardinalidade 1:1 com project_code (chave unica).
+export const projectAssets = mysqlTable(
+  "project_assets",
+  {
+    id: int().primaryKey().autoincrement(),
+    projectCode: varchar({ length: 20 }).notNull().unique(),
+    photosLink: text(),                // URL pasta "6. Fotos Instalacao e Comissionamento"
+    driveFolderId: varchar({ length: 64 }),  // ID da pasta no Drive (pra automacao)
+    permissionStatus: mysqlEnum(["public", "private", "unknown"]).default("unknown"),
+    lastSyncedAt: timestamp(),
+    createdAt: timestamp().notNull().defaultNow(),
+    updatedAt: timestamp().notNull().defaultNow().onUpdateNow(),
+  },
+  (table) => ({
+    projectCodeIdx: uniqueIndex("idx_assets_project_code").on(table.projectCode),
+  })
+);
+
+export type ProjectAsset = typeof projectAssets.$inferSelect;
+export type InsertProjectAsset = typeof projectAssets.$inferInsert;
+
 export type Installer = typeof installers.$inferSelect;
 export type InsertInstaller = typeof installers.$inferInsert;
 export type Vehicle = typeof vehicles.$inferSelect;

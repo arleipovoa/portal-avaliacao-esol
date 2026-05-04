@@ -1,8 +1,14 @@
 import { HISTORICO, type ObraAvaliada } from "./historicoData";
 
-// "Material" e "Projetos" sao contas globais (nao pessoas).
-// Mantidos no ranking pra fidelidade com a planilha, mas marcados.
-const NON_PERSON = new Set(["Material", "Projetos"]);
+// "Material", "Projeto"/"Projetos" e "Planejamento" sao contas globais (nao pessoas).
+const NON_PERSON = new Set(["Material", "Projeto", "Projetos", "Planejamento"]);
+
+// A partir de 2026, "Gabriel T" passou a ser registrado como "Planejamento"
+// (mudanca de papel). Em anos anteriores permanece como instalador.
+function displayName(rawName: string, year: number): string {
+  if (year >= 2026 && rawName === "Gabriel T") return "Planejamento";
+  return rawName;
+}
 
 function obrasDoAno(year: number): ObraAvaliada[] {
   return HISTORICO.filter(o => o.termino?.startsWith(String(year)));
@@ -118,7 +124,8 @@ export function historyYearly(year: number) {
 
   for (const o of obras) {
     if (o.notaEquipePct === null) continue;
-    for (const nome of o.equipe) {
+    for (const rawNome of o.equipe) {
+      const nome = displayName(rawNome, year);
       if (!stats[nome]) {
         stats[nome] = {
           nome, isPerson: !NON_PERSON.has(nome),

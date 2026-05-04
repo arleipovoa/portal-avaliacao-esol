@@ -20,7 +20,7 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>(
     const variantStyles = {
       default: 'bg-slate-900/50 border border-slate-800',
       glass: 'glass',
-      bordered: 'bg-transparent border border-white/10',
+      bordered: 'bg-transparent border border-border',
     };
 
     const sizeStyles = {
@@ -58,7 +58,7 @@ export const CardHeader = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn('mb-4 pb-4 border-b border-white/5', className)}
+    className={cn('mb-4 pb-4 border-b border-border', className)}
     {...props}
   />
 ));
@@ -70,7 +70,7 @@ export const CardTitle = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <h3
     ref={ref}
-    className={cn('text-lg font-semibold text-white tracking-tight', className)}
+    className={cn('text-lg font-semibold text-foreground tracking-tight', className)}
     {...props}
   />
 ));
@@ -102,7 +102,7 @@ export const CardFooter = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn('mt-4 pt-4 border-t border-white/5 flex gap-3', className)}
+    className={cn('mt-4 pt-4 border-t border-border flex gap-3', className)}
     {...props}
   />
 ));

@@ -14,6 +14,22 @@ export function formatDate(date: Date | string, locale = 'pt-BR'): string {
 }
 
 /**
+ * Format date to Brazilian DD/MM/AAAA. Accepts ISO strings (YYYY-MM-DD or full ISO),
+ * Date objects, or null/undefined. Avoids UTC drift by parsing YYYY-MM-DD manually.
+ */
+export function formatDateBR(value: Date | string | null | undefined): string {
+  if (value === null || value === undefined || value === "") return "—";
+  if (typeof value === "string") {
+    const m = value.match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if (m) return `${m[3]}/${m[2]}/${m[1]}`;
+    const d = new Date(value);
+    if (Number.isNaN(d.getTime())) return value;
+    return d.toLocaleDateString("pt-BR");
+  }
+  return value.toLocaleDateString("pt-BR");
+}
+
+/**
  * Format currency to BRL
  */
 export function formatCurrency(value: number): string {
@@ -24,10 +40,15 @@ export function formatCurrency(value: number): string {
 }
 
 /**
- * Format percentage
+ * Format a score/grade in pt-BR with comma decimal. No "%" suffix.
+ * Default 1 decimal. Returns "—" for null/undefined/NaN.
  */
-export function formatPercentage(value: number, decimals = 1): string {
-  return `${value.toFixed(decimals)}%`;
+export function formatNota(value: number | null | undefined, decimals = 1): string {
+  if (value === null || value === undefined || Number.isNaN(value)) return "—";
+  return new Intl.NumberFormat("pt-BR", {
+    minimumFractionDigits: decimals,
+    maximumFractionDigits: decimals,
+  }).format(value);
 }
 
 /**

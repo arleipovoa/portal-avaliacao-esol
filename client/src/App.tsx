@@ -12,8 +12,8 @@ import Evaluations from "@/pages/Evaluations";
 // Modulo Obras
 import ObrasDashboard from "@/pages/ObrasDashboard";
 import ObrasEvaluation from "@/pages/ObrasEvaluation";
-import ObrasRegras from "@/pages/ObrasRegras";
 import AvaliacaoCruzada from "@/pages/AvaliacaoCruzada";
+import ObrasRegras from "@/pages/ObrasRegras";
 
 // Modulo NPS
 import NpsDashboard from "@/pages/NpsDashboard";
@@ -27,6 +27,8 @@ import { CyclesTab as AdminCycles } from "@/pages/admin/CyclesTab";
 import { CalculateTab as AdminCalculate } from "@/pages/admin/CalculateTab";
 import InstaladoresTab from "@/pages/admin/InstaladoresTab";
 import VeiculosTab from "@/pages/admin/VeiculosTab";
+
+import { WarningCircle } from "@phosphor-icons/react";
 
 export default function App() {
   return (
@@ -45,8 +47,8 @@ export default function App() {
         <Route path="/obras"><Redirect to="/obras/dashboard" /></Route>
         <Route path="/obras/dashboard" component={ObrasDashboard} />
         <Route path="/obras/avaliacao" component={ObrasEvaluation} />
-        <Route path="/obras/regras" component={ObrasRegras} />
         <Route path="/obras/avaliacao-cruzada" component={AvaliacaoCruzada} />
+        <Route path="/obras/regras" component={ObrasRegras} />
 
         {/* Modulo NPS */}
         <Route path="/nps"><Redirect to="/nps/dashboard" /></Route>
@@ -66,12 +68,13 @@ export default function App() {
         {/* 404 */}
         <Route>
           <div className="flex items-center justify-center min-h-[60vh]">
-            <div className="rounded-2xl border border-white/5 p-12 text-center max-w-md bg-white/5">
-              <p className="text-5xl mb-4">404</p>
-              <h2 className="text-xl font-semibold text-white mb-2">Pagina nao encontrada</h2>
+            <div className="rounded-2xl border border-border p-12 text-center max-w-md bg-card">
+              <WarningCircle size={48} weight="duotone" className="mx-auto mb-4 text-muted-foreground/50" />
+              <p className="text-5xl font-bold text-foreground mb-2">404</p>
+              <h2 className="text-lg text-muted-foreground mb-4">Pagina nao encontrada</h2>
               <a
                 href="/"
-                className="inline-flex items-center gap-2 px-5 py-2.5 bg-flux-orange text-void font-semibold text-sm rounded-lg hover:bg-flux-orange/90 transition-all mt-4"
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary text-primary-foreground font-semibold text-sm rounded-lg hover:bg-primary/90 transition-all"
               >
                 Voltar ao inicio
               </a>

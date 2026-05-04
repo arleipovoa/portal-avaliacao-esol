@@ -8,21 +8,31 @@ interface MainLayoutProps {
 
 const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   const [navCollapsed, setNavCollapsed] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <div className="flex h-screen bg-void overflow-hidden">
-      <Navigation collapsed={navCollapsed} onToggle={() => setNavCollapsed(!navCollapsed)} />
+    <div className="flex h-screen bg-background overflow-hidden">
+      <Navigation
+        collapsed={navCollapsed}
+        onToggle={() => {
+          if (window.innerWidth < 1024) {
+            setMobileOpen(true);
+          } else {
+            setNavCollapsed(!navCollapsed);
+          }
+        }}
+        mobileOpen={mobileOpen}
+        onMobileClose={() => setMobileOpen(false)}
+      />
 
       <div
         className={cn(
           "flex-1 flex flex-col transition-all duration-300 overflow-hidden",
-          navCollapsed ? "ml-20" : "ml-64"
+          "lg:ml-64",
+          navCollapsed && "lg:ml-16"
         )}
       >
         <div className="flex-1 overflow-y-auto">
-          {/* Container central com largura maxima — em telas pequenas ocupa tudo,
-              em telas grandes (>1280px) limita pra leitura mais confortavel.
-              Padding lateral cresce com a tela. */}
           <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 py-6 lg:py-8">
             {children}
           </div>

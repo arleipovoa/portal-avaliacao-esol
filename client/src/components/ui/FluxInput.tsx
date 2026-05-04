@@ -25,7 +25,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     return (
       <div className={cn('flex flex-col gap-2', fullWidth && 'w-full')}>
         {label && (
-          <label className="text-sm font-medium text-slate-300">
+          <label className="text-sm font-medium text-foreground/80">
             {label}
             {props.required && <span className="text-red-400 ml-1">*</span>}
           </label>
@@ -42,9 +42,9 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             ref={ref}
             type={type}
             className={cn(
-              'w-full px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-slate-200 placeholder-slate-500',
+              'w-full px-4 py-2 rounded-lg bg-foreground/5 border border-border text-foreground placeholder-slate-500',
               'transition-all duration-200',
-              'focus:outline-none focus:border-flux-orange focus:bg-white/[0.08] focus:ring-1 focus:ring-flux-orange/20',
+              'focus:outline-none focus:border-flux-orange focus:bg-foreground/[0.08] focus:ring-1 focus:ring-flux-orange/20',
               leftIcon && 'pl-10',
               rightIcon && 'pr-10',
               error && 'border-red-500/50 focus:border-red-500 focus:ring-red-500/20',
@@ -99,7 +99,7 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
     return (
       <div className={cn('flex flex-col gap-2', fullWidth && 'w-full')}>
         {label && (
-          <label className="text-sm font-medium text-slate-300">
+          <label className="text-sm font-medium text-foreground/80">
             {label}
             {props.required && <span className="text-red-400 ml-1">*</span>}
           </label>
@@ -108,9 +108,9 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
         <textarea
           ref={ref}
           className={cn(
-            'w-full px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-slate-200 placeholder-slate-500',
+            'w-full px-4 py-2 rounded-lg bg-foreground/5 border border-border text-foreground placeholder-slate-500',
             'transition-all duration-200 resize-none',
-            'focus:outline-none focus:border-flux-orange focus:bg-white/[0.08] focus:ring-1 focus:ring-flux-orange/20',
+            'focus:outline-none focus:border-flux-orange focus:bg-foreground/[0.08] focus:ring-1 focus:ring-flux-orange/20',
             error && 'border-red-500/50 focus:border-red-500 focus:ring-red-500/20',
             className
           )}
@@ -156,7 +156,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
     return (
       <div className={cn('flex flex-col gap-2', fullWidth && 'w-full')}>
         {label && (
-          <label className="text-sm font-medium text-slate-300">
+          <label className="text-sm font-medium text-foreground/80">
             {label}
             {props.required && <span className="text-red-400 ml-1">*</span>}
           </label>
@@ -165,9 +165,9 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
         <select
           ref={ref}
           className={cn(
-            'w-full px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-slate-200',
+            'w-full px-4 py-2 rounded-lg bg-foreground/5 border border-border text-foreground',
             'transition-all duration-200',
-            'focus:outline-none focus:border-flux-orange focus:bg-white/[0.08] focus:ring-1 focus:ring-flux-orange/20',
+            'focus:outline-none focus:border-flux-orange focus:bg-foreground/[0.08] focus:ring-1 focus:ring-flux-orange/20',
             error && 'border-red-500/50 focus:border-red-500 focus:ring-red-500/20',
             className
           )}

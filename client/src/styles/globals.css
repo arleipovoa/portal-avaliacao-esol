@@ -141,11 +141,11 @@
   }
 
   .btn-secondary {
-    @apply btn glass hover:bg-white/10;
+    @apply btn glass hover:bg-foreground/10;
   }
 
   .btn-ghost {
-    @apply btn text-slate-300 hover:text-white hover:bg-white/5;
+    @apply btn text-muted-foreground hover:text-foreground hover:bg-foreground/5;
   }
 
   .btn-sm {
@@ -189,7 +189,7 @@
   }
 
   .badge-secondary {
-    @apply badge bg-slate-500/10 text-slate-300 border border-slate-500/20;
+    @apply badge bg-slate-500/10 text-muted-foreground border border-slate-500/20;
   }
 
   .badge-success {

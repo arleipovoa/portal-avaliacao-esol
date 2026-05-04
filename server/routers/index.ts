@@ -11,6 +11,7 @@ import { projectsRouter } from "./projects.router";
 import { installersRouter } from "./installers.router";
 import { vehiclesRouter } from "./vehicles.router";
 import { obraDiarioRouter } from "./obraDiario.router";
+import { projectAssetsRouter } from "./projectAssets.router";
 
 export const appRouter = router({
   auth: authRouter, // stub vazio — mantido por compatibilidade
@@ -25,6 +26,7 @@ export const appRouter = router({
   installers: installersRouter,
   vehicles: vehiclesRouter,
   obraDiario: obraDiarioRouter,
+  projectAssets: projectAssetsRouter,
 });
 
 export type AppRouter = typeof appRouter;

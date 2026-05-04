@@ -17,7 +17,13 @@ export interface PeerReviewCruzada {
 const PEER_OBRAS: PeerReviewObra[] = peerReviewMatriz as unknown as PeerReviewObra[];
 const PEER_MATRIZ: PeerReviewCruzada[] = peerReviewCruzada as unknown as PeerReviewCruzada[];
 
-const NON_PERSON = new Set(["Material", "Projeto", "Projetos"]);
+const NON_PERSON = new Set(["Material", "Projeto", "Projetos", "Planejamento"]);
+
+// A partir de 2026, "Gabriel T" passou a ser registrado como "Planejamento".
+function displayName(rawName: string, year: number): string {
+  if (year >= 2026 && rawName === "Gabriel T") return "Planejamento";
+  return rawName;
+}
 
 // Obtem o ano (do termino) cruzando com HISTORICO via codigo do projeto
 function anoDoProjeto(projeto: string): number | null {
@@ -35,7 +41,8 @@ export function peerReviewYearly(year: number) {
   const stats: Record<string, Stat> = {};
 
   for (const o of obrasDoAno) {
-    for (const [nome, media] of Object.entries(o.mediasPorColaborador)) {
+    for (const [rawNome, media] of Object.entries(o.mediasPorColaborador)) {
+      const nome = displayName(rawNome, year);
       if (!stats[nome]) {
         stats[nome] = { nome, isPerson: !NON_PERSON.has(nome), total: 0, soma: 0, max: -Infinity, min: Infinity };
       }

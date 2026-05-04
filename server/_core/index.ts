@@ -22,9 +22,35 @@ async function findAvailablePort(startPort = 3000): Promise<number> {
   throw new Error(`No available port from ${startPort}`);
 }
 
+const CORS_ALLOWLIST = new Set<string>([
+  "https://app.grupoesol.com",
+  "http://localhost:3000",
+  "http://localhost:8080", // form-pbi dev (Vite)
+  "https://form-to-pbi.vercel.app",
+]);
+
 async function startServer() {
   const app = express();
   const server = createServer(app);
+
+  app.use((req, res, next) => {
+    const origin = req.headers.origin;
+    if (origin && CORS_ALLOWLIST.has(origin)) {
+      res.setHeader("Access-Control-Allow-Origin", origin);
+      res.setHeader("Vary", "Origin");
+      res.setHeader("Access-Control-Allow-Credentials", "true");
+      res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
+      res.setHeader(
+        "Access-Control-Allow-Headers",
+        req.headers["access-control-request-headers"] || "Content-Type, Authorization"
+      );
+    }
+    if (req.method === "OPTIONS") {
+      res.status(204).end();
+      return;
+    }
+    next();
+  });
 
   app.use(express.json({ limit: "50mb" }));
   app.use(express.urlencoded({ limit: "50mb", extended: true }));
