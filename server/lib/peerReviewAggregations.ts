@@ -17,7 +17,7 @@ export interface PeerReviewCruzada {
 const PEER_OBRAS: PeerReviewObra[] = peerReviewMatriz as unknown as PeerReviewObra[];
 const PEER_MATRIZ: PeerReviewCruzada[] = peerReviewCruzada as unknown as PeerReviewCruzada[];
 
-const NON_PERSON = new Set(["Material", "Projeto", "Projetos"]);
+const NON_PERSON = new Set(["Material", "Projeto", "Projetos", "Planejamento"]);
 
 // Obtem o ano (do termino) cruzando com HISTORICO via codigo do projeto
 function anoDoProjeto(projeto: string): number | null {

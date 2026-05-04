@@ -14,11 +14,17 @@ function fmt(v: number | null | undefined, digits = 1): string {
   return v.toFixed(digits);
 }
 
+// Escala 0-10
 function colorByNota(n: number | null | undefined): string {
   if (n === null || n === undefined) return "text-slate-400";
-  if (n >= 80) return "text-green-400";
-  if (n >= 60) return "text-yellow-400";
+  if (n >= 8) return "text-green-400";
+  if (n >= 6) return "text-yellow-400";
   return "text-red-400";
+}
+// Converte valor histórico (0-100) → 0-10 para exibição
+function to10(v: number | null | undefined): number | null {
+  if (v === null || v === undefined) return null;
+  return v / 10;
 }
 
 export default function HistoricoSection() {
@@ -78,10 +84,10 @@ export default function HistoricoSection() {
           {/* ── 1) ANUAL ── */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             {[
-              { label: "Total de Obras",  value: yearly.total,                      accent: "text-flux-orange", icon: "🏗️" },
-              { label: "Nota Final Média", value: `${fmt(yearly.mediaFinal)}%`,    accent: colorByNota(yearly.mediaFinal), icon: "⭐" },
-              { label: "Segurança Média",  value: `${fmt(yearly.mediaSeguranca)}%`, accent: colorByNota(yearly.mediaSeguranca), icon: "🛡️" },
-              { label: "Estética Média",   value: `${fmt(yearly.mediaEstetica)}%`,  accent: colorByNota(yearly.mediaEstetica), icon: "✨" },
+              { label: "Total de Obras",   value: String(yearly.total),                                   accent: "text-flux-orange", icon: "🏗️" },
+              { label: "Nota Final Média", value: fmt(to10(yearly.mediaFinal), 2),                        accent: colorByNota(to10(yearly.mediaFinal)), icon: "⭐" },
+              { label: "Segurança Média",  value: fmt(to10(yearly.mediaSeguranca), 2),                    accent: colorByNota(to10(yearly.mediaSeguranca)), icon: "🛡️" },
+              { label: "Estética Média",   value: fmt(to10(yearly.mediaEstetica), 2),                     accent: colorByNota(to10(yearly.mediaEstetica)), icon: "✨" },
             ].map(s => (
               <div key={s.label} className="rounded-xl border border-white/5 p-5 bg-white/5">
                 <div className="flex items-center justify-between mb-3">
@@ -113,7 +119,7 @@ export default function HistoricoSection() {
             </div>
           </div>
 
-          {/* ── 2) TRIMESTRAL ── */}
+          {/* ── 2) TRIMESTRAL — cards de médias ── */}
           <div>
             <h3 className="text-sm font-semibold text-white mb-3">Por Trimestre</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
@@ -131,20 +137,53 @@ export default function HistoricoSection() {
                     <div className="space-y-1.5 text-xs">
                       <div className="flex justify-between">
                         <span className="text-slate-400">Final</span>
-                        <span className={cn("font-mono font-bold", colorByNota(t.mediaFinal))}>{fmt(t.mediaFinal)}%</span>
+                        <span className={cn("font-mono font-bold", colorByNota(to10(t.mediaFinal)))}>{fmt(to10(t.mediaFinal), 2)}</span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-slate-500">Segurança</span>
-                        <span className="font-mono">{fmt(t.mediaSeguranca)}</span>
+                        <span className="font-mono">{fmt(to10(t.mediaSeguranca), 1)}</span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-slate-500">Funcional.</span>
-                        <span className="font-mono">{fmt(t.mediaFuncionalidade)}</span>
+                        <span className="font-mono">{fmt(to10(t.mediaFuncionalidade), 1)}</span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-slate-500">Estética</span>
-                        <span className="font-mono">{fmt(t.mediaEstetica)}</span>
+                        <span className="font-mono">{fmt(to10(t.mediaEstetica), 1)}</span>
                       </div>
+                    </div>
+                  ) : (
+                    <p className="text-xs text-slate-500 italic">Sem dados</p>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            {/* Ranking por trimestre */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 mt-3">
+              {quarterly.map(t => (
+                <div key={`rank-${t.trimestre}`} className={cn(
+                  "rounded-xl border p-4 bg-white/5",
+                  t.total === 0 ? "border-white/5 opacity-50" : "border-white/10"
+                )}>
+                  <p className="text-xs font-semibold text-slate-400 mb-3">
+                    🏆 {t.label} — Top
+                  </p>
+                  {(t as any).ranking?.length > 0 ? (
+                    <div className="space-y-2">
+                      {(t as any).ranking.slice(0, 5).map((r: any, i: number) => (
+                        <div key={r.nome} className="flex items-center justify-between gap-2">
+                          <div className="flex items-center gap-1.5 min-w-0">
+                            <span className={cn('text-[11px] font-bold shrink-0',
+                              i === 0 ? 'text-yellow-400' : i === 1 ? 'text-slate-300' : i === 2 ? 'text-amber-600' : 'text-slate-500'
+                            )}>{i + 1}º</span>
+                            <span className="text-xs text-white truncate">{r.nome}</span>
+                          </div>
+                          <span className={cn('text-xs font-mono font-bold shrink-0', colorByNota(to10(r.media)))}>
+                            {fmt(to10(r.media), 1)}
+                          </span>
+                        </div>
+                      ))}
                     </div>
                   ) : (
                     <p className="text-xs text-slate-500 italic">Sem dados</p>
@@ -173,8 +212,8 @@ export default function HistoricoSection() {
                         <span className="text-sm font-semibold text-white capitalize">{m.monthLabel}/{year}</span>
                         <span className="text-xs text-slate-500">{m.total} obra(s)</span>
                       </div>
-                      <span className={cn("text-sm font-mono font-bold", colorByNota(m.mediaNota))}>
-                        {fmt(m.mediaNota)}%
+                      <span className={cn("text-sm font-mono font-bold", colorByNota(to10(m.mediaNota)))}>
+                        {fmt(to10(m.mediaNota), 2)}
                       </span>
                     </button>
                     {open && (
@@ -195,11 +234,11 @@ export default function HistoricoSection() {
                               )}
                             </div>
                             <div className="flex items-center gap-3 text-[10px] text-slate-500 shrink-0">
-                              <span>S: <span className="font-mono">{fmt(o.notaSeguranca, 0)}</span></span>
-                              <span>F: <span className="font-mono">{fmt(o.notaFuncionalidade, 0)}</span></span>
-                              <span>E: <span className="font-mono">{fmt(o.notaEstetica, 0)}</span></span>
-                              <span className={cn("font-mono font-bold", colorByNota(o.notaEquipePct))}>
-                                {fmt(o.notaEquipePct, 1)}%
+                              <span>S: <span className="font-mono">{fmt(to10(o.notaSeguranca), 1)}</span></span>
+                              <span>F: <span className="font-mono">{fmt(to10(o.notaFuncionalidade), 1)}</span></span>
+                              <span>E: <span className="font-mono">{fmt(to10(o.notaEstetica), 1)}</span></span>
+                              <span className={cn("font-mono font-bold", colorByNota(to10(o.notaEquipePct)))}>
+                                {fmt(to10(o.notaEquipePct), 2)}
                               </span>
                             </div>
                           </div>
@@ -219,20 +258,16 @@ export default function HistoricoSection() {
               <div className="rounded-xl border border-white/5 bg-white/5 overflow-hidden">
                 <div className="grid grid-cols-12 px-4 py-2 text-[10px] text-slate-500 uppercase tracking-wider font-medium border-b border-white/5">
                   <div className="col-span-1">#</div>
-                  <div className="col-span-3">Nome</div>
-                  <div className="col-span-2 text-right">Track</div>
+                  <div className="col-span-4">Nome</div>
                   <div className="col-span-2 text-right">Média</div>
                   <div className="col-span-1 text-right">Obras</div>
-                  <div className="col-span-1 text-right">Min</div>
+                  <div className="col-span-2 text-right">Min</div>
                   <div className="col-span-2 text-right">Max</div>
                 </div>
                 {yearly.ranking.map((r: any, i: number) => (
                   <div
                     key={r.nome}
-                    className={cn(
-                      "grid grid-cols-12 px-4 py-2.5 text-sm hover:bg-white/[0.02] transition-all border-b border-white/[0.02] last:border-0",
-                      !r.isPerson && "opacity-70"
-                    )}
+                    className="grid grid-cols-12 px-4 py-2.5 text-sm hover:bg-white/[0.02] transition-all border-b border-white/[0.02] last:border-0"
                   >
                     <div className={cn(
                       "col-span-1 font-bold",
@@ -242,26 +277,17 @@ export default function HistoricoSection() {
                     )}>
                       {i + 1}º
                     </div>
-                    <div className="col-span-3 text-white truncate flex items-center gap-1.5">
-                      {i === 0 && r.isPerson && "🥇 "}{i === 1 && r.isPerson && "🥈 "}{i === 2 && r.isPerson && "🥉 "}
+                    <div className="col-span-4 text-white truncate flex items-center gap-1.5">
+                      {i === 0 && "🥇 "}{i === 1 && "🥈 "}{i === 2 && "🥉 "}
                       <span>{r.nome}</span>
-                      {!r.isPerson && (
-                        <span className="text-[9px] uppercase tracking-wider text-slate-500 border border-white/10 rounded px-1.5 py-0.5">conta</span>
-                      )}
                     </div>
-                    <div className={cn("col-span-2 text-right font-mono font-bold", colorByNota(r.track * 10))}>{fmt(r.track, 2)}</div>
-                    <div className={cn("col-span-2 text-right font-mono", colorByNota(r.media))}>{fmt(r.media)}%</div>
+                    <div className={cn("col-span-2 text-right font-mono font-bold", colorByNota(to10(r.media)))}>{fmt(to10(r.media), 2)}</div>
                     <div className="col-span-1 text-right text-slate-400 font-mono">{r.total}</div>
-                    <div className="col-span-1 text-right text-slate-500 font-mono text-xs">{fmt(r.min, 0)}</div>
-                    <div className="col-span-2 text-right text-slate-300 font-mono text-xs">{fmt(r.max, 0)}</div>
+                    <div className="col-span-2 text-right text-slate-500 font-mono text-xs">{fmt(to10(r.min), 1)}</div>
+                    <div className="col-span-2 text-right text-slate-300 font-mono text-xs">{fmt(to10(r.max), 1)}</div>
                   </div>
                 ))}
               </div>
-              <p className="text-[10px] text-slate-500 mt-2 px-1">
-                <strong className="text-slate-400">Track</strong> = média × (participações / total de obras avaliadas no ano).
-                Reflete fidelidade da planilha (espelha coluna J de "Ranking Instaladores"). "Material" e "Projetos" são contas
-                globais, não pessoas.
-              </p>
             </div>
           )}
         </>

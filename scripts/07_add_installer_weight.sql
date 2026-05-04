@@ -14,4 +14,7 @@ ALTER TABLE installers
 UPDATE installers SET weight = '1.2' WHERE name IN ('Elivelton', 'Gustavo G.', 'Élder', 'Elder');
 UPDATE installers SET weight = '1.1' WHERE name IN ('Fábio', 'Hyan', 'Gustavo P.', 'Flávio', 'Ley');
 UPDATE installers SET weight = '1.0' WHERE name IN ('Moisés', 'Gabriel M.', 'Kauã', 'Enderson');
-UPDATE installers SET weight = '0.5' WHERE name IN ('Planejamento', 'Material', 'Projeto');
+UPDATE installers SET weight = '0.5' WHERE name IN ('Gabriel T.', 'Material', 'Projeto', 'Projetos', 'Planejamento');
+
+-- Adiciona a conta "Planejamento" se ainda não existir
+INSERT IGNORE INTO installers (name, status, role, weight) VALUES ('Planejamento', 'active', 'conta', '0.5');

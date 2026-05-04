@@ -507,7 +507,22 @@ export default function ObrasEvaluation() {
           <div className="border-t border-white/5 pt-4 space-y-3">
             <button
               type="button"
-              onClick={() => setHasFinancialLoss(v => !v)}
+              onClick={() => {
+                const next = !hasFinancialLoss;
+                setHasFinancialLoss(next);
+                if (next) {
+                  setEntries(prev => {
+                    const reset: Record<number, Entry> = {};
+                    Object.entries(prev).forEach(([id, e]) => {
+                      reset[parseInt(id)] = { ...e, score: 0, na: false };
+                    });
+                    return reset;
+                  });
+                  setOsModulos(0);
+                  setOsInversores(0);
+                  setNps(0);
+                }
+              }}
               className="flex items-center justify-between w-full group"
             >
               <div className="flex items-center gap-2">
