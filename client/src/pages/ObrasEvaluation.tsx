@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useSearch } from 'wouter';
 import { useAuth } from '@/_core/hooks/useAuth';
 import { trpc } from '@/lib/trpc';
@@ -253,25 +253,23 @@ export default function ObrasEvaluation() {
 
   const { data: grouped = {}, isLoading: loadingCriteria } = trpc.projects.getCriteria.useQuery(undefined, { enabled: !!user });
   const { data: project } = trpc.projects.getById.useQuery({ id: projectId }, { enabled: projectId > 0 });
+  const { data: savedEval, isSuccess: evalLoaded } = trpc.projects.getEvaluation.useQuery(
+    { projectId, evaluatorId: userId! },
+    { enabled: projectId > 0 && !!userId },
+  );
 
   // Estado por critério
   const allCriteria = useMemo(() => Object.values(grouped as Record<string, any[]>).flat(), [grouped]);
-  const [entries, setEntries] = useState<Record<number, Entry>>({});
-  useMemo(() => {
-    if (allCriteria.length > 0 && Object.keys(entries).length === 0) {
-      const init: Record<number, Entry> = {};
-      allCriteria.forEach(c => { init[c.id] = { score: 10, obs: '', na: false }; });
-      setEntries(init);
-    }
-  }, [allCriteria]);
+  const [entries,           setEntries]          = useState<Record<number, Entry>>({});
+  const [initialized,       setInitialized]      = useState(false);
 
   // OS
-  const [osModulos,       setOsModulos]       = useState(10);
-  const [osObsModulos,    setOsObsModulos]    = useState('');
-  const [osModulosNa,     setOsModulosNa]     = useState(false);
-  const [osInversores,    setOsInversores]    = useState(10);
-  const [osObsInversores, setOsObsInversores] = useState('');
-  const [osInversoresNa,  setOsInversoresNa]  = useState(false);
+  const [osModulos,         setOsModulos]        = useState(10);
+  const [osObsModulos,      setOsObsModulos]     = useState('');
+  const [osModulosNa,       setOsModulosNa]      = useState(false);
+  const [osInversores,      setOsInversores]     = useState(10);
+  const [osObsInversores,   setOsObsInversores]  = useState('');
+  const [osInversoresNa,    setOsInversoresNa]   = useState(false);
 
   // NPS
   const [nps,    setNps]    = useState(10);
@@ -284,7 +282,39 @@ export default function ObrasEvaluation() {
 
   // Drive
   const [driveLink, setDriveLink] = useState('');
-  useMemo(() => { if (project?.photosLink && !driveLink) setDriveLink(project.photosLink); }, [project]);
+
+  // Inicialização: aguarda critérios e snapshot salvo, depois preenche o estado
+  useEffect(() => {
+    if (initialized) return;
+    if (allCriteria.length === 0) return;
+    // Se há projectId+userId, esperar a query resolver antes de iniciar
+    if (projectId > 0 && !!userId && !evalLoaded) return;
+
+    const snap = (savedEval?.items as any) ?? null;
+
+    if (snap?.entries && typeof snap.entries === 'object') {
+      setEntries(snap.entries);
+      if (snap.osModulos          !== undefined) setOsModulos(snap.osModulos);
+      if (snap.osObsModulos       !== undefined) setOsObsModulos(snap.osObsModulos);
+      if (snap.osModulosNa        !== undefined) setOsModulosNa(snap.osModulosNa);
+      if (snap.osInversores       !== undefined) setOsInversores(snap.osInversores);
+      if (snap.osObsInversores    !== undefined) setOsObsInversores(snap.osObsInversores);
+      if (snap.osInversoresNa     !== undefined) setOsInversoresNa(snap.osInversoresNa);
+      if (snap.nps                !== undefined) setNps(snap.nps);
+      if (snap.npsObs             !== undefined) setNpsObs(snap.npsObs);
+      if (snap.npsNa              !== undefined) setNpsNa(snap.npsNa);
+      if (snap.hasFinancialLoss   !== undefined) setHasFinancialLoss(snap.hasFinancialLoss);
+      if (snap.financialLossReason !== undefined) setFinancialLossReason(snap.financialLossReason);
+      setDriveLink(snap.driveLink || project?.photosLink || '');
+    } else {
+      const init: Record<number, Entry> = {};
+      allCriteria.forEach((c: any) => { init[c.id] = { score: 10, obs: '', na: false }; });
+      setEntries(init);
+      if (project?.photosLink) setDriveLink(project.photosLink);
+    }
+    setInitialized(true);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [allCriteria, evalLoaded, initialized]);
 
   function getEntry(id: number): Entry { return entries[id] ?? { score: 10, obs: '', na: false }; }
   function patchEntry(id: number, patch: Partial<Entry>) {
@@ -316,6 +346,16 @@ export default function ObrasEvaluation() {
 
   function handleSubmit() {
     if (!projectId || !userId) { setError('Projeto ou usuário não identificado.'); return; }
+
+    const formSnapshot = {
+      entries,
+      osModulos, osObsModulos, osModulosNa,
+      osInversores, osObsInversores, osInversoresNa,
+      nps, npsObs, npsNa,
+      hasFinancialLoss, financialLossReason,
+      driveLink,
+    };
+
     submitMutation.mutate({
       projectId, userId,
       projectCode:        project?.code ?? '',
@@ -332,8 +372,9 @@ export default function ObrasEvaluation() {
       driveLink:          driveLink || undefined,
       observacaoGeral:    hasFinancialLoss ? `PREJUÍZO FINANCEIRO: ${financialLossReason}` : undefined,
       itemScores: allCriteria
-        .filter(c => !getEntry(c.id).na)
-        .map(c => ({ criteriaId: c.id, score: getEntry(c.id).score, obs: getEntry(c.id).obs || undefined })),
+        .filter((c: any) => !getEntry(c.id).na)
+        .map((c: any) => ({ criteriaId: c.id, score: getEntry(c.id).score, obs: getEntry(c.id).obs || undefined })),
+      formSnapshot,
     });
   }
 
@@ -470,6 +511,13 @@ export default function ObrasEvaluation() {
           <p className="text-sm text-slate-400 mt-1">
             Notas de 0 a 10 por critério. Use <span className="text-slate-300 font-medium">Não avaliado</span> para excluir um item da média.
           </p>
+          {savedEval && initialized && (
+            <p className="text-[11px] text-slate-600 mt-1.5 flex items-center gap-1">
+              <span>💾</span>
+              Avaliação anterior restaurada ·{' '}
+              {new Date(savedEval.updatedAt).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+            </p>
+          )}
         </div>
         <a href="/obras/regras"
           className="shrink-0 text-xs text-slate-500 hover:text-flux-orange transition-colors flex items-center gap-1 mt-1 border border-white/10 rounded-lg px-3 py-1.5 hover:border-flux-orange/30">

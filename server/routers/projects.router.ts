@@ -2,7 +2,7 @@ import { protectedProcedure, router } from "../_core/trpc";
 import { z } from "zod";
 import { getDb } from "../db";
 import { projects, projectMembers, obraScores, obraEvaluations, obraCriteria, users } from "../../drizzle/schema";
-import { eq, and, inArray } from "drizzle-orm";
+import { eq, and, inArray, desc } from "drizzle-orm";
 import { dbObras } from "../_core/db";
 import { obraDiario, installers } from "../../drizzle/schema-obras-diario";
 import { fetchPbiProjects, generatePbiDocuments, isPbiConfigured } from "../lib/pbiClient";
@@ -271,6 +271,8 @@ export const projectsRouter = router({
       hasFinancialLoss: z.boolean().optional(),
       // Código string do projeto (ex: "P2345") para buscar diário de obra
       projectCode: z.string().optional(),
+      // Snapshot completo do formulário para persistência
+      formSnapshot: z.any().optional(),
     }))
     .mutation(async ({ input }) => {
       const {
@@ -391,6 +393,59 @@ export const projectsRouter = router({
         }
       }
 
+      // ── Persistência ────────────────────────────────────────────────────
+      if (input.formSnapshot !== undefined) {
+        try {
+          const db = await getDb();
+          if (db) {
+            // Snapshot na obraEvaluations (check-then-upsert por (projectId, evaluatorId))
+            const existing = await db.select({ id: obraEvaluations.id })
+              .from(obraEvaluations)
+              .where(and(eq(obraEvaluations.projectId, projectId), eq(obraEvaluations.evaluatorId, userId)))
+              .limit(1);
+
+            if (existing.length > 0) {
+              await db.update(obraEvaluations)
+                .set({ items: input.formSnapshot as any, status: "submitted", submittedAt: new Date() })
+                .where(eq(obraEvaluations.id, existing[0].id));
+            } else {
+              await db.insert(obraEvaluations).values({
+                projectId, evaluatorId: userId,
+                items: input.formSnapshot as any,
+                status: "submitted", submittedAt: new Date(),
+              });
+            }
+
+            // Scores resumidos na obraScores (check-then-upsert por (projectId, userId))
+            const existingScore = await db.select({ id: obraScores.id })
+              .from(obraScores)
+              .where(and(eq(obraScores.projectId, projectId), eq(obraScores.userId, userId)))
+              .limit(1);
+
+            const scoreData = {
+              notaSeguranca:      String(notaSeguranca),
+              notaFuncionalidade: String(notaFuncionalidade),
+              notaEstetica:       String(notaEstetica),
+              mediaOs:            mediaOs !== null ? String(mediaOs) : null,
+              eficiencia:         String(eficiencia),
+              npsCliente:         npsNa ? null : String(npsCliente),
+              notaObraPercentual: String(notaFinal),
+              bonusValorBase:     String(bonusValorBase),
+              bonusValorCorrigido: String(bonusValorCorrigido),
+            };
+
+            if (existingScore.length > 0) {
+              await db.update(obraScores).set(scoreData).where(eq(obraScores.id, existingScore[0].id));
+            } else {
+              await db.insert(obraScores).values({ projectId, userId, ...scoreData });
+            }
+          }
+        } catch (e) {
+          console.error("[submitScores] Erro ao persistir avaliação:", e);
+          // Não propagar — retorna o resultado calculado mesmo se a persistência falhar
+        }
+      }
+
       return {
         notaFinal,
         eficiencia,
@@ -418,12 +473,25 @@ export const projectsRouter = router({
       };
     }),
 
-  // Por enquanto sem persistencia: scores nao sao salvos, entao getScores
-  // sempre retorna lista vazia. Quando o banco de obras estiver acessivel, ler dali.
-  getScores: protectedProcedure
-    .input(z.object({ projectId: z.number() }))
-    .query(async () => {
-      return [] as unknown[];
+  // Retorna o snapshot salvo de uma avaliação (null se não houver)
+  getEvaluation: protectedProcedure
+    .input(z.object({ projectId: z.number(), evaluatorId: z.number() }))
+    .query(async ({ input }) => {
+      try {
+        const db = await getDb();
+        if (!db) return null;
+        const rows = await db.select()
+          .from(obraEvaluations)
+          .where(and(
+            eq(obraEvaluations.projectId, input.projectId),
+            eq(obraEvaluations.evaluatorId, input.evaluatorId),
+          ))
+          .orderBy(desc(obraEvaluations.updatedAt))
+          .limit(1);
+        return rows[0] ?? null;
+      } catch {
+        return null;
+      }
     }),
 
   // Gera contrato e procuração via API do form-pbi
