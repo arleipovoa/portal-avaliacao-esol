@@ -71,7 +71,7 @@ export default function AvaliacaoCruzada() {
               onChange={e => setHideContas(e.target.checked)}
               className="accent-flux-orange"
             />
-            Ocultar Material/Projeto
+            Ocultar contas (Material, Projeto, Planejamento)
           </label>
           <div className="flex gap-2">
             {[currentYear - 1, currentYear].map(y => (

@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useSearch } from 'wouter';
 import { useAuth } from '@/_core/hooks/useAuth';
 import { trpc } from '@/lib/trpc';
@@ -232,23 +232,22 @@ export default function ObrasEvaluation() {
 
   const { data: grouped = {}, isLoading: loadingCriteria } = trpc.projects.getCriteria.useQuery(undefined, { enabled: !!user });
   const { data: project } = trpc.projects.getById.useQuery({ id: projectId }, { enabled: projectId > 0 });
+  const { data: savedEval, isSuccess: evalLoaded } = trpc.projects.getEvaluation.useQuery(
+    { projectId, evaluatorId: userId! },
+    { enabled: projectId > 0 && !!userId },
+  );
 
   const allCriteria = useMemo(() => Object.values(grouped as Record<string, any[]>).flat(), [grouped]);
-  const [entries, setEntries] = useState<Record<number, Entry>>({});
-  useMemo(() => {
-    if (allCriteria.length > 0 && Object.keys(entries).length === 0) {
-      const init: Record<number, Entry> = {};
-      allCriteria.forEach(c => { init[c.id] = { score: 10, obs: '', na: false }; });
-      setEntries(init);
-    }
-  }, [allCriteria]);
+  const [entries,           setEntries]          = useState<Record<number, Entry>>({});
+  const [initialized,       setInitialized]      = useState(false);
 
-  const [osModulos, setOsModulos] = useState(10);
-  const [osObsModulos, setOsObsModulos] = useState('');
-  const [osModulosNa, setOsModulosNa] = useState(false);
-  const [osInversores, setOsInversores] = useState(10);
-  const [osObsInversores, setOsObsInversores] = useState('');
-  const [osInversoresNa, setOsInversoresNa] = useState(false);
+  // OS
+  const [osModulos,         setOsModulos]        = useState(10);
+  const [osObsModulos,      setOsObsModulos]     = useState('');
+  const [osModulosNa,       setOsModulosNa]      = useState(false);
+  const [osInversores,      setOsInversores]     = useState(10);
+  const [osObsInversores,   setOsObsInversores]  = useState('');
+  const [osInversoresNa,    setOsInversoresNa]   = useState(false);
 
   const [nps, setNps] = useState(10);
   const [npsObs, setNpsObs] = useState('');
@@ -258,7 +257,39 @@ export default function ObrasEvaluation() {
   const [financialLossReason, setFinancialLossReason] = useState('');
 
   const [driveLink, setDriveLink] = useState('');
-  useMemo(() => { if (project?.photosLink && !driveLink) setDriveLink(project.photosLink); }, [project]);
+
+  // Inicialização: aguarda critérios e snapshot salvo, depois preenche o estado
+  useEffect(() => {
+    if (initialized) return;
+    if (allCriteria.length === 0) return;
+    // Se há projectId+userId, esperar a query resolver antes de iniciar
+    if (projectId > 0 && !!userId && !evalLoaded) return;
+
+    const snap = (savedEval?.items as any) ?? null;
+
+    if (snap?.entries && typeof snap.entries === 'object') {
+      setEntries(snap.entries);
+      if (snap.osModulos          !== undefined) setOsModulos(snap.osModulos);
+      if (snap.osObsModulos       !== undefined) setOsObsModulos(snap.osObsModulos);
+      if (snap.osModulosNa        !== undefined) setOsModulosNa(snap.osModulosNa);
+      if (snap.osInversores       !== undefined) setOsInversores(snap.osInversores);
+      if (snap.osObsInversores    !== undefined) setOsObsInversores(snap.osObsInversores);
+      if (snap.osInversoresNa     !== undefined) setOsInversoresNa(snap.osInversoresNa);
+      if (snap.nps                !== undefined) setNps(snap.nps);
+      if (snap.npsObs             !== undefined) setNpsObs(snap.npsObs);
+      if (snap.npsNa              !== undefined) setNpsNa(snap.npsNa);
+      if (snap.hasFinancialLoss   !== undefined) setHasFinancialLoss(snap.hasFinancialLoss);
+      if (snap.financialLossReason !== undefined) setFinancialLossReason(snap.financialLossReason);
+      setDriveLink(snap.driveLink || project?.photosLink || '');
+    } else {
+      const init: Record<number, Entry> = {};
+      allCriteria.forEach((c: any) => { init[c.id] = { score: 10, obs: '', na: false }; });
+      setEntries(init);
+      if (project?.photosLink) setDriveLink(project.photosLink);
+    }
+    setInitialized(true);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [allCriteria, evalLoaded, initialized]);
 
   function getEntry(id: number): Entry { return entries[id] ?? { score: 10, obs: '', na: false }; }
   function patchEntry(id: number, patch: Partial<Entry>) {
@@ -284,25 +315,40 @@ export default function ObrasEvaluation() {
 
   const submitMutation = trpc.projects.submitScores.useMutation({
     onSuccess: data => { setResult(data); setSubmitted(true); },
-    onError: err => { setError(err.message || 'Erro ao enviar avaliacao'); },
+    onError: err => { setError(err.message || 'Erro ao enviar avaliação'); },
   });
 
   function handleSubmit() {
-    if (!projectId || !userId) { setError('Projeto ou usuario nao identificado.'); return; }
+    if (!projectId || !userId) { setError('Projeto ou usuário não identificado.'); return; }
+
+    const formSnapshot = {
+      entries,
+      osModulos, osObsModulos, osModulosNa,
+      osInversores, osObsInversores, osInversoresNa,
+      nps, npsObs, npsNa,
+      hasFinancialLoss, financialLossReason,
+      driveLink,
+    };
+
     submitMutation.mutate({
       projectId, userId,
-      notaSeguranca: notaSeg ?? 0,
-      notaFuncionalidade: notaFunc ?? 0,
-      notaEstetica: notaEst ?? 0,
-      osModulos: osModulosNa ? 0 : osModulos,
-      osInversores: osInversoresNa ? 0 : osInversores,
-      npsCliente: npsNa ? 0 : nps,
+      projectCode:        project?.code ?? '',
+      notaSeguranca:      notaSeg     ?? 0,
+      notaFuncionalidade: notaFunc    ?? 0,
+      notaEstetica:       notaEst     ?? 0,
+      osModulos:          osModulos,
+      osInversores:       osInversores,
+      npsCliente:         nps,
+      osModulosNa,
+      osInversoresNa,
+      npsNa,
       hasFinancialLoss,
-      driveLink: driveLink || undefined,
-      observacaoGeral: hasFinancialLoss ? `PREJUIZO FINANCEIRO: ${financialLossReason}` : undefined,
+      driveLink:          driveLink || undefined,
+      observacaoGeral:    hasFinancialLoss ? `PREJUÍZO FINANCEIRO: ${financialLossReason}` : undefined,
       itemScores: allCriteria
-        .filter(c => !getEntry(c.id).na)
-        .map(c => ({ criteriaId: c.id, score: getEntry(c.id).score, obs: getEntry(c.id).obs || undefined })),
+        .filter((c: any) => !getEntry(c.id).na)
+        .map((c: any) => ({ criteriaId: c.id, score: getEntry(c.id).score, obs: getEntry(c.id).obs || undefined })),
+      formSnapshot,
     });
   }
 
@@ -321,7 +367,8 @@ export default function ObrasEvaluation() {
             <CheckCircle size={32} weight="duotone" className="text-emerald-600 dark:text-emerald-400" />
           </div>
           <h2 className="text-xl font-semibold text-foreground mb-1">Avaliação Enviada!</h2>
-          <p className="text-xs text-muted-foreground mb-6">{project?.code} - {project?.clientName}</p>
+          <p className="text-xs text-muted-foreground mb-6">{project?.code} · {project?.clientName}</p>
+          {/* Breakdown dos componentes da nota */}
           <div className="grid grid-cols-3 gap-3 mb-6 text-left">
             {[
               { label: 'Segurança', value: result.breakdown.seguranca },
@@ -333,18 +380,23 @@ export default function ObrasEvaluation() {
             ].map(({ label, value }) => (
               <div key={label} className="bg-muted rounded-lg p-2">
                 <p className="text-[10px] text-muted-foreground mb-0.5">{label}</p>
-                <p className={cn('text-sm font-bold tabular-nums', scoreColorClass(value))}>{formatNota(value, 1)}</p>
+                {value === null
+                  ? <p className="text-xs text-muted-foreground italic">N/A</p>
+                  : <p className={cn('text-sm font-bold tabular-nums', scoreColorClass(value))}>{formatNota(value, 1)}</p>
+                }
               </div>
             ))}
           </div>
-          <div className="bg-muted rounded-xl border border-border p-4 mb-6">
+
+          {/* Nota Final */}
+          <div className="bg-muted rounded-xl border border-border p-4 mb-4">
             <p className="text-xs text-muted-foreground mb-1">Nota Final</p>
             <p className={cn('text-4xl font-bold tabular-nums', scoreColorClass(result.notaFinal))}>
               {formatNota(result.notaFinal, 2)}
             </p>
             {result.hasFinancialLoss ? (
               <p className="text-xs text-red-600 dark:text-red-400 mt-2 flex items-center justify-center gap-1">
-                <Warning size={14} /> Prejuízo financeiro registrado — avaliação desconsiderada.
+                <Warning size={14} /> Prejuízo financeiro registrado — avaliação desconsiderada. Bônus zerado.
               </p>
             ) : result.bonusValorCorrigido > 0 ? (
               <p className="text-xs text-muted-foreground mt-1">
@@ -352,6 +404,58 @@ export default function ObrasEvaluation() {
               </p>
             ) : null}
           </div>
+
+          {/* Tabela de bônus por participante */}
+          {!result.hasFinancialLoss && result.hasDiaryData && result.participantBonuses?.length > 0 ? (
+            <div className="bg-white/5 rounded-xl border border-white/5 p-4 mb-6 text-left space-y-3">
+              <div className="flex items-center justify-between">
+                <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest">
+                  Distribuição de Bônus
+                </p>
+                <span className="text-[10px] text-slate-600">{result.totalDias} dia(s) de obra</span>
+              </div>
+              <div className="space-y-2">
+                {result.participantBonuses.map((p: any) => {
+                  const freqPct = Math.round(p.frequencia * 100);
+                  const freqColor = freqPct >= 80 ? 'text-green-400' : freqPct >= 50 ? 'text-flux-orange' : 'text-red-400';
+                  return (
+                    <div key={p.installerId} className="flex items-center gap-2 py-1.5 border-b border-white/5 last:border-0">
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-medium text-slate-200 truncate">{p.nome}</p>
+                        <div className="flex items-center gap-2 mt-0.5">
+                          <span className="text-[10px] text-slate-600">P {p.peso.toFixed(1)}</span>
+                          <span className={cn('text-[10px] font-mono', freqColor)}>{freqPct}%</span>
+                          <span className="text-[10px] text-slate-600">{p.diasPresentes}/{p.totalDias}d</span>
+                          {p.nota360 < 10 && (
+                            <span className="text-[10px] text-purple-400">360: {p.nota360.toFixed(1)}</span>
+                          )}
+                        </div>
+                      </div>
+                      <span className={cn(
+                        'text-sm font-bold font-mono shrink-0',
+                        p.bonusIndividual >= 100 ? 'text-flux-orange' : 'text-slate-400',
+                      )}>
+                        R$ {p.bonusIndividual.toFixed(2)}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+              <div className="flex items-center justify-between pt-1 border-t border-white/10">
+                <span className="text-xs text-slate-500">Total distribuído</span>
+                <span className="text-sm font-bold text-flux-orange font-mono">
+                  R$ {result.participantBonuses.reduce((s: number, p: any) => s + p.bonusIndividual, 0).toFixed(2)}
+                </span>
+              </div>
+            </div>
+          ) : !result.hasFinancialLoss && result.bonusValorCorrigido > 0 ? (
+            <div className="bg-white/5 rounded-xl border border-white/5 p-4 mb-6 space-y-1 text-left">
+              <p className="text-xs text-slate-500">
+                Valor corrigido pela nota: <span className="text-flux-orange font-semibold font-mono">R$ {result.bonusValorCorrigido.toFixed(2)}</span>
+              </p>
+              <p className="text-[10px] text-slate-600">Diário de obra não cadastrado — distribuição por participante indisponível</p>
+            </div>
+          ) : null}
           <a href="/obras/dashboard"
             className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary text-primary-foreground font-semibold text-sm rounded-lg hover:bg-primary/90 transition-all">
             <ArrowLeft size={16} /> Voltar ao Dashboard
@@ -385,6 +489,13 @@ export default function ObrasEvaluation() {
           <p className="text-sm text-muted-foreground mt-1">
             Notas de 0 a 10 por critério. Use <span className="text-foreground font-medium">Não avaliado</span> para excluir um item da média.
           </p>
+          {savedEval && initialized && (
+            <p className="text-[11px] text-slate-600 mt-1.5 flex items-center gap-1">
+              <span>💾</span>
+              Avaliação anterior restaurada ·{' '}
+              {new Date(savedEval.updatedAt).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+            </p>
+          )}
         </div>
         <a href="/obras/regras"
           className="shrink-0 text-xs text-muted-foreground hover:text-primary transition-colors flex items-center gap-1.5 mt-1 border border-border rounded-lg px-3 py-1.5 hover:border-primary/30">
@@ -419,16 +530,35 @@ export default function ObrasEvaluation() {
             )}
           </div>
 
-          {/* Financial loss toggle */}
+          {/* Toggle: Prejuízo Financeiro */}
           <div className="border-t border-border pt-4 space-y-3">
-            <button type="button" onClick={() => setHasFinancialLoss(v => !v)} className="flex items-center justify-between w-full group">
+            <button
+              type="button"
+              onClick={() => {
+                const next = !hasFinancialLoss;
+                setHasFinancialLoss(next);
+                if (next) {
+                  setEntries(prev => {
+                    const reset: Record<number, Entry> = {};
+                    Object.entries(prev).forEach(([id, e]) => {
+                      reset[parseInt(id)] = { ...e, score: 0, na: false };
+                    });
+                    return reset;
+                  });
+                  setOsModulos(0);
+                  setOsInversores(0);
+                  setNps(0);
+                }
+              }}
+              className="flex items-center justify-between w-full group"
+            >
               <div className="flex items-center gap-2">
                 <CurrencyDollar size={18} weight="duotone" className={hasFinancialLoss ? 'text-red-600 dark:text-red-400' : 'text-muted-foreground'} />
                 <span className={cn(
                   'text-sm font-medium transition-colors',
                   hasFinancialLoss ? 'text-red-600 dark:text-red-400' : 'text-muted-foreground group-hover:text-foreground',
                 )}>
-                  Houve prejuizo financeiro?
+                  Houve prejuízo financeiro?
                 </span>
               </div>
               <div className={cn(

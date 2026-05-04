@@ -23,6 +23,8 @@ export const installers = mysqlTable(
     hiredAt: timestamp(),
     leftAt: timestamp(),
     role: varchar({ length: 50 }),
+    // Peso para cálculo de bônus: 1.2=Líder, 1.1=Instalador1, 1.0=Auxiliar, 0.5=Backend
+    weight: varchar({ length: 4 }).notNull().default("1.0"),
     createdAt: timestamp().notNull().defaultNow(),
     updatedAt: timestamp().notNull().defaultNow().onUpdateNow(),
   },

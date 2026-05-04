@@ -27,6 +27,7 @@ export const installersRouter = router({
         name: z.string().min(1).max(100),
         role: z.string().max(50).optional(),
         hiredAt: z.string().optional(),
+        weight: z.string().regex(/^\d(\.\d)?$/).optional(), // ex: "1.0", "1.2", "0.5"
       })
     )
     .mutation(async ({ input }) => {
@@ -41,6 +42,7 @@ export const installersRouter = router({
         name: input.name,
         role: input.role ?? null,
         hiredAt: input.hiredAt ? new Date(input.hiredAt) : null,
+        weight: input.weight ?? "1.0",
         status: "active",
       });
       return { success: true };
@@ -55,6 +57,7 @@ export const installersRouter = router({
         hiredAt: z.string().nullable().optional(),
         leftAt: z.string().nullable().optional(),
         status: z.enum(["active", "inactive"]).optional(),
+        weight: z.string().regex(/^\d(\.\d)?$/).nullable().optional(),
       })
     )
     .mutation(async ({ input }) => {

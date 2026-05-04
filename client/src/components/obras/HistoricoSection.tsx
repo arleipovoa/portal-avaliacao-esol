@@ -24,18 +24,24 @@ const CLASSIF_COLORS: Record<string, string> = {
 // Reexport do formatNota com mesma assinatura usada antes (drop-in).
 const fmt = (v: number | null | undefined, digits = 1) => formatNota(v, digits);
 
+// Escala 0-10
 function colorByNota(n: number | null | undefined): string {
   if (n === null || n === undefined) return "text-slate-500";
-  if (n >= 80) return "text-green-700 dark:text-green-400";
-  if (n >= 60) return "text-yellow-700 dark:text-yellow-300";
+  if (n >= 8) return "text-green-700 dark:text-green-400";
+  if (n >= 6) return "text-yellow-700 dark:text-yellow-300";
   return "text-red-700 dark:text-red-400";
 }
 
 function bgByNota(n: number | null | undefined): string {
   if (n === null || n === undefined) return "bg-slate-400/60";
-  if (n >= 80) return "bg-green-600 dark:bg-green-500";
-  if (n >= 60) return "bg-yellow-500 dark:bg-yellow-400";
+  if (n >= 8) return "bg-green-600 dark:bg-green-500";
+  if (n >= 6) return "bg-yellow-500 dark:bg-yellow-400";
   return "bg-red-600 dark:bg-red-500";
+}
+// Converte valor histórico (0-100) → 0-10 para exibição
+function to10(v: number | null | undefined): number | null {
+  if (v === null || v === undefined) return null;
+  return v / 10;
 }
 
 export default function HistoricoSection() {
@@ -96,10 +102,10 @@ export default function HistoricoSection() {
           {/* ── 1) ANUAL ── */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             {([
-              { label: "Total de Obras",   value: String(yearly.total),               accent: "text-amber-700 dark:text-amber-300", Icon: HardHat },
-              { label: "Nota Final Média", value: fmt(yearly.mediaFinal),             accent: colorByNota(yearly.mediaFinal),       Icon: Star },
-              { label: "Segurança Média",  value: fmt(yearly.mediaSeguranca),         accent: colorByNota(yearly.mediaSeguranca),   Icon: ShieldCheck },
-              { label: "Estética Média",   value: fmt(yearly.mediaEstetica),          accent: colorByNota(yearly.mediaEstetica),    Icon: Sparkle },
+              { label: "Total de Obras",   value: String(yearly.total),                            accent: "text-amber-700 dark:text-amber-300",       Icon: HardHat },
+              { label: "Nota Final Média", value: fmt(to10(yearly.mediaFinal), 1),                 accent: colorByNota(to10(yearly.mediaFinal)),       Icon: Star },
+              { label: "Segurança Média",  value: fmt(to10(yearly.mediaSeguranca), 1),             accent: colorByNota(to10(yearly.mediaSeguranca)),   Icon: ShieldCheck },
+              { label: "Estética Média",   value: fmt(to10(yearly.mediaEstetica), 1),              accent: colorByNota(to10(yearly.mediaEstetica)),    Icon: Sparkle },
             ] as { label: string; value: string; accent: string; Icon: Icon }[]).map(s => (
               <div key={s.label} className="rounded-xl border border-border p-5 bg-card">
                 <div className="flex items-center justify-between mb-3">
@@ -131,7 +137,7 @@ export default function HistoricoSection() {
             </div>
           </div>
 
-          {/* ── 2) TRIMESTRAL ── */}
+          {/* ── 2) TRIMESTRAL — cards de médias ── */}
           <div>
             <h3 className="text-sm font-semibold text-foreground mb-3">Por Trimestre</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
@@ -149,23 +155,56 @@ export default function HistoricoSection() {
                     <div className="space-y-1.5 text-xs">
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">Final</span>
-                        <span className={cn("tabular-nums font-bold", colorByNota(t.mediaFinal))}>{fmt(t.mediaFinal)}</span>
+                        <span className={cn("tabular-nums font-bold", colorByNota(to10(t.mediaFinal)))}>{fmt(to10(t.mediaFinal), 1)}</span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">Segurança</span>
-                        <span className="tabular-nums">{fmt(t.mediaSeguranca)}</span>
+                        <span className="tabular-nums">{fmt(to10(t.mediaSeguranca), 1)}</span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">Funcional.</span>
-                        <span className="tabular-nums">{fmt(t.mediaFuncionalidade)}</span>
+                        <span className="tabular-nums">{fmt(to10(t.mediaFuncionalidade), 1)}</span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">Estética</span>
-                        <span className="tabular-nums">{fmt(t.mediaEstetica)}</span>
+                        <span className="tabular-nums">{fmt(to10(t.mediaEstetica), 1)}</span>
                       </div>
                     </div>
                   ) : (
                     <p className="text-xs text-muted-foreground italic">Sem dados</p>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            {/* Ranking por trimestre */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 mt-3">
+              {quarterly.map(t => (
+                <div key={`rank-${t.trimestre}`} className={cn(
+                  "rounded-xl border p-4 bg-white/5",
+                  t.total === 0 ? "border-white/5 opacity-50" : "border-white/10"
+                )}>
+                  <p className="text-xs font-semibold text-slate-400 mb-3">
+                    🏆 {t.label} — Top
+                  </p>
+                  {(t as any).ranking?.length > 0 ? (
+                    <div className="space-y-2">
+                      {(t as any).ranking.slice(0, 5).map((r: any, i: number) => (
+                        <div key={r.nome} className="flex items-center justify-between gap-2">
+                          <div className="flex items-center gap-1.5 min-w-0">
+                            <span className={cn('text-[11px] font-bold shrink-0',
+                              i === 0 ? 'text-yellow-400' : i === 1 ? 'text-slate-300' : i === 2 ? 'text-amber-600' : 'text-slate-500'
+                            )}>{i + 1}º</span>
+                            <span className="text-xs text-white truncate">{r.nome}</span>
+                          </div>
+                          <span className={cn('text-xs font-mono font-bold shrink-0', colorByNota(to10(r.media)))}>
+                            {fmt(to10(r.media), 1)}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-xs text-slate-500 italic">Sem dados</p>
                   )}
                 </div>
               ))}
@@ -191,8 +230,8 @@ export default function HistoricoSection() {
                         <span className="text-sm font-semibold text-foreground capitalize">{m.monthLabel}/{year}</span>
                         <span className="text-xs text-muted-foreground">{m.total} obra(s)</span>
                       </div>
-                      <span className={cn("text-sm tabular-nums font-bold", colorByNota(m.mediaNota))}>
-                        {fmt(m.mediaNota)}
+                      <span className={cn("text-sm tabular-nums font-bold", colorByNota(to10(m.mediaNota)))}>
+                        {fmt(to10(m.mediaNota), 1)}
                       </span>
                     </button>
                     {open && (
@@ -213,11 +252,11 @@ export default function HistoricoSection() {
                               )}
                             </div>
                             <div className="flex items-center gap-3 text-xs text-muted-foreground shrink-0">
-                              <span>S: <span className="tabular-nums text-foreground/80">{fmt(o.notaSeguranca, 0)}</span></span>
-                              <span>F: <span className="tabular-nums text-foreground/80">{fmt(o.notaFuncionalidade, 0)}</span></span>
-                              <span>E: <span className="tabular-nums text-foreground/80">{fmt(o.notaEstetica, 0)}</span></span>
-                              <span className={cn("tabular-nums font-bold", colorByNota(o.notaEquipePct))}>
-                                {fmt(o.notaEquipePct, 1)}
+                              <span>S: <span className="tabular-nums text-foreground/80">{fmt(to10(o.notaSeguranca), 1)}</span></span>
+                              <span>F: <span className="tabular-nums text-foreground/80">{fmt(to10(o.notaFuncionalidade), 1)}</span></span>
+                              <span>E: <span className="tabular-nums text-foreground/80">{fmt(to10(o.notaEstetica), 1)}</span></span>
+                              <span className={cn("tabular-nums font-bold", colorByNota(to10(o.notaEquipePct)))}>
+                                {fmt(to10(o.notaEquipePct), 1)}
                               </span>
                             </div>
                           </div>
@@ -267,21 +306,22 @@ export default function HistoricoSection() {
                     </div>
                     {(() => {
                       const relPct = maxTrack > 0 ? (r.track / maxTrack) * 100 : 0;
+                      const trackPct = Math.min(100, Math.max(0, r.track));
                       return (
                         <div className="col-span-4 flex items-center gap-2 pr-2">
                           <div className="flex-1 h-2 rounded-full bg-foreground/10 overflow-hidden">
                             <div
-                              className={cn("h-full rounded-full transition-all", bgByNota(relPct))}
-                              style={{ width: `${Math.min(100, Math.max(0, r.track))}%` }}
+                              className={cn("h-full rounded-full transition-all", bgByNota(to10(relPct)))}
+                              style={{ width: `${trackPct}%` }}
                             />
                           </div>
-                          <span className={cn("text-xs font-bold tabular-nums shrink-0 w-12 text-right", colorByNota(relPct))}>
+                          <span className={cn("text-xs font-bold tabular-nums shrink-0 w-12 text-right", colorByNota(to10(relPct)))}>
                             {fmt(r.track, 1)}
                           </span>
                         </div>
                       );
                     })()}
-                    <div className={cn("col-span-2 text-right tabular-nums", colorByNota(r.media))}>{fmt(r.media)}</div>
+                    <div className={cn("col-span-2 text-right tabular-nums", colorByNota(to10(r.media)))}>{fmt(to10(r.media), 1)}</div>
                     <div className="col-span-1 text-right text-muted-foreground tabular-nums">{r.total}</div>
                   </div>
                 ))}

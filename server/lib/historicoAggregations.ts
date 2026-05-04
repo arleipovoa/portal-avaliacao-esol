@@ -78,6 +78,26 @@ export function historyByMonth(year: number) {
     }));
 }
 
+// Ranking compacto para um conjunto de obras (somente pessoas, sem contas).
+function rankingFromObras(obras: ObraAvaliada[], year: number) {
+  const stats: Record<string, { total: number; soma: number; max: number; min: number }> = {};
+  for (const o of obras) {
+    if (o.notaEquipePct === null) continue;
+    for (const rawNome of o.equipe) {
+      const nome = displayName(rawNome, year);
+      if (NON_PERSON.has(nome)) continue;
+      if (!stats[nome]) stats[nome] = { total: 0, soma: 0, max: -Infinity, min: Infinity };
+      stats[nome].total++;
+      stats[nome].soma += o.notaEquipePct;
+      stats[nome].max = Math.max(stats[nome].max, o.notaEquipePct);
+      stats[nome].min = Math.min(stats[nome].min, o.notaEquipePct);
+    }
+  }
+  return Object.entries(stats)
+    .map(([nome, s]) => ({ nome, total: s.total, media: s.soma / s.total, max: s.max, min: s.min }))
+    .sort((a, b) => b.media - a.media);
+}
+
 // ── 2) TRIMESTRAL ──
 export function historyQuarterly(year: number) {
   const obras = obrasDoAno(year);
@@ -96,6 +116,7 @@ export function historyQuarterly(year: number) {
     mediaEstetica: avg(trimGroups[t].map(o => o.notaEstetica)),
     mediaFinal: avg(trimGroups[t].map(o => o.notaEquipePct)),
     distribClassif: classificacaoCount(trimGroups[t]),
+    ranking: rankingFromObras(trimGroups[t], year),
   }));
 }
 
@@ -148,9 +169,9 @@ export function historyYearly(year: number) {
   }
 
   const ranking = Object.values(stats)
+    .filter(s => s.isPerson)
     .map(s => {
       const media = s.somaNotaFinal / s.total;
-      // Track = media × (participacao / totalGeral). Reflete fidelidade ao volume avaliado.
       const track = totalAvaliacoes > 0 ? media * (s.total / totalAvaliacoes) : 0;
       return {
         nome: s.nome,
